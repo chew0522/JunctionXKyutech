@@ -25,8 +25,12 @@ The agent is one DeepSeek tool-calling loop plus a set of independent connector 
 - Reads from (or writes to) its own mock JSON file under `data/`
 - Has no dependency on other connectors
 
-Tier 1 connectors to build first (see PRD §5): `get_events`, `book_study_room`, `get_bus_location`, `todo_add`/`todo_list`.
-Tier 2 connectors after that: `get_cafe_crowd`, `book_clinic_appointment`.
+**Build order matters** (see PRD §5, §12): the Tier 0 proactive nudge engine comes *before* Tier 1 connectors — it's the highest-leverage feature for the judging criteria, not an afterthought.
+
+- **Tier 0 (build first):** nudge engine — a rule-based check (polling on a timer is fine) that evaluates mock data and pushes an unsolicited message into the chat when a rule fires. It reuses Tier 1 connector functions for data access; it does not get its own data layer. See PRD §6.1 for the exact trigger design.
+- **Tier 1 connectors:** `get_events`, `book_study_room`, `get_bus_location`, `todo_add`/`todo_list`.
+- **Tier 2 connectors:** `get_cafe_crowd`, `book_clinic_appointment`.
+- **Stretch, only if time remains:** cross-connector reasoning (one answer combining 3+ connectors). Do not start this before Tier 0/1/2 are demo-solid.
 
 When adding a new connector: write the function, register it as a tool, add its mock data file. Don't refactor the agent loop itself to accommodate a new connector — if that seems necessary, the connector is scoped wrong.
 
