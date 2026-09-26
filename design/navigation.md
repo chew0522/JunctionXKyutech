@@ -35,7 +35,7 @@ Why:
 - The agent (DeepSeek) already knows the context from the conversation, so "Book Room 201" after a room nudge just works.
 - **Nudge text must reach the agent.** When a nudge is shown, add it to the chat history as an assistant message, so the agent knows what "Book Room 201" refers to.
 
-Exception: the header **To-do** button opens the to-do sheet directly (it's a view, not an action).
+Exceptions (views, not actions): the **Home** button opens the Dashboard, and the **View all** link on the to-do card opens the to-do sheet.
 
 ## Screens and surfaces
 
@@ -44,7 +44,7 @@ Exception: the header **To-do** button opens the to-do sheet directly (it's a vi
 | **Dashboard** | App launch, or Home button (top left of every chat screen) | Tap a tile, the nudge, or the ask bar | Nudge + 4 live tiles + ask bar |
 | **Chat — Welcome state** | Opening the chat with no messages | Send a message, or a nudge fires | Welcome, search bar, 3 chips |
 | **Chat** | First message sent | Home button → Dashboard | Everything |
-| **To-do sheet** | Header to-do button, or card link "View all" | Swipe down, tap outside, or close button | Pending assignments from `todo_list`: title, course, due date. View only (optional: a `Mark submitted` button that sends "Mark Problem Set 3 as submitted"). |
+| **To-do sheet** | "View all" link on the to-do card | Swipe down, tap outside, or close button | Pending assignments from `todo_list`: title, course, due date. View only (optional: a `Mark submitted` button that sends "Mark Problem Set 3 as submitted"). |
 
 That's all. **Don't add** a settings page, profile page, or event detail page — the agent answers in the chat.
 
@@ -134,7 +134,7 @@ Demo clock: **Saturday 26 Sep 2026, 14:50** (`DEMO_NOW`). The student is at the 
 |---|---|
 | App name | Campus Concierge |
 | Demo user name | Alex (placeholder) |
-| Header | Home button (left) · "Campus Concierge" · To-do button (right). Welcome footer: "Connected to 6 campus services" |
+| Header | Home button (left) · "Campus Concierge". Nothing on the right. Welcome footer: "Connected to 6 campus services" |
 | **Usual room (nudge)** | **Study Room 204** · Library 3F · 8 seats — **booked** (`room-204`) |
 | **Room offered + booked** | **Study Room 201** · Library 2F · **4 seats · whiteboard** (`room-201`) |
 | Events today | **AI Workshop**, 15:00, Building A, Room 101 · **Career Fair**, 17:00, Main Hall |

@@ -55,7 +55,7 @@ Cafe tile shows 3 bars (6 px wide, 10 / 16 / 22 px tall; filled = `primary`, emp
 ```
 ┌──────────────────────────────────┐
 │ HEADER                   68 px   │  surface, 1 px line at bottom
-│ [home] Campus Concierge     [✓]  │
+│ [home] Campus Concierge          │
 ├──────────────────────────────────┤
 │                                  │
 │ MESSAGE LIST        flexible     │  background colour
@@ -101,7 +101,6 @@ Scaffold(
 | Padding | 0 × 16, items centred, gap 12 |
 | **Left: Home button** | 44 × 44 outlined (`line`), radius 12, `house` icon → **Dashboard**. `aria-label="Back to dashboard"` |
 | Title | "Campus Concierge", `appName`, fills the middle. No logo, no subtitle |
-| Right: To-do button | 44 × 44 outlined, `square-check` icon → opens the **to-do bottom sheet** (list of assignments due). `aria-label="Open to-do list"` |
 
 ## Message list
 
@@ -186,7 +185,7 @@ Variants — same shell, different header and rows. Every value comes from the c
 
 ## To-do bottom sheet
 
-Opens from the header to-do button (canvas board "To-do bottom sheet").
+Opens from the "View all" link on the to-do card (canvas board "To-do bottom sheet"). There is no header button for it.
 
 - Scrim over the chat: `#1A1C20` at 45%. Tap it to close.
 - Sheet: `surface`, top corners radius 24, padding 10 / 16 / 28. Drag handle 40 × 5, `inputLine`.

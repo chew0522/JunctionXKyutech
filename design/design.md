@@ -197,7 +197,7 @@ Simple 2 px stroke icons (Lucide style — Flutter: [`lucide_icons`](https://pub
 | `bus` | Bus card |
 | `coffee` | Cafe crowd card |
 | `square` (empty) | Unchecked to-do |
-| `square-check` | Header to-do button |
+| `square-check` | To-do list card |
 | `house` | Home button (back to dashboard) |
 | `calendar` | Dashboard "Next event" tile |
 | `stethoscope` | Clinic slots card |
