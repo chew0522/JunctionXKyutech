@@ -137,7 +137,10 @@ Everything in the list is one of these. **Result cards share one shell** — onl
 | `get_cafe_crowd` | Checked cafe crowds |
 | `get_clinic_slots` | Checked clinic slots |
 | `book_clinic_appointment` | Booked clinic appointment |
-| `submit_assignment` | Marked {assignment title} as submitted |
+| `submit_assignment` | Submitted {assignment title} |
+| `get_courses` | Checked your courses |
+| `get_course_materials` | Checked course materials |
+| 3+ different tools in one reply | "Checked events · cafe crowds · study rooms · your to-dos" (join the short names) |
 
 ### 4. Nudge card (Tier 0)
 Full width. Fill `nudgeFill`, 1 px `nudgeLine`, `radiusCard`, padding 16, gap 12 between rows.

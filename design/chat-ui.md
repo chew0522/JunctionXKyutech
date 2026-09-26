@@ -11,10 +11,29 @@ Device: **phone, portrait, 390 × 844**, light mode only. All example values are
 | # | Screen | Canvas board | Type |
 |---|---|---|---|
 | B | Chat — Welcome state | 0 · Welcome | Chat screen with no messages |
-| C | Chat — conversation | 1 – 5 | Chat screen with messages |
-| D | To-do bottom sheet | To-do bottom sheet | Optional (see §D) |
+| C | Chat — conversation | 1 – 10 | Chat screen with messages |
+| D | To-do bottom sheet | To-do bottom sheet | **Extra — not in PRD** (see §D) |
 
-**Only 2 routes:** Dashboard and Chat. Welcome is the chat screen when the message list is empty. The Dashboard has its own spec: **[dashboard.md](dashboard.md)**.
+**Features → screens** (every PRD §5 feature, Tier 0 – 2.5):
+
+| Tier | PRD feature | Connector(s) | Screen |
+|---|---|---|---|
+| 0 | Proactive nudges | nudge engine (`/nudges`) | C1, C6 |
+| 1 | Event Information Center | `get_events` | C7 |
+| 1 | Library study room reservation | `get_study_rooms`, `book_study_room` | C8 → C2 |
+| 1 | School bus tracker | `get_bus_location` | C3 |
+| 1 | Academic platform — courses, materials | `get_courses`, `get_course_materials` | C9 |
+| 1 | Academic platform — submit assignment | `submit_assignment` | C10 |
+| 1 | To-do list (from assignments) | `todo_list` | C3 |
+| 2 | Cafe crowd | `get_cafe_crowd` | C4 |
+| 2 | Clinic reservation | `get_clinic_slots`, `book_clinic_appointment` | C5 |
+| 2 | Student service assistance | none (general Q&A) | Plain agent bubble |
+| 2.5 | Cross-connector reasoning | 3+ of the above | C11 |
+| 3 | Registration, exam results, student ID | none — out of scope | Agent says it can't (see [tone.md](tone.md)) |
+
+**Routes:** CLAUDE.md and PRD §7 say **one chat screen, no routing**. The **Dashboard** and **Home button** are extras we added — **not in the PRD; build only if the team leader agrees.** If not: drop the Home button and [dashboard.md](dashboard.md), and the app is the chat screen only. Welcome is the chat screen when the message list is empty.
+
+**No chat history between sessions.** CLAUDE.md says no persistence — the history lives in memory (`_history` in `backend/main.py`) and resets on `/reset` or restart.
 
 ```
 Dashboard ──(tile / nudge / ask bar)──► Chat
@@ -175,11 +194,76 @@ Data: `get_clinic_slots` (future + `available` only) → `book_clinic_appointmen
 | Nudge 3 | "AI Workshop starts in 10 min" · "A hands-on session on LLM tool-calling and agent design." · pills `clock` 15:00, `map-pin` Building A, Room 101 · **Tell me more** / **Not going** |
 | Nudge after a tap | One line, 60% opacity: check + "Your usual room is taken · You chose "Book Room 201"" |
 
+### C7. Events — canvas **6 · Events**
+| Order | Piece | Content |
+|---|---|---|
+| 1 | Divider | Today · 14:48 |
+| 2 | User | What's on today? |
+| 3 | Trace | Checked campus events |
+| 4 | Agent | Two today — the AI Workshop starts in 12 minutes. |
+| 5 | **Card: Campus events** | `calendar` circle + "Today · Sat 26 Sep". One row per event: time (Bricolage 18, `primary`, 52 px wide) · name (14 / 600) + "venue · organizer" (13 muted) · category (12 / 600 muted, right). **15:00** AI Workshop — Building A, Room 101 · CS Club — Workshop · **17:00** Career Fair — Main Hall · Career Services — Career. Buttons: `Tell me more` · `What's on tomorrow?` |
+
+Data: `get_events(date)` (`name`, `time`, `venue`, `organizer`, `category`; `description` is used by the agent for "Tell me more").
+
+### C8. Available rooms — canvas **7 · Available rooms**
+| Order | Piece | Content |
+|---|---|---|
+| 1 | Divider | Today · 14:50 |
+| 2 | User | Is there a study room free? |
+| 3 | Trace | Checked study rooms |
+| 4 | Agent | Four are free right now. Your usual room, 204, is taken — 201 is the closest match. |
+| 5 | **Card: Available rooms** (options) | `door` circle + "Free now · 4 rooms". One **tappable row per free room** (same style as clinic slots: 56 px, `primaryTint`, radius 14): `door` icon in a white 36 px square · name (14 / 600) + "building floorF · n seats · whiteboard" (13 muted) · "Book". Rows: Study Room 201 — Library 2F · 4 seats · whiteboard · Study Room 202 — Library 2F · 6 seats · whiteboard · Study Room 205 — Library 3F · 2 seats · Group Pod B — Student Union 1F · 6 seats · whiteboard |
+
+Tap a row → sends "Book Study Room 201" → agent calls `book_study_room` → **C2** (Room booked card).
+Data: `get_study_rooms` filtered to `available: true`.
+
+### C9. Courses + materials — canvas **8 · Courses + materials**
+| Order | Piece | Content |
+|---|---|---|
+| 1 | Divider | Today · 14:57 |
+| 2 | User | What are my courses? |
+| 3 | Trace | Checked your courses |
+| 4 | **Card: Your courses** (options) | `graduation-cap` circle + "Fall 2026 · 3 courses". One tappable row per course: cap icon · "CODE Name" (14 / 600) + "instructor · n due" (13 muted) · "Materials". CS301 Distributed Systems — Prof. Yamamoto · 1 due · CS210 Data Structures & Algorithms — Prof. Ito · 1 due · EE150 Signals and Systems — Prof. Kobayashi · 1 due |
+| 5 | User | Materials for CS301 *(sent by tapping the row)* |
+| 6 | Trace | Checked course materials |
+| 7 | **Card: Course materials** | `book-open` circle + "CS301 · Week 4". One row per material: type icon in a 36 px square (`presentation` slides · `book-open` reading · `video` video) · title (14 / 600) + "Week n" (13 muted) · type label (12 / 600 muted, right). Consensus Algorithms — Week 4 — Slides · Raft Paper — Week 4 — Reading |
+
+Data: `get_courses` (`code`, `name`, `instructor`, `semester`) + due count from `get_assignments(course_id, pending_only=True)`; `get_course_materials(course_id)` (`title`, `week`, `type`). Strip "(Slides)" / "(Reading)" from the title — the type label shows it. Rows are **not** tappable (no real files).
+
+### C10. Submit assignment — canvas **9 · Submit assignment**
+Submitting can't be undone, so the agent **asks first**.
+
+| Order | Piece | Content |
+|---|---|---|
+| 1 | Divider | Today · 14:58 |
+| 2 | User | Submit Problem Set 3 |
+| 3 | **Card: Confirm** | `upload` circle + "Submit this assignment?" · "Marks it as handed in. You can't undo it." (14 muted) · rows **Assignment** Problem Set 3 – Consensus · **Due** Today 23:59 · CS301 · buttons `Submit it` (primary, `primary` fill) · `Not yet` (white, 1 px `line`) |
+| 4 | User | Submit it |
+| 5 | Trace | Submitted Problem Set 3 – Consensus |
+| 6 | Agent | Done. Two left — Lab 5 is next, due Tue 18:00. |
+| 7 | **Card: Assignment submitted** | Green check + "Assignment submitted". Rows: **Assignment** Problem Set 3 – Consensus · **Submitted** Today, 14:58 |
+
+Data: `submit_assignment(assignment_id)` — mocked, **no file upload** (PRD §4). The confirm card is built by the agent before calling the tool; add to the system prompt: "Before `submit_assignment`, ask the student to confirm."
+
+### C11. Combined answer (Tier 2.5) — canvas **10 · Combined answer**
+The "agent connects the dots" moment (PRD §3, §9 criterion 3). One question → an answer built from **4 connectors**.
+
+| Order | Piece | Content |
+|---|---|---|
+| 1 | User | Can I grab a coffee before the AI Workshop? |
+| 2 | Trace | Checked events · cafe crowds · study rooms · your to-dos |
+| 3 | Agent | Yes — the Student Union is quiet right now. Here's the rest of your afternoon. |
+| 4 | **Card: Your afternoon** (plan) | `sparkle` circle + "Your afternoon". One row per step: time (Bricolage 18, `primary`, 52 px) · title (14 / 600) + detail (13 muted) · **source tag** (22 px pill, `background` fill, 12 / 600 muted). Rows: **Now** Coffee at Student Union — Quiet, about 2 min wait. Skip the Library cafe — 12 min. — `Cafes` · **15:00** AI Workshop — Building A, Room 101 — `Events` · **After** Study Room 201 — Free now · Library 2F · 4 seats — `Rooms` · **23:59** Problem Set 3 due — CS301 · not submitted yet — `To-dos`. Footer: `sparkle` 14 + "Combined from 4 campus services" (12 muted). Buttons: `Book Room 201` (primary) · `Show my to-dos` |
+
+Source tags are what prove it's combining services — keep them. Tags come from the tool names in the `tools` list (backend change 2).
+
+**How the card is built:** the agent calls several tools in one turn. The UI shows the plan card when the reply used **3 or more different tools**; rows come from the tool results in time order. Simplest version for 24 h: the agent returns the plan as plain text, and the app shows it in an agent bubble with the source tags underneath.
+
 ---
 
-## D. To-do bottom sheet (optional)
+## D. To-do bottom sheet — extra, not in PRD
 
-Canvas: **To-do bottom sheet**. There's no header button for it any more; **build only if there's time**, opened from a "View all" link on the to-do card. Otherwise skip it — the to-do card in the chat already lists everything.
+Canvas: **To-do bottom sheet**. Not in the PRD, and there's no header button for it any more. **Build only if the team agrees and there's time**, opened from a "View all" link on the to-do card. Otherwise skip it — the to-do card (C3) lists everything, and submitting is C10.
 
 | Part | Spec |
 |---|---|
@@ -198,11 +282,14 @@ Canvas: **To-do bottom sheet**. There's no header button for it any more; **buil
 2. Chat screen: header, composer, user/agent bubbles, time divider, `sendMessage()`
 3. Welcome state (empty chat)
 4. **Nudge card** + polling `/nudges` every 15 s (needs backend change 1 in [nudges.md](nudges.md#for-the-coder-3-backend-changes-the-ui-needs))
-5. Trace line + result cards: Room booked → Bus → To-do list (needs backend change 2)
+5. Trace line + Tier 1 cards: Events → Available rooms → Room booked → Bus → To-do list → Courses → Materials → Confirm + Submitted (needs backend change 2)
 6. Thinking + error states
 7. Tier 2 cards: Cafe crowds, Clinic slots, Appointment booked
-8. Dashboard — see [dashboard.md](dashboard.md)
-9. Optional: to-do sheet, nudge collapse, animations
+8. Tier 2.5: Combined answer card (or plain text + source tags)
+9. Only if the leader agrees: Dashboard ([dashboard.md](dashboard.md)), to-do sheet
+10. Polish: nudge collapse, animations
+
+Matches PRD §12: 0–3 h steps 1–3 · 3–6 h step 4 · 6–10 h step 5 · 10–13 h step 7 · 13–16 h step 8.
 
 ## Widgets to make
 
@@ -212,8 +299,11 @@ Canvas: **To-do bottom sheet**. There's no header button for it any more; **buil
 | `Composer(chips)` | All chat screens |
 | `UserBubble`, `AgentBubble`, `TimeDivider`, `TraceLine`, `ThinkingBubble` | Chat |
 | `NudgeCard(nudge, compact)` | Chat (also used compact on the Dashboard) |
-| `ResultCard(icon, title, rows, buttons)` | Room booked, Appointment booked |
-| `BusCard`, `TodoListCard`, `CafeCard`, `SlotPickerCard` | One per connector |
+| `ResultCard(icon, title, rows, buttons)` | Room booked, Appointment booked, Assignment submitted, Confirm submit |
+| `OptionsCard(icon, title, options)` — tappable rows, each sends a message | Available rooms, Clinic slots, Courses |
+| `ListCard(icon, title, rows)` — lead + 2 lines + right label | Events, Materials, To-do list, Cafe crowds |
+| `BusCard` | Bus |
+| `PlanCard(steps with source tags)` | Combined answer (Tier 2.5) |
 | `Chip(label)` | Composer, Welcome, error |
 
 Check before handing back: every tappable thing ≥ 44 × 44 · amber only on nudges · no emoji anywhere · every tap sends a message.

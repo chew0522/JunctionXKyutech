@@ -4,7 +4,7 @@ Campus Concierge — a single chat screen on a phone. Small system on purpose: *
 
 Look in one line: **calm, warm paper background, one strong indigo, and amber reserved only for the agent speaking first.**
 
-**Mockups:** [Campus Concierge Chat UI canvas](https://claude.ai/artifact/NtfYEffJuhq1eSvM8qeFjn) — 9 screens + a UI kit board; press Play to click through. Other docs: **[chat-ui.md](chat-ui.md) (start here — chat screens, build order)** · [dashboard.md](dashboard.md) (Dashboard) · [layout.md](layout.md) (component specs) · [navigation.md](navigation.md) (flow, demo script, demo facts) · [nudges.md](nudges.md) (Tier 0) · [tone.md](tone.md) (how the agent talks + system prompt).
+**Mockups:** [Campus Concierge Chat UI canvas](https://claude.ai/artifact/NtfYEffJuhq1eSvM8qeFjn) — 14 screens + a UI kit board; press Play to click through. Other docs: **[chat-ui.md](chat-ui.md) (start here — chat screens, build order)** · [dashboard.md](dashboard.md) (Dashboard) · [layout.md](layout.md) (component specs) · [navigation.md](navigation.md) (flow, demo script, demo facts) · [nudges.md](nudges.md) (Tier 0) · [tone.md](tone.md) (how the agent talks + system prompt).
 
 ## Theme at a glance (send this to the team)
 
@@ -201,6 +201,13 @@ Simple 2 px stroke icons (Lucide style — Flutter: [`lucide_icons`](https://pub
 | `house` | Home button (back to dashboard) |
 | `calendar` | Dashboard "Next event" tile |
 | `stethoscope` | Clinic slots card |
+| `door-open` / `door` | Available rooms card |
+| `graduation-cap` | Courses card |
+| `book-open` | Materials card, reading rows |
+| `presentation` | Slides rows |
+| `video` | Recording rows |
+| `upload` | Confirm submit card |
+| `sparkles` | Combined answer card (Tier 2.5) |
 | `x` | Close the to-do sheet |
 | `search` | Welcome search bar |
 | `wrench` | Agent trace line |

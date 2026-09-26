@@ -49,7 +49,11 @@ These are the target replies. When testing, compare what DeepSeek actually says 
 | Where can I get coffee without a queue? | Go to the Student Union Coffee Bar — it's quiet, about a 2-minute wait. The Library cafe is packed right now. |
 | I need to see a doctor | Today's slots are gone. These are open tomorrow — tap one to book. |
 | Book 09:00 with Dr. Tanaka | Booked. You're seeing Dr. Tanaka tomorrow at 09:00 for a general checkup. |
-| Mark Problem Set 3 as submitted | Marked as submitted. Two left — Lab 5 is next, due Tue 18:00. |
+| Submit Problem Set 3 | Submit Problem Set 3 – Consensus? You can't undo it. *(confirm card)* |
+| Submit it | Done. Two left — Lab 5 is next, due Tue 18:00. |
+| Is there a study room free? | Four are free right now. Your usual room, 204, is taken — 201 is the closest match. |
+| What are my courses? | You're taking three this semester — tap one to see its materials. |
+| Can I grab a coffee before the AI Workshop? | Yes — the Student Union is quiet right now. Here's the rest of your afternoon. *(plan card)* |
 | What materials are there for CS301? | *(names the materials from `get_course_materials`, max 3, then:)* Want the rest? |
 | Can you register me for next semester? | I can't do course registration yet — that still happens in the student system. I can show your current courses and what's due, though. |
 | What's my GPA? | I don't have access to exam results — those stay in the student system for privacy. |
@@ -115,8 +119,10 @@ SYSTEM_PROMPT = (
     "- Friendly and calm. No 'Great question!', no apologies unless something failed, "
     "no mention of being an AI or of tools.\n\n"
 
-    "ACTIONS: When the student clearly asks you to book or submit something, do it right away "
+    "ACTIONS: When the student clearly asks you to book something, do it right away "
     "with the tool, then confirm in one sentence starting with 'Done.' or 'Booked.'. "
+    "Submitting an assignment can't be undone: before calling submit_assignment, ask "
+    "'Submit <title>? You can't undo it.' and only submit after the student says yes. "
     "If the room or slot is taken, say so and suggest the nearest free alternative.\n\n"
 
     "NUDGES: Messages in the history that start with 'NUDGE:' were sent by you proactively. "
