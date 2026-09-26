@@ -19,7 +19,7 @@ Device: **phone, portrait, 390 × 844**, light mode only. All example values are
 | Tier | PRD feature | Connector(s) | Screen |
 |---|---|---|---|
 | 0 | Proactive nudges | nudge engine (`/nudges`) | C1, C6 |
-| 1 | Event Information Center | `get_events` | C7 in chat, **EventsPage** by default ([pages.md](pages.md)) |
+| 1 | Event Information Center | `get_events` | C7 in chat, **EventsPage** by default (see [page-events.md](page-events.md)) |
 | 1 | Library study room reservation | `get_study_rooms`, `book_study_room` | C8 → C2 in chat, **BookingsPage** by default |
 | 1 | School bus tracker | `get_bus_location` | C3 in chat, **BusPage** by default |
 | 1 | Academic platform — courses, materials | `get_courses`, `get_course_materials` | C9 in chat, **CoursesPage** by default |
@@ -31,16 +31,16 @@ Device: **phone, portrait, 390 × 844**, light mode only. All example values are
 | 2.5 | Cross-connector reasoning | 3+ of the above | C11 |
 | 3 | Registration, exam results, student ID | none — out of scope | Agent says it can't (see [tone.md](tone.md)) |
 
-**Routes: approved.** The app is more than one screen — Dashboard + 4 bottom-bar tabs, most of them real pages, not chat. See [pages.md](pages.md) for Events/Buses/Cafes/Courses/Bookings and [dashboard.md](dashboard.md) for Home. **This file covers only the chat itself**, which is reached **exclusively through the Ask button** in the bottom bar.
+**Routes: approved.** The app is more than one screen — Dashboard + 4 bottom-bar tabs, most of them real pages, not chat. See page-events.md, page-buses.md, page-cafes.md, page-courses.md, page-bookings.md for the app pages and [dashboard.md](dashboard.md) for Home. **This file covers only the chat itself**, which is reached **exclusively through the Ask button** in the bottom bar.
 
 ```
-        Home   Events   ( ASK )   Courses   Bookings   ← bottom bar (dashboard.md, pages.md)
+        Home   Events   ( ASK )   Courses   Bookings   ← bottom bar (see dashboard.md and the page-*.md files)
                            │
                            ▼
                   Chat — Welcome / conversation      ← this file
 ```
 
-**In the chat, the one rule:** every chip, nudge button and card button **sends its label as a user message** to `/chat`. One handler: `sendMessage(String text)`. This rule is chat-only — Dashboard tiles and bottom-bar tabs navigate to pages instead (see [pages.md](pages.md)); they don't send chat messages.
+**In the chat, the one rule:** every chip, nudge button and card button **sends its label as a user message** to `/chat`. One handler: `sendMessage(String text)`. This rule is chat-only — Dashboard tiles and bottom-bar tabs navigate to pages instead (see the page-*.md files); they don't send chat messages.
 
 **No chat history between sessions.** CLAUDE.md says no persistence — the history lives in memory (`_history` in `backend/main.py`) and resets on `/reset` or restart.
 
@@ -287,7 +287,7 @@ Canvas: **To-do bottom sheet**. Not in the PRD, and there's no header button for
 6. Thinking + error states
 7. Tier 2 cards: Cafe crowds, Clinic slots, Appointment booked
 8. Tier 2.5: Combined answer card (or plain text + source tags)
-9. Dashboard + the 5 app pages — see [dashboard.md](dashboard.md) and [pages.md](pages.md) (build these **before** step 5 if going with pages instead of chat-only; see pages.md's own build order)
+9. Dashboard + the 5 app pages — see [dashboard.md](dashboard.md) and the 5 page-*.md files (build these **before** step 5 if going with pages instead of chat-only; each page-*.md has its own build notes)
 10. Polish: nudge collapse, animations, to-do sheet (now optional either way — Courses page covers it)
 
 Matches PRD §12: 0–3 h steps 1–3 · 3–6 h step 4 · 6–10 h step 5 · 10–13 h step 7 · 13–16 h step 8.

@@ -1,6 +1,6 @@
 # Dashboard (Home) — build spec for the coder
 
-The **Home** tab of the bottom bar, and the app's launch screen. A glance at campus right now: the current nudge + 4 live tiles. **Tapping a tile navigates to its own page** (see [pages.md](pages.md)) — it does **not** open the chat. Only the **Ask** button opens the chat.
+The **Home** tab of the bottom bar, and the app's launch screen. A glance at campus right now: the current nudge + 4 live tiles. **Tapping a tile navigates to its own page** (see [page-events.md](page-events.md), [page-buses.md](page-buses.md), [page-cafes.md](page-cafes.md), [page-courses.md](page-courses.md), [page-bookings.md](page-bookings.md)) — it does **not** open the chat. Only the **Ask** button opens the chat.
 
 Colours, fonts and sizes: [design.md](design.md). Nudge card: [chat-ui.md § Nudge card](chat-ui.md#nudge-card-tier-0) (use the compact version below). Device: phone, 390 × 844. Demo time: Sat 26 Sep 2026, 14:50.
 
@@ -66,4 +66,4 @@ Canvas board: **Dashboard**. Route `/`. Background `background`, side padding 16
 |---|---|
 | `DashTile(icon, label, value, line1, line2, route)` | The 4 tiles — `route` is the page it opens |
 | `NudgeCard(nudge, compact: true)` | The nudge at the top (shared with the chat) |
-| `BottomBar(active, hasNudge)` | Bottom bar with the raised Ask button — used on every page in [pages.md](pages.md) too |
+| `BottomBar(active, hasNudge)` | Bottom bar with the raised Ask button — used on every one of the 5 pages too |

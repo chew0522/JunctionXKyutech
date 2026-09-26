@@ -4,7 +4,7 @@ Campus Concierge — a phone app: a Dashboard, 4 real pages, and a Chat reached 
 
 Look in one line: **calm, warm paper background, one strong indigo, and amber reserved only for the agent speaking first.**
 
-**Mockups:** [Campus Concierge Chat UI canvas](https://claude.ai/artifact/NtfYEffJuhq1eSvM8qeFjn) — 19 screens + a UI kit board; press Play to click through. **Start with [navigation.md](navigation.md)** for the overall map, then: [dashboard.md](dashboard.md) (Home + bottom bar) · [pages.md](pages.md) (Events, Buses, Cafes, Courses, Bookings) · [chat-ui.md](chat-ui.md) (the chat, reached via Ask) · [layout.md](layout.md) (component specs) · [nudges.md](nudges.md) (Tier 0) · [tone.md](tone.md) (agent tone + system prompt).
+**Mockups:** [Campus Concierge Chat UI canvas](https://claude.ai/artifact/NtfYEffJuhq1eSvM8qeFjn) — 19 screens + a UI kit board; press Play to click through. **Start with [navigation.md](navigation.md)** for the overall map, then: [dashboard.md](dashboard.md) (Home + bottom bar) · [page-events.md](page-events.md), [page-buses.md](page-buses.md), [page-cafes.md](page-cafes.md), [page-courses.md](page-courses.md), [page-bookings.md](page-bookings.md) (one file per page) · [chat-ui.md](chat-ui.md) (the chat, reached via Ask) · [layout.md](layout.md) (component specs) · [nudges.md](nudges.md) (Tier 0) · [tone.md](tone.md) (agent tone + system prompt).
 
 ## Theme at a glance (send this to the team)
 

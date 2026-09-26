@@ -1,6 +1,6 @@
 # Navigation
 
-**A real multi-page app, not a chat-only funnel.** Dashboard (Home) + 4 bottom-bar tabs, most of them dedicated pages. The chat is reached **only** through the raised **Ask** button — it's not where the app starts, and tiles/tabs don't route into it. Full page specs: [pages.md](pages.md) and [dashboard.md](dashboard.md). Full chat spec: [chat-ui.md](chat-ui.md).
+**A real multi-page app, not a chat-only funnel.** Dashboard (Home) + 4 bottom-bar tabs, most of them dedicated pages. The chat is reached **only** through the raised **Ask** button — it's not where the app starts, and tiles/tabs don't route into it. Full page specs: [dashboard.md](dashboard.md), [page-events.md](page-events.md), [page-buses.md](page-buses.md), [page-cafes.md](page-cafes.md), [page-courses.md](page-courses.md), [page-bookings.md](page-bookings.md). Full chat spec: [chat-ui.md](chat-ui.md).
 
 ```
                   Home   Events   ( ASK )   Courses   Bookings   ← bottom bar
@@ -42,11 +42,11 @@ Why split it this way: browsing and simple actions (view a list, book a free roo
 | Surface | How you get there | How you leave | Contents |
 |---|---|---|---|
 | **Dashboard (Home)** | App launch, or the Home tab | Tap a tile or a bottom-bar tab | Nudge + 4 live tiles + bottom bar — [dashboard.md](dashboard.md) |
-| **Events** | Bottom bar, or the "Next event" tile | Bottom bar, or the back chevron | All events, by day — [pages.md § 1](pages.md) |
-| **Buses** | The "Next bus" tile only | Back chevron | All bus routes, live — [pages.md § 2](pages.md) |
-| **Cafes** | The "Quietest cafe" tile only | Back chevron | All cafes, quietest first — [pages.md § 3](pages.md) |
-| **Courses** | Bottom bar, or the "Due next" tile | Bottom bar, or the back chevron | To-dos + courses + materials + submit — [pages.md § 4](pages.md) |
-| **Bookings** | Bottom bar, or a room/clinic nudge action | Bottom bar, or the back chevron | Study rooms + clinic, book in-page — [pages.md § 5](pages.md) |
+| **Events** | Bottom bar, or the "Next event" tile | Bottom bar, or the back chevron | All events, by day — [page-events.md](page-events.md) |
+| **Buses** | The "Next bus" tile only | Back chevron | All bus routes, live — [page-buses.md](page-buses.md) |
+| **Cafes** | The "Quietest cafe" tile only | Back chevron | All cafes, quietest first — [page-cafes.md](page-cafes.md) |
+| **Courses** | Bottom bar, or the "Due next" tile | Bottom bar, or the back chevron | To-dos + courses + materials + submit — [page-courses.md](page-courses.md) |
+| **Bookings** | Bottom bar, or a room/clinic nudge action | Bottom bar, or the back chevron | Study rooms + clinic, book in-page — [page-bookings.md](page-bookings.md) |
 | **Chat — Welcome state** | The **Ask** button | Send a message, or a nudge fires | Welcome, search bar, 3 chips |
 | **Chat — conversation** | First message sent | Chat header's Home button → Dashboard | Everything in [chat-ui.md](chat-ui.md) |
 
@@ -71,7 +71,7 @@ The chat opens on a **Welcome** state (canvas board "0 · Welcome"). It's the sa
 
 ## Dashboard, Events, Courses, Bookings, Buses, Cafes
 
-Full specs: [dashboard.md](dashboard.md) (Home + the bottom bar) and [pages.md](pages.md) (the other 5). Short version: it's a **glance at campus right now**, not a grid of app-launcher icons — every tile and row is live info, and tapping one takes you straight to that page or does the action, no conversation needed. The **Ask** button is the only door into the chat.
+Full specs: [dashboard.md](dashboard.md) (Home + the bottom bar) and one file per page: [page-events.md](page-events.md), [page-buses.md](page-buses.md), [page-cafes.md](page-cafes.md), [page-courses.md](page-courses.md), [page-bookings.md](page-bookings.md). Short version: it's a **glance at campus right now**, not a grid of app-launcher icons — every tile and row is live info, and tapping one takes you straight to that page or does the action, no conversation needed. The **Ask** button is the only door into the chat.
 
 If there's no time to build the pages: fall back to the chat-only plan in [chat-ui.md](chat-ui.md), where every tile and tab sends a message into the chat instead.
 
