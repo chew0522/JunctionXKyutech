@@ -8,7 +8,7 @@ Shown when the chat has no messages yet. Canvas board "0 · Welcome".
 
 ```
 ┌──────────────────────────────────┐
-│ [CC] Campus Concierge   [home]   │  68 px, no border, background colour
+│ [home] Campus Concierge          │  68 px, no border, background colour
 │                                  │
 │                                  │
 │        Welcome, {username}       │  Bricolage 32 / 38, 700, centred
@@ -27,7 +27,7 @@ Shown when the chat has no messages yet. Canvas board "0 · Welcome".
 
 | Part | Spec |
 |---|---|
-| Header | 68 px, padding 0 × 16. Left: 32 × 32 `CC` mark (radius 10) + "Campus Concierge" Bricolage 16. Right: **Home button** 44 × 44, outlined (`line`), radius 12, `house` icon |
+| Header | 68 px, padding 0 × 16, gap 12. Left: **Home button** 44 × 44, outlined (`line`), radius 12, `house` icon. Then "Campus Concierge" Bricolage 16. No logo |
 | Content block | Vertically centred in the space between header and footer, nudged up slightly (72 px bottom padding). Side padding 20 |
 | **Search bar** | Height 56, **fully round** (`radiusPill`), `surface` fill, 1 px `inputLine`. Left: 20 px `search` icon in `textMuted`. Input text 16 (16+ stops iOS zooming in). Right: 44 × 44 round `primary` send button, 6 px from the edge |
 | Chips | Same as chat chips (44 px). Row wraps and centres |
@@ -41,7 +41,7 @@ Canvas board "Dashboard". Background `background`, side padding 16.
 
 | Part | Spec |
 |---|---|
-| Header | 68 px, no border. Left: 32 px `CC` mark + "Campus Concierge". Right: date + time, `meta` 600, `textMuted` |
+| Header | 68 px, no border. Left: "Campus Concierge" (no logo, no Home button — this *is* home). Right: date + time, `meta` 600, `textMuted` |
 | Greeting | "Good afternoon, {username}" Bricolage 28 / 34 · "Here's your campus right now." body, `textMuted` |
 | Nudge | Compact nudge card: padding 14 × 16, title 18, body 14, **no info pills**, same 2 buttons |
 | Section label | "RIGHT NOW" — `label`, uppercase |
@@ -55,8 +55,7 @@ Cafe tile shows 3 bars (6 px wide, 10 / 16 / 22 px tall; filled = `primary`, emp
 ```
 ┌──────────────────────────────────┐
 │ HEADER                   68 px   │  surface, 1 px line at bottom
-│ [CC] Campus Concierge      [✓]   │
-│      ● Connected to 6 services   │
+│ [home] Campus Concierge     [✓]  │
 ├──────────────────────────────────┤
 │                                  │
 │ MESSAGE LIST        flexible     │  background colour
@@ -100,11 +99,9 @@ Scaffold(
 | Part | Spec |
 |---|---|
 | Padding | 0 × 16, items centred, gap 12 |
-| Avatar | 40 × 40, `radiusButton`, `primary` fill, "CC" in white `appName` 16 |
-| Title | "Campus Concierge", `appName` |
-| Subtitle | 8 px `live` dot + "Connected to 6 campus services", `meta`, `textMuted` |
-| Subtitle text | "Online · 6 services" (short, so two buttons fit) |
-| Right buttons | Two 44 × 44 outlined buttons, gap 8: `square-check` → opens to-do sheet · `house` → **Home (Dashboard)**, always the rightmost |
+| **Left: Home button** | 44 × 44 outlined (`line`), radius 12, `house` icon → **Dashboard**. `aria-label="Back to dashboard"` |
+| Title | "Campus Concierge", `appName`, fills the middle. No logo, no subtitle |
+| Right: To-do button | 44 × 44 outlined, `square-check` icon → opens the **to-do bottom sheet** (list of assignments due). `aria-label="Open to-do list"` |
 
 ## Message list
 

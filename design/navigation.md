@@ -41,7 +41,7 @@ Exception: the header **To-do** button opens the to-do sheet directly (it's a vi
 
 | Surface | How you get there | How you leave | Contents |
 |---|---|---|---|
-| **Dashboard** | App launch, or Home button (top right of every chat screen) | Tap a tile, the nudge, or the ask bar | Nudge + 4 live tiles + ask bar |
+| **Dashboard** | App launch, or Home button (top left of every chat screen) | Tap a tile, the nudge, or the ask bar | Nudge + 4 live tiles + ask bar |
 | **Chat — Welcome state** | Opening the chat with no messages | Send a message, or a nudge fires | Welcome, search bar, 3 chips |
 | **Chat** | First message sent | Home button → Dashboard | Everything |
 | **To-do sheet** | Header to-do button, or card link "View all" | Swipe down, tap outside, or close button | Pending assignments from `todo_list`: title, course, due date. View only (optional: a `Mark submitted` button that sends "Mark Problem Set 3 as submitted"). |
@@ -54,7 +54,7 @@ The chat opens on a **Welcome** state (canvas board "0 · Welcome"). It's the sa
 
 | Element | Behaviour |
 |---|---|
-| **Home button** (top right) | Goes back to the **Dashboard**. `aria-label="Back to dashboard"` |
+| **Home button** (top left) | Goes back to the **Dashboard**. `aria-label="Back to dashboard"` |
 | "Welcome, {username}" | Centred. Username comes from the app (mock: a fixed demo name) |
 | Subtitle | "Ask me anything about campus — rooms, buses, events and what's due." |
 | **Search bar** (round, pill) | The student types here. Sending the first message switches to the chat view |
@@ -134,7 +134,7 @@ Demo clock: **Saturday 26 Sep 2026, 14:50** (`DEMO_NOW`). The student is at the 
 |---|---|
 | App name | Campus Concierge |
 | Demo user name | Alex (placeholder) |
-| Header subtitle | Chat: "Online · 6 services" · Welcome footer: "Connected to 6 campus services" |
+| Header | Home button (left) · "Campus Concierge" · To-do button (right). Welcome footer: "Connected to 6 campus services" |
 | **Usual room (nudge)** | **Study Room 204** · Library 3F · 8 seats — **booked** (`room-204`) |
 | **Room offered + booked** | **Study Room 201** · Library 2F · **4 seats · whiteboard** (`room-201`) |
 | Events today | **AI Workshop**, 15:00, Building A, Room 101 · **Career Fair**, 17:00, Main Hall |

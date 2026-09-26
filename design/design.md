@@ -69,7 +69,7 @@ Four roles. Each has one job — don't reuse a colour for a different job.
 ### Primary — Indigo (the student + the app)
 | Token | Hex | Used for |
 |---|---|---|
-| `primary` | `#2B3A8F` | User bubbles, send button, links, primary buttons, app avatar |
+| `primary` | `#2B3A8F` | User bubbles, send button, links, primary buttons |
 | `primaryTint` | `#EEF0FA` | Suggestion chips, secondary buttons |
 | `primaryLine` | `#C9CEE8` | Chip / secondary button border |
 
