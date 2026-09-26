@@ -9,17 +9,16 @@ import '../widgets/floating_bottom_bar.dart';
 import '../widgets/list_card.dart';
 import '../widgets/page_header.dart';
 import '../widgets/todo_row.dart';
+import 'course_detail_page.dart';
 import 'submission_portal_page.dart';
 
 class CoursesPage extends StatefulWidget {
   final void Function(AppTab) onNavigate;
-  final bool hasActiveNudge;
   final VoidCallback onOpenTodoListPage;
 
   const CoursesPage({
     super.key,
     required this.onNavigate,
-    required this.hasActiveNudge,
     required this.onOpenTodoListPage,
   });
 
@@ -35,11 +34,6 @@ class _CoursesPageState extends State<CoursesPage> {
   DateTime _now = DateTime.now();
   List<dynamic> _assignments = [];
   List<dynamic> _courses = [];
-
-  // Materials drill-in state — replaces the page content in place, per page-courses.md §6.
-  Map<String, dynamic>? _viewingCourse;
-  List<dynamic>? _materials;
-  bool _loadingMaterials = false;
 
   @override
   void initState() {
@@ -84,28 +78,10 @@ class _CoursesPageState extends State<CoursesPage> {
   int _dueCountFor(String courseId) =>
       _assignments.where((a) => a['course_id'] == courseId).length;
 
-  Future<void> _openCourse(Map<String, dynamic> course) async {
-    setState(() {
-      _viewingCourse = course;
-      _loadingMaterials = true;
-      _materials = null;
-    });
-    try {
-      final materials = await _api.fetchMaterials(course['id']);
-      setState(() {
-        _materials = materials;
-        _loadingMaterials = false;
-      });
-    } catch (_) {
-      setState(() => _loadingMaterials = false);
-    }
-  }
-
-  void _closeCourse() {
-    setState(() {
-      _viewingCourse = null;
-      _materials = null;
-    });
+  void _openCourse(Map<String, dynamic> course) {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (ctx) => CourseDetailPage(course: course, onBack: () => Navigator.of(ctx).pop())))
+        .then((_) => _load());
   }
 
   void _openSubmission(Map<String, dynamic> assignment) {
@@ -130,27 +106,13 @@ class _CoursesPageState extends State<CoursesPage> {
       body: SafeArea(
         child: Column(
           children: [
-            PageHeader(
-              title: _viewingCourse == null
-                  ? 'Courses'
-                  : '${_viewingCourse!['code']} · Week 4',
-              onBack: _viewingCourse == null
-                  ? () => widget.onNavigate(AppTab.home)
-                  : _closeCourse,
-            ),
+            PageHeader(title: 'Courses', onBack: () => widget.onNavigate(AppTab.home)),
             Expanded(
-              child: _viewingCourse != null
-                  ? _materialsView()
-                  : (_errored
-                      ? _ErrorState(onRetry: _load)
-                      : (_loading ? _loadingSkeleton() : _content())),
+              child: _errored
+                  ? _ErrorState(onRetry: _load)
+                  : (_loading ? _loadingSkeleton() : _content()),
             ),
-            if (_viewingCourse == null)
-              FloatingBottomBar(
-                active: AppTab.courses,
-                hasNudge: widget.hasActiveNudge,
-                onTap: widget.onNavigate,
-              ),
+            FloatingBottomBar(active: AppTab.courses, onTap: widget.onNavigate),
           ],
         ),
       ),
@@ -232,59 +194,6 @@ class _CoursesPageState extends State<CoursesPage> {
           const SizedBox(height: 24),
         ],
       ),
-    );
-  }
-
-  Widget _materialsView() {
-    if (_loadingMaterials) {
-      return const Center(child: CircularProgressIndicator(color: AppColors.primary));
-    }
-    final materials = _materials ?? [];
-    return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      children: [
-        const SizedBox(height: 8),
-        if (materials.isEmpty)
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Text('No materials posted yet.', style: AppText.body.copyWith(color: AppColors.textMuted)),
-          )
-        else
-          ListCard(
-            rows: materials.map((m) {
-              final type = m['type'] as String;
-              final icon = switch (type) {
-                'slides' => LucideIcons.fileText,
-                'reading' => LucideIcons.bookOpen,
-                'video' => LucideIcons.video,
-                _ => LucideIcons.file,
-              };
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                child: Row(
-                  children: [
-                    Icon(icon, size: 18, color: AppColors.primary),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(m['title'], style: AppText.metaValue.copyWith(fontSize: 14)),
-                          Text('Week ${m['week']}', style: AppText.metaKey.copyWith(fontSize: 13)),
-                        ],
-                      ),
-                    ),
-                    Text(
-                      type[0].toUpperCase() + type.substring(1),
-                      style: AppText.metaKey.copyWith(fontSize: 12),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ),
-        const SizedBox(height: 24),
-      ],
     );
   }
 }

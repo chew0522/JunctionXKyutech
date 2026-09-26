@@ -29,7 +29,7 @@
     "category": "event",
     "location": "Sports Complex Grounds",
     "capacity": 500,
-    "available": true
+    "available": false
   },
   {
     "id": "fac-5",

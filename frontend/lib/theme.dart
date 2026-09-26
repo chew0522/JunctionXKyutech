@@ -6,9 +6,6 @@ class AppColors {
   static const primaryTint = Color(0xFFEEF0FA);
   static const primaryLine = Color(0xFFC9CEE8);
   static const nudge = Color(0xFF8A4B00);
-  static const nudgeFill = Color(0xFFFFF1DC);
-  static const nudgeLine = Color(0xFFF2C98B);
-  static const nudgeButtonLine = Color(0xFFE0B574);
   static const success = Color(0xFF1E6B3F);
   static const successFill = Color(0xFFE6F4EC);
   static const live = Color(0xFF2E8B57);

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../api.dart';
+import '../widgets/slot_picker.dart';
 import '../theme.dart';
 import '../widgets/bookable_card.dart';
 import '../widgets/page_header.dart';
@@ -38,9 +39,13 @@ class _StudyRoomsPageState extends State<StudyRoomsPage> {
   }
 
   Future<void> _book(Map<String, dynamic> room) async {
+    final now = await _api.fetchNow();
+    if (!mounted) return;
+    final picked = await pickDateTime(context, now, resourceId: room['id'], name: room['name']);
+    if (picked == null) return;
     setState(() => _bookingId = room['id']);
     try {
-      await _api.bookRoom(room['id']);
+      await _api.bookRoom(room['id'], date: picked.$1, time: picked.$2);
     } finally {
       await _load();
       setState(() => _bookingId = null);

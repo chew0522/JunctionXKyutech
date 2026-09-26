@@ -12,7 +12,6 @@ class BookingsPage extends StatelessWidget {
   final VoidCallback onOpenSchoolFacilitiesPage;
   final VoidCallback onOpenSportsFacilitiesPage;
   final VoidCallback onOpenHealthcarePage;
-  final bool hasActiveNudge;
 
   const BookingsPage({
     super.key,
@@ -21,7 +20,6 @@ class BookingsPage extends StatelessWidget {
     required this.onOpenSchoolFacilitiesPage,
     required this.onOpenSportsFacilitiesPage,
     required this.onOpenHealthcarePage,
-    required this.hasActiveNudge,
   });
 
   @override
@@ -70,7 +68,6 @@ class BookingsPage extends StatelessWidget {
             ),
             FloatingBottomBar(
               active: AppTab.bookings,
-              hasNudge: hasActiveNudge,
               onTap: onNavigate,
             ),
           ],

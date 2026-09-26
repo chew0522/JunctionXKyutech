@@ -12,6 +12,8 @@ dependencies:
   http: ^1.2.0
   google_fonts: ^6.2.1
   lucide_icons: ^0.257.0
+  mobile_scanner: ^6.0.2
+  qr_flutter: ^4.1.0
 
 dev_dependencies:
   flutter_test:

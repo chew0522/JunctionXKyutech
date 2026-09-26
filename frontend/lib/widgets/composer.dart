@@ -3,6 +3,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../theme.dart';
 import 'chip.dart';
+import 'feature_sheet.dart';
 
 class Composer extends StatefulWidget {
   final List<String> chips;
@@ -65,6 +66,23 @@ class _ComposerState extends State<Composer> {
             ),
           Row(
             children: [
+              SizedBox(
+                width: 48,
+                height: 48,
+                child: OutlinedButton(
+                  onPressed: () async {
+                    final prompt = await showFeatureSheet(context);
+                    if (prompt != null) widget.onSend(prompt);
+                  },
+                  style: OutlinedButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    shape: const CircleBorder(),
+                    side: const BorderSide(color: AppColors.inputLine),
+                  ),
+                  child: const Icon(LucideIcons.menu, size: 20, color: AppColors.text),
+                ),
+              ),
+              const SizedBox(width: 8),
               Expanded(
                 child: Container(
                   height: 48,
@@ -82,7 +100,7 @@ class _ComposerState extends State<Composer> {
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         isCollapsed: true,
-                        hintText: 'Ask about rooms, buses, events…',
+                        hintText: 'Ask anything…',
                         hintStyle: AppText.body.copyWith(color: AppColors.textMuted),
                       ),
                       onSubmitted: (_) => _submit(),

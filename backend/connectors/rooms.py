@@ -35,7 +35,7 @@ def get_study_rooms() -> list[dict]:
     return json.loads(DATA_FILE.read_text())
 
 
-def book_study_room(room_id: str) -> dict:
+def book_study_room(room_id: str, date: str | None = None, time: str | None = None) -> dict:
     rooms = json.loads(DATA_FILE.read_text())
     room = next((r for r in rooms if r["id"] == room_id), None)
 
@@ -52,7 +52,7 @@ def book_study_room(room_id: str) -> dict:
         kind="room",
         title=room["name"],
         subtitle=f"{room['building']}, Floor {room['floor']}",
-        date=now.strftime("%Y-%m-%d"),
-        time=now.strftime("%H:%M"),
+        date=date or now.strftime("%Y-%m-%d"),
+        time=time or now.strftime("%H:%M"),
     )
     return {"success": True, "message": f"{room['name']} booked."}

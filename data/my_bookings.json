@@ -7,5 +7,59 @@
     "date": "2026-09-26",
     "time": "14:50",
     "booked_at": "2026-09-26T14:50:00"
+  },
+  {
+    "id": "186e748b",
+    "kind": "room",
+    "title": "Group Pod B",
+    "subtitle": "Student Union, Floor 1",
+    "date": "2026-09-26",
+    "time": "14:50",
+    "booked_at": "2026-09-26T14:50:00"
+  },
+  {
+    "id": "129ab414",
+    "kind": "clinic",
+    "title": "General Checkup with Dr. Tanaka",
+    "subtitle": "Health Center",
+    "date": "2026-09-27",
+    "time": "09:00",
+    "booked_at": "2026-09-26T14:50:00"
+  },
+  {
+    "id": "e8ca4281",
+    "kind": "clinic",
+    "title": "General Checkup with Dr. Tanaka",
+    "subtitle": "Health Center",
+    "date": "2026-09-26",
+    "time": "10:00",
+    "booked_at": "2026-09-26T14:50:00"
+  },
+  {
+    "id": "5cd065a3",
+    "kind": "facility",
+    "title": "Outdoor Field",
+    "subtitle": "Sports Complex Grounds",
+    "date": "2026-09-26",
+    "time": "15:30",
+    "booked_at": "2026-09-26T14:50:00"
+  },
+  {
+    "id": "1f725779",
+    "kind": "room",
+    "title": "Study Room 201",
+    "subtitle": "Library, Floor 2",
+    "date": "2026-09-26",
+    "time": "17:00",
+    "booked_at": "2026-09-26T14:50:00"
+  },
+  {
+    "id": "bafec5d5",
+    "kind": "clinic",
+    "title": "Mental Health Counseling with Dr. Suzuki",
+    "subtitle": "Health Center",
+    "date": "2026-09-26",
+    "time": "14:30",
+    "booked_at": "2026-09-26T14:50:00"
   }
 ]

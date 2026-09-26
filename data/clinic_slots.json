@@ -5,7 +5,7 @@
     "time": "10:00",
     "doctor": "Dr. Tanaka",
     "type": "General Checkup",
-    "available": true
+    "available": false
   },
   {
     "id": "slot-2",
@@ -21,7 +21,7 @@
     "time": "14:30",
     "doctor": "Dr. Suzuki",
     "type": "Mental Health Counseling",
-    "available": true
+    "available": false
   },
   {
     "id": "slot-4",
@@ -29,7 +29,7 @@
     "time": "09:00",
     "doctor": "Dr. Tanaka",
     "type": "General Checkup",
-    "available": true
+    "available": false
   },
   {
     "id": "slot-5",

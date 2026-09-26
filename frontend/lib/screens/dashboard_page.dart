@@ -3,11 +3,9 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../api.dart';
 import '../date_utils.dart';
-import '../models.dart';
 import '../theme.dart';
 import '../widgets/dash_tile.dart';
 import '../widgets/floating_bottom_bar.dart';
-import '../widgets/nudge_card.dart';
 
 class DashboardPage extends StatefulWidget {
   final void Function(AppTab) onNavigate;
@@ -15,10 +13,8 @@ class DashboardPage extends StatefulWidget {
   final VoidCallback onOpenCafePage;
   final VoidCallback onOpenEventsPage;
   final VoidCallback onOpenTodoListPage;
-  // Nudges are fetched once, centrally, by MainShell — see its docstring for why.
-  final List<Nudge> nudges;
-  final bool hasActiveNudge;
-  final void Function(String id, String label) onResolveNudge;
+  final VoidCallback onOpenTimetablePage;
+  final VoidCallback onOpenScanPage;
 
   const DashboardPage({
     super.key,
@@ -27,9 +23,8 @@ class DashboardPage extends StatefulWidget {
     required this.onOpenCafePage,
     required this.onOpenEventsPage,
     required this.onOpenTodoListPage,
-    required this.nudges,
-    required this.hasActiveNudge,
-    required this.onResolveNudge,
+    required this.onOpenTimetablePage,
+    required this.onOpenScanPage,
   });
 
   @override
@@ -47,6 +42,7 @@ class DashboardPageState extends State<DashboardPage> {
   List<dynamic> _cafes = [];
   List<dynamic> _events = [];
   List<dynamic> _myBookings = [];
+  List<dynamic> _timetable = [];
 
   @override
   void initState() {
@@ -74,6 +70,7 @@ class DashboardPageState extends State<DashboardPage> {
         _api.fetchCafes(),
         _api.fetchEvents(),
         _api.fetchMyBookings(),
+        _api.fetchTimetable(),
       ]);
       setState(() {
         _now = results[0] as DateTime;
@@ -89,6 +86,7 @@ class DashboardPageState extends State<DashboardPage> {
         _events = events.take(2).toList();
         _myBookings = (results[5] as List)
           ..sort((a, b) => parseDateTime(a['date'], a['time']).compareTo(parseDateTime(b['date'], b['time'])));
+        _timetable = results[6] as List;
         _loading = false;
       });
     } catch (_) {
@@ -97,13 +95,6 @@ class DashboardPageState extends State<DashboardPage> {
         _errored = true;
       });
     }
-  }
-
-  Nudge? get _currentNudge {
-    for (final n in widget.nudges) {
-      if (!n.resolved) return n;
-    }
-    return null;
   }
 
   String get _greeting {
@@ -128,7 +119,6 @@ class DashboardPageState extends State<DashboardPage> {
                   ),
                   FloatingBottomBar(
                     active: AppTab.home,
-                    hasNudge: widget.hasActiveNudge,
                     onTap: widget.onNavigate,
                   ),
                 ],
@@ -180,14 +170,6 @@ class DashboardPageState extends State<DashboardPage> {
           Text('$_greeting, Alex', style: AppText.title.copyWith(fontSize: 26, height: 32 / 26)),
           const SizedBox(height: 4),
           Text("Here's your campus right now.", style: AppText.body.copyWith(color: AppColors.textMuted)),
-          if (_currentNudge != null) ...[
-            const SizedBox(height: 16),
-            NudgeCard(
-              nudge: _currentNudge!,
-              compact: true,
-              onButtonTap: (label) => widget.onResolveNudge(_currentNudge!.id, label),
-            ),
-          ],
           const SizedBox(height: 20),
           Text('RIGHT NOW', style: AppText.label.copyWith(color: AppColors.textMuted, letterSpacing: 0.7)),
           const SizedBox(height: 8),
@@ -197,9 +179,32 @@ class DashboardPageState extends State<DashboardPage> {
               Expanded(child: _busTile()),
               const SizedBox(width: 10),
               Expanded(child: _dueNextTile()),
-              const SizedBox(width: 10),
-              Expanded(child: _cafeTile()),
             ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(child: _cafeTile()),
+              const SizedBox(width: 10),
+              Expanded(child: _timetableTile()),
+            ],
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            height: 48,
+            child: ElevatedButton.icon(
+              onPressed: widget.onOpenScanPage,
+              icon: const Icon(LucideIcons.qrCode, size: 18),
+              label: Text('Scan / Pay / ID', style: AppText.button.copyWith(color: Colors.white)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.pill)),
+              ),
+            ),
           ),
           if (_myBookings.isNotEmpty) ...[
             const SizedBox(height: 20),
@@ -277,6 +282,25 @@ class DashboardPageState extends State<DashboardPage> {
       line1: first['title'],
       line2: '${isSameDay(due, _now) ? 'today' : weekdayShort(due)} · ${_assignments.length} due',
       onTap: widget.onOpenTodoListPage,
+    );
+  }
+
+  Widget _timetableTile() {
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    final today = days[_now.weekday - 1];
+    final nowStr =
+        '${_now.hour.toString().padLeft(2, '0')}:${_now.minute.toString().padLeft(2, '0')}';
+    final todays = _timetable.where((e) => e['day'] == today).toList()
+      ..sort((a, b) => (a['start'] as String).compareTo(b['start'] as String));
+    final upcoming = todays.where((e) => (e['end'] as String).compareTo(nowStr) > 0).toList();
+    final next = upcoming.isEmpty ? null : upcoming.first;
+    return DashTile(
+      icon: LucideIcons.calendarDays,
+      label: 'Timetable',
+      value: next == null ? '—' : next['start'],
+      line1: next == null ? 'No more classes' : next['code'],
+      line2: next == null ? 'today' : '${next['room']} · ${todays.length} today',
+      onTap: widget.onOpenTimetablePage,
     );
   }
 

@@ -8,7 +8,7 @@ LOG_FILE = Path(__file__).resolve().parent.parent / "data" / "chat_log.json"
 RETENTION_DAYS = 7
 
 
-def append_message(role: str, text: str, choices: list[str] | None = None) -> None:
+def append_message(role: str, text: str, choices: list[str] | None = None, cards: list[dict] | None = None) -> None:
     """role is 'user' or 'agent'. Called once per turn from each side of /chat. choices
     is only ever set for an 'agent' message — see agent.py's offer_choices tool — so a
     reloaded history still shows the same tappable options as when it was first sent."""
@@ -16,6 +16,8 @@ def append_message(role: str, text: str, choices: list[str] | None = None) -> No
     entry = {"role": role, "text": text, "time": current_time.now().isoformat()}
     if choices:
         entry["choices"] = choices
+    if cards:
+        entry["cards"] = cards
     log.append(entry)
     LOG_FILE.write_text(json.dumps(log, indent=2))
 

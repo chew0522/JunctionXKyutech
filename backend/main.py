@@ -3,7 +3,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 import chat_log
-import nudges as nudges_module
 from agent import run_agent
 from api_routes import router as api_router
 
@@ -31,8 +30,10 @@ def chat(req: ChatRequest):
     chat_log.append_message("user", req.message)
     result = run_agent(req.message, history=_history)
     _history[:] = result["history"]
-    chat_log.append_message("agent", result["reply"], choices=result["choices"])
-    return {"reply": result["reply"], "choices": result["choices"]}
+    cards = result["cards"]
+    choices = None if cards else result["choices"]
+    chat_log.append_message("agent", result["reply"], choices=choices, cards=cards)
+    return {"reply": result["reply"], "choices": choices, "cards": cards}
 
 
 @app.get("/history")
@@ -42,13 +43,7 @@ def history():
     return {"messages": chat_log.get_recent_messages()}
 
 
-@app.get("/nudges")
-def nudges():
-    return {"nudges": nudges_module.get_new_nudges()}
-
-
 @app.post("/reset")
 def reset():
     _history.clear()
-    nudges_module.reset_delivered()
     return {"ok": True}

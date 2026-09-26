@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 
 import '../api.dart';
 import '../date_utils.dart';
@@ -21,6 +20,7 @@ class _HealthcarePageState extends State<HealthcarePage> {
   DateTime _now = DateTime.now();
   bool _errored = false;
   String? _bookingId;
+  DateTime? _selected;
 
   @override
   void initState() {
@@ -36,6 +36,7 @@ class _HealthcarePageState extends State<HealthcarePage> {
       slots.sort((a, b) => parseDateTime(a['date'], a['time']).compareTo(parseDateTime(b['date'], b['time'])));
       setState(() {
         _now = results[0] as DateTime;
+        _selected ??= DateTime(_now.year, _now.month, _now.day);
         _slots = slots;
       });
     } catch (_) {
@@ -52,6 +53,9 @@ class _HealthcarePageState extends State<HealthcarePage> {
       setState(() => _bookingId = null);
     }
   }
+
+  List<dynamic> get _slotsForSelected =>
+      _slots!.where((s) => isSameDay(DateTime.parse(s['date']), _selected!)).toList();
 
   String _dayLabel(DateTime date) {
     if (isSameDay(date, _now)) return 'Today';
@@ -84,15 +88,38 @@ class _HealthcarePageState extends State<HealthcarePage> {
                       : ListView(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           children: [
-                            for (final s in _slots!) ...[
+                            Material(
+                              color: AppColors.surface,
+                              shape: RoundedRectangleBorder(
+                                side: const BorderSide(color: AppColors.line),
+                                borderRadius: BorderRadius.circular(AppRadius.card),
+                              ),
+                              child: CalendarDatePicker(
+                                initialDate: _selected!,
+                                firstDate: DateTime(_now.year, _now.month, _now.day),
+                                lastDate: _now.add(const Duration(days: 60)),
+                                onDateChanged: (d) => setState(() => _selected = d),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            Text('${_dayLabel(_selected!)} · AVAILABLE TIMES'.toUpperCase(),
+                                style: AppText.label.copyWith(color: AppColors.textMuted, letterSpacing: 0.7)),
+                            const SizedBox(height: 8),
+                            if (_slotsForSelected.isEmpty)
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                child: Text('No appointments on this day.',
+                                    style: AppText.body.copyWith(color: AppColors.textMuted)),
+                              ),
+                            for (final s in _slotsForSelected) ...[
                               _SlotCard(
                                 slot: s,
-                                dayLabel: _dayLabel(parseDateTime(s['date'], s['time'])),
                                 booking: _bookingId == s['id'],
                                 onBook: () => _book(s),
                               ),
                               const SizedBox(height: 12),
                             ],
+                            const SizedBox(height: 16),
                           ],
                         )),
             ),
@@ -105,13 +132,11 @@ class _HealthcarePageState extends State<HealthcarePage> {
 
 class _SlotCard extends StatelessWidget {
   final Map<String, dynamic> slot;
-  final String dayLabel;
   final bool booking;
   final VoidCallback onBook;
 
   const _SlotCard({
     required this.slot,
-    required this.dayLabel,
     required this.booking,
     required this.onBook,
   });
@@ -129,19 +154,20 @@ class _SlotCard extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 40,
-            height: 40,
+            width: 64,
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            alignment: Alignment.center,
             decoration: BoxDecoration(color: AppColors.primaryTint, borderRadius: BorderRadius.circular(12)),
-            child: const Icon(LucideIcons.stethoscope, size: 20, color: AppColors.primary),
+            child: Text(slot['time'], style: AppText.button.copyWith(color: AppColors.primary, fontSize: 14)),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('$dayLabel, ${slot['time']}', style: AppText.cardTitle.copyWith(fontSize: 16)),
+                Text(slot['doctor'], style: AppText.cardTitle.copyWith(fontSize: 16)),
                 const SizedBox(height: 2),
-                Text('${slot['doctor']} · ${slot['type']}', style: AppText.metaKey.copyWith(fontSize: 13)),
+                Text(slot['type'], style: AppText.metaKey.copyWith(fontSize: 13)),
               ],
             ),
           ),

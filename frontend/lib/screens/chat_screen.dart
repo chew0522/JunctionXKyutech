@@ -4,28 +4,23 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../api.dart';
 import '../models.dart';
 import '../theme.dart';
+import '../widgets/bookable_card.dart';
 import '../widgets/chat_header.dart';
 import '../widgets/chip.dart';
 import '../widgets/composer.dart';
 import '../widgets/message_pieces.dart';
-import '../widgets/nudge_card.dart';
+import '../widgets/slot_picker.dart';
+import 'healthcare_page.dart';
 
-const _defaultChips = ['My to-dos', 'Next bus', 'Cafe crowd'];
-const _welcomeChips = ["What's on today?", 'Next bus', 'My to-dos'];
+const _welcomeChips = ["What's on today?"];
 const studentName = 'Alex';
 
 class ChatScreen extends StatefulWidget {
   final VoidCallback onGoHome;
-  // Nudges are fetched once, centrally, by MainShell — see its docstring for why.
-  // ChatScreen only watches this list to insert newly-arrived ones into its timeline.
-  final List<Nudge> nudges;
-  final void Function(String id, String label) onResolveNudge;
 
   const ChatScreen({
     super.key,
     required this.onGoHome,
-    required this.nudges,
-    required this.onResolveNudge,
   });
 
   @override
@@ -37,10 +32,9 @@ class _ChatScreenState extends State<ChatScreen> {
   final _scrollController = ScrollController();
   final _welcomeInputController = TextEditingController();
 
-  // Unified timeline of ChatMessage and Nudge, in the order they should render.
-  final List<Object> _items = [];
-  final Set<String> _insertedNudgeIds = {};
+  final List<ChatMessage> _items = [];
 
+  String? _bookingCardId;
   bool _sending = false;
   bool _errored = false;
   bool _loadingHistory = true;
@@ -50,27 +44,6 @@ class _ChatScreenState extends State<ChatScreen> {
   void initState() {
     super.initState();
     _loadHistory();
-    _syncNudges();
-  }
-
-  @override
-  void didUpdateWidget(ChatScreen oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.nudges.length != widget.nudges.length) {
-      _syncNudges();
-    }
-  }
-
-  void _syncNudges() {
-    final fresh = widget.nudges.where((n) => !_insertedNudgeIds.contains(n.id)).toList();
-    if (fresh.isEmpty) return;
-    setState(() {
-      for (final n in fresh) {
-        _insertedNudgeIds.add(n.id);
-        _items.add(n);
-      }
-    });
-    _scrollToBottom();
   }
 
   Future<void> _loadHistory() async {
@@ -129,14 +102,45 @@ class _ChatScreenState extends State<ChatScreen> {
     _scrollToBottom();
   }
 
+  IconData _cardIcon(String kind) => switch (kind) {
+        'clinic' => LucideIcons.stethoscope,
+        'facility' => LucideIcons.landmark,
+        _ => LucideIcons.doorOpen,
+      };
+
+  Future<void> _bookCard(Map<String, dynamic> card) async {
+    if (card['kind'] == 'clinic') {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (ctx) => HealthcarePage(onBack: () => Navigator.of(ctx).pop())),
+      );
+      return;
+    }
+    final now = await _api.fetchNow();
+    if (!mounted) return;
+    final picked = await pickDateTime(context, now, resourceId: card['id'], name: card['title']);
+    if (picked == null) return;
+    setState(() => _bookingCardId = card['id']);
+    String text;
+    try {
+      final res = card['kind'] == 'room'
+          ? await _api.bookRoom(card['id'], date: picked.$1, time: picked.$2)
+          : await _api.bookFacility(card['id'], date: picked.$1, time: picked.$2);
+      text = res['success'] == true
+          ? '${card['title']} is booked for ${picked.$1} at ${picked.$2}.'
+          : res['message'] as String;
+    } catch (_) {
+      text = "Couldn't complete that booking. Please try again.";
+    }
+    setState(() {
+      _bookingCardId = null;
+      _items.add(ChatMessage(text: text, fromAgent: true));
+    });
+    _scrollToBottom();
+  }
+
   void _retryLast() {
     final text = _lastFailedMessage;
     if (text != null) _sendMessage(text);
-  }
-
-  void _handleNudgeButton(Nudge nudge, String label) {
-    _sendMessage(label);
-    widget.onResolveNudge(nudge.id, label);
   }
 
   @override
@@ -178,7 +182,7 @@ class _ChatScreenState extends State<ChatScreen> {
               },
             ),
           ),
-          Composer(chips: _defaultChips, onSend: _sendMessage),
+          Composer(onSend: _sendMessage),
         ],
       ),
     );
@@ -187,12 +191,12 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget _buildTimelineItem(int index) {
     final item = _items[index];
     final showDivider = _shouldShowDivider(index);
-    final time = item is ChatMessage ? item.time : (item as Nudge).time;
+    final time = item.time;
     final crossedDay = index == 0 || !_sameDay(time, _timeOf(_items[index - 1]));
 
     final children = <Widget>[
       if (showDivider) TimeDivider(label: _formatTime(time, showDate: crossedDay)),
-      if (item is ChatMessage) ...[
+      ...[
         // A defensive fallback, not the expected path: the model is instructed to
         // always write real text alongside offer_choices, but LLM output isn't
         // guaranteed — an empty bubble would look broken, so skip it and show only
@@ -201,6 +205,25 @@ class _ChatScreenState extends State<ChatScreen> {
           AgentBubble(text: item.text)
         else if (!item.fromAgent)
           UserBubble(text: item.text),
+        if (item.fromAgent && (item.cards?.isNotEmpty ?? false))
+          Padding(
+            padding: const EdgeInsets.only(top: 6, bottom: 4),
+            child: Column(
+              children: [
+                for (final c in item.cards!) ...[
+                  BookableResourceCard(
+                    icon: _cardIcon(c['kind']),
+                    title: c['title'],
+                    subtitle: c['subtitle'],
+                    available: c['available'] == true,
+                    booking: _bookingCardId == c['id'],
+                    onBook: () => _bookCard(c),
+                  ),
+                  const SizedBox(height: 8),
+                ],
+              ],
+            ),
+          ),
         if (item.fromAgent && (item.choices?.isNotEmpty ?? false))
           Padding(
             padding: const EdgeInsets.only(top: 6, bottom: 4),
@@ -212,8 +235,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   .toList(),
             ),
           ),
-      ] else if (item is Nudge)
-        NudgeCard(nudge: item, onButtonTap: (label) => _handleNudgeButton(item, label)),
+      ],
     ];
 
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: children);
@@ -226,7 +248,7 @@ class _ChatScreenState extends State<ChatScreen> {
     return currTime.difference(prevTime).inMinutes >= 10 || !_sameDay(prevTime, currTime);
   }
 
-  DateTime _timeOf(Object item) => item is ChatMessage ? item.time : (item as Nudge).time;
+  DateTime _timeOf(ChatMessage item) => item.time;
 
   bool _sameDay(DateTime a, DateTime b) =>
       a.year == b.year && a.month == b.month && a.day == b.day;

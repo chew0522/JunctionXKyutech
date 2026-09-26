@@ -2,7 +2,11 @@
 Bookings, drill-in pages) that need structured data directly — no LLM round-trip.
 The chat agent (agent.py) is a separate consumer of the same connector functions."""
 
-from fastapi import APIRouter
+import hashlib
+import json
+from pathlib import Path
+
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 import bookings_log
@@ -15,13 +19,114 @@ from connectors.academic import (
 )
 from connectors.bus import get_bus_location
 from connectors.cafe import get_cafe_crowd
+from connectors.course_detail import get_course_detail
 from connectors.clinic import book_clinic_appointment, get_clinic_slots
 from connectors.events import get_events
 from connectors.facilities import book_facility, get_facilities
+from connectors.scan import get_qr, handle_scan
 from connectors.rooms import book_study_room, get_study_rooms
+from connectors.student_admin import (
+    get_finance,
+    get_form_submissions,
+    get_forms,
+    get_registration,
+    submit_form,
+)
 from connectors.todo import todo_list
 
 router = APIRouter(prefix="/api")
+
+_DATA = Path(__file__).resolve().parent.parent / "data"
+
+
+@router.get("/slots")
+def api_slots(resource_id: str, name: str, date: str):
+    """Mock availability grid, 08:00-22:00 every 30 min. Stable per resource+date (hash),
+    plus past times today and anything already in the student's own bookings."""
+    now = current_time.now()
+    taken = {(b["title"], b["date"], b["time"]) for b in bookings_log.get_bookings()}
+    slots = []
+    for minutes in range(8 * 60, 22 * 60 + 1, 30):
+        t = f"{minutes // 60:02d}:{minutes % 60:02d}"
+        busy = int(hashlib.md5(f"{resource_id}|{date}|{t}".encode()).hexdigest(), 16) % 10 < 3
+        past = date == now.strftime("%Y-%m-%d") and t <= now.strftime("%H:%M")
+        slots.append({"time": t, "available": not (busy or past or (name, date, t) in taken)})
+    return slots
+
+
+@router.get("/profile")
+def api_profile():
+    return json.loads((_DATA / "profile.json").read_text())
+
+
+class FeedbackBody(BaseModel):
+    category: str
+    message: str
+
+
+@router.post("/feedback")
+def api_feedback(body: FeedbackBody):
+    file = _DATA / "feedback.json"
+    log = json.loads(file.read_text())
+    log.append({**body.model_dump(), "submitted_at": current_time.now().isoformat()})
+    file.write_text(json.dumps(log, indent=2))
+    return {"ok": True}
+
+
+@router.get("/registration")
+def api_registration():
+    return get_registration()
+
+
+@router.get("/finance")
+def api_finance():
+    return get_finance()
+
+
+@router.get("/forms")
+def api_forms():
+    return get_forms()
+
+
+@router.get("/form-submissions")
+def api_form_submissions():
+    return get_form_submissions()
+
+
+class FormSubmitBody(BaseModel):
+    values: dict
+
+
+@router.post("/forms/{form_id}/submit")
+def api_submit_form(form_id: str, body: FormSubmitBody):
+    entry = submit_form(form_id, body.values)
+    if entry is None:
+        raise HTTPException(status_code=404, detail="Unknown form")
+    return entry
+
+
+@router.get("/timetable")
+def api_timetable():
+    courses = {c["id"]: c for c in get_courses()}
+    entries = json.loads((_DATA / "timetable.json").read_text())
+    return [{**e, "code": courses[e["course_id"]]["code"], "name": courses[e["course_id"]]["name"]} for e in entries]
+
+
+class ScanBody(BaseModel):
+    code: str
+
+
+@router.post("/scan")
+def api_scan(body: ScanBody):
+    return handle_scan(body.code)
+
+
+@router.get("/qr/{kind}")
+def api_qr(kind: str):
+    qr = get_qr(kind)
+    if qr is None:
+        raise HTTPException(status_code=404, detail="Unknown QR kind")
+    return qr
 
 
 @router.get("/now")
@@ -43,11 +148,13 @@ def api_rooms():
 
 class BookRoomRequest(BaseModel):
     room_id: str
+    date: str | None = None
+    time: str | None = None
 
 
 @router.post("/rooms/book")
 def api_book_room(req: BookRoomRequest):
-    return book_study_room(req.room_id)
+    return book_study_room(req.room_id, req.date, req.time)
 
 
 @router.get("/bus")
@@ -77,6 +184,14 @@ def api_book_slot(req: BookSlotRequest):
 @router.get("/courses")
 def api_courses():
     return get_courses()
+
+
+@router.get("/courses/{course_id}/detail")
+def api_course_detail(course_id: str):
+    detail = get_course_detail(course_id)
+    if detail is None:
+        raise HTTPException(status_code=404, detail="Unknown course")
+    return detail
 
 
 @router.get("/materials")
@@ -112,11 +227,13 @@ def api_facilities(category: str | None = None):
 
 class BookFacilityRequest(BaseModel):
     facility_id: str
+    date: str | None = None
+    time: str | None = None
 
 
 @router.post("/facilities/book")
 def api_book_facility(req: BookFacilityRequest):
-    return book_facility(req.facility_id)
+    return book_facility(req.facility_id, req.date, req.time)
 
 
 @router.get("/my-bookings")

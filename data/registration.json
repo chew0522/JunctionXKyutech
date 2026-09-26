@@ -1,0 +1,28 @@
+{
+  "registration_open": false,
+  "registered": [
+    { "code": "CS301", "name": "Distributed Systems", "credits": 3, "venue": "Engineering Building, Room 210" },
+    { "code": "CS210", "name": "Data Structures & Algorithms", "credits": 3, "venue": "Building A" },
+    { "code": "EE150", "name": "Signals and Systems", "credits": 4, "venue": "Building B" }
+  ],
+  "dropped": [
+    { "code": "MATH201", "name": "Linear Algebra I", "credits": 3, "dropped_on": "2026-09-05", "reason": "Schedule clash" }
+  ],
+  "exemptions": [
+    { "code": "ENG101", "name": "Academic English", "credits": 2, "reason": "Passed placement test" }
+  ],
+  "available": [
+    { "code": "CS401", "name": "Advanced Algorithms", "instructor": "Prof. Chen", "credits": 3,
+      "schedule": "Mon & Wed, 10:00-11:30", "location": "Lecture Hall 2",
+      "eligible": true, "prereq": "Prerequisite met: CS210 Data Structures & Algorithms (92/100)" },
+    { "code": "CS450", "name": "Machine Learning", "instructor": "Prof. Wong", "credits": 4,
+      "schedule": "Tue & Thu, 14:00-15:30", "location": "Building C, Lab 1",
+      "eligible": false, "prereq": "Missing prerequisite: STAT201 Probability & Statistics" },
+    { "code": "MATH301", "name": "Linear Algebra II", "instructor": "Prof. Kumar", "credits": 3,
+      "schedule": "Mon, Wed & Fri, 09:00-10:00", "location": "Building B, Room 12",
+      "eligible": true, "prereq": "Prerequisite met: MATH201 Linear Algebra I (85/100)" },
+    { "code": "CS330", "name": "Computer Networks", "instructor": "Prof. Sato", "credits": 3,
+      "schedule": "Tue & Fri, 13:00-14:30", "location": "Engineering Building, Room 105",
+      "eligible": true, "prereq": "Prerequisite met: CS210 Data Structures & Algorithms (92/100)" }
+  ]
+}

@@ -1,5 +1,5 @@
 """Shared ledger of confirmed bookings across rooms/clinic/facilities — same pattern as
-chat_log.py and nudges.py (a cross-cutting concern, not a connector). This exists
+chat_log.py (a cross-cutting concern, not a connector). This exists
 because "available: false" in each connector's own data file means "not bookable right
 now" for lots of reasons (someone else has it, it's closed) — it does NOT mean "the
 student booked it". Anything that wants to show "your appointments" needs an actual

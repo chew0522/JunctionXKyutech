@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../api.dart';
+import '../widgets/slot_picker.dart';
 import '../theme.dart';
 import '../widgets/bookable_card.dart';
 import '../widgets/page_header.dart';
@@ -46,9 +47,13 @@ class _FacilitiesPageState extends State<FacilitiesPage> {
   }
 
   Future<void> _book(Map<String, dynamic> facility) async {
+    final now = await _api.fetchNow();
+    if (!mounted) return;
+    final picked = await pickDateTime(context, now, resourceId: facility['id'], name: facility['name']);
+    if (picked == null) return;
     setState(() => _bookingId = facility['id']);
     try {
-      await _api.bookFacility(facility['id']);
+      await _api.bookFacility(facility['id'], date: picked.$1, time: picked.$2);
     } finally {
       await _load();
       setState(() => _bookingId = null);

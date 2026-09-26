@@ -18,23 +18,14 @@ from connectors.academic import (
 )
 from connectors.bus import TOOL_SCHEMA as BUS_SCHEMA, get_bus_location
 from connectors.cafe import TOOL_SCHEMA as CAFE_SCHEMA, get_cafe_crowd
-from connectors.clinic import (
-    BOOK_APPOINTMENT_SCHEMA,
-    GET_SLOTS_SCHEMA,
-    book_clinic_appointment,
-    get_clinic_slots,
-)
+from connectors.clinic import GET_SLOTS_SCHEMA, get_clinic_slots
 from connectors.events import TOOL_SCHEMA as EVENTS_SCHEMA, get_events
+from connectors.facilities import GET_FACILITIES_SCHEMA, get_facilities
 
 # get_next_class (used internally by plan_coffee_run) is not registered as its own agent
 # tool — the model should always go through the planner, never raw schedule data.
 from connectors.planner import PLAN_COFFEE_SCHEMA, plan_coffee_run
-from connectors.rooms import (
-    BOOK_ROOM_SCHEMA,
-    GET_ROOMS_SCHEMA,
-    book_study_room,
-    get_study_rooms,
-)
+from connectors.rooms import GET_ROOMS_SCHEMA, get_study_rooms
 from connectors.todo import LIST_TODOS_SCHEMA, todo_list
 
 client = OpenAI(
@@ -80,6 +71,67 @@ def offer_choices(choices: list[str]) -> dict:
     return {"acknowledged": True, "choices": choices}
 
 
+OFFER_BOOKINGS_SCHEMA = {
+    "type": "function",
+    "function": {
+        "name": "offer_bookings",
+        "description": (
+            "Show bookable options as detailed cards in the chat. This is the ONLY way to "
+            "book anything: the student taps a card and picks the date and time in the app. "
+            "Call it whenever the student wants to book or asks what is available to book: "
+            "kind 'room' (study rooms), 'facility' (halls, courts, gym) or 'clinic' "
+            "(clinic appointments). Optionally pass ids of the specific rooms/facilities "
+            "to show; omit ids to show everything currently available. Also write a short "
+            "text reply — the cards only add the pickable options."
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "kind": {"type": "string", "enum": ["room", "facility", "clinic"]},
+                "ids": {"type": "array", "items": {"type": "string"}},
+            },
+            "required": ["kind"],
+        },
+    },
+}
+
+
+def offer_bookings(kind: str, ids: list[str] | None = None) -> list[dict]:
+    cards: list[dict] = []
+    if kind == "room":
+        for r in get_study_rooms():
+            if (ids and r["id"] not in ids) or (not ids and not r["available"]):
+                continue
+            cards.append({
+                "kind": "room", "id": r["id"], "title": r["name"],
+                "subtitle": f"{r['building']}, Floor {r['floor']} · {r['capacity']} seats"
+                            + (" · whiteboard" if r["has_whiteboard"] else ""),
+                "available": r["available"],
+            })
+    elif kind == "facility":
+        for f in get_facilities():
+            if (ids and f["id"] not in ids) or (not ids and not f["available"]):
+                continue
+            cards.append({
+                "kind": "facility", "id": f["id"], "title": f["name"],
+                "subtitle": f"{f['location']} · Capacity {f['capacity']}",
+                "available": f["available"],
+            })
+    elif kind == "clinic":
+        seen = {}
+        for s in get_clinic_slots():
+            if s["available"]:
+                seen.setdefault((s["doctor"], s["type"]), 0)
+                seen[(s["doctor"], s["type"])] += 1
+        for (doctor, type_), n in seen.items():
+            cards.append({
+                "kind": "clinic", "id": f"{doctor}|{type_}", "title": doctor,
+                "subtitle": f"{type_} · {n} open slot{'s' if n != 1 else ''}",
+                "available": True,
+            })
+    return cards
+
+
 def _system_prompt() -> str:
     # Rebuilt per call (not a module-level constant) so "today"/"tomorrow" stay correct
     # relative to current_time.now() — without this, the model has to guess the date
@@ -102,7 +154,12 @@ def _system_prompt() -> str:
         "Never estimate walk times or whether there's enough time for something yourself — "
         "always call plan_coffee_run for that. Keep answers short and conversational. "
         "Never use emoji — the app's design system forbids them; use plain text only. "
-        "Whenever you present a short list of pickable options (rooms, routes, slots, "
+        "You cannot book anything directly. For any booking request (study room, "
+        "facility, clinic), call offer_bookings so the student sees detail cards and "
+        "picks the date and time in the app, and tell them to tap the one they want. "
+        "Pass ids to narrow the cards to what the student asked for (e.g. only sports facilities, or rooms fitting their group size). "
+        "Do not also call offer_choices for those. "
+        "Whenever you present a short list of other pickable options (routes, "
         "cafes, a yes/no confirmation), call offer_choices with those options so the "
         "student can tap instead of typing. Calling offer_choices never replaces your "
         "written reply — your final message must still contain real sentences "
@@ -113,34 +170,34 @@ def _system_prompt() -> str:
 TOOLS = [
     EVENTS_SCHEMA,
     GET_ROOMS_SCHEMA,
-    BOOK_ROOM_SCHEMA,
+    GET_FACILITIES_SCHEMA,
     BUS_SCHEMA,
     LIST_TODOS_SCHEMA,
     CAFE_SCHEMA,
     GET_SLOTS_SCHEMA,
-    BOOK_APPOINTMENT_SCHEMA,
     GET_COURSES_SCHEMA,
     GET_MATERIALS_SCHEMA,
     GET_ASSIGNMENTS_SCHEMA,
     PLAN_COFFEE_SCHEMA,
     OFFER_CHOICES_SCHEMA,
+    OFFER_BOOKINGS_SCHEMA,
 ]
 
 # Maps tool name -> the actual Python function that implements it
 TOOL_FUNCTIONS = {
     "get_events": get_events,
     "get_study_rooms": get_study_rooms,
-    "book_study_room": book_study_room,
+    "get_facilities": get_facilities,
     "get_bus_location": get_bus_location,
     "todo_list": todo_list,
     "get_cafe_crowd": get_cafe_crowd,
     "get_clinic_slots": get_clinic_slots,
-    "book_clinic_appointment": book_clinic_appointment,
     "get_courses": get_courses,
     "get_course_materials": get_course_materials,
     "get_assignments": get_assignments,
     "plan_coffee_run": plan_coffee_run,
     "offer_choices": offer_choices,
+    "offer_bookings": offer_bookings,
 }
 
 
@@ -152,6 +209,7 @@ def run_agent(user_message: str, history: list[dict] | None = None) -> dict:
     messages[0] = {"role": "system", "content": _system_prompt()}
     messages.append({"role": "user", "content": user_message})
     choices: list[str] | None = None
+    cards: list[dict] | None = None
 
     # Loop: the model may request tool calls multiple times before giving a final answer
     while True:
@@ -164,7 +222,7 @@ def run_agent(user_message: str, history: list[dict] | None = None) -> dict:
         messages.append(choice.message.model_dump(exclude_none=True))
 
         if choice.finish_reason != "tool_calls":
-            return {"reply": choice.message.content, "history": messages, "choices": choices}
+            return {"reply": choice.message.content, "history": messages, "choices": choices, "cards": cards}
 
         for tool_call in choice.message.tool_calls:
             name = tool_call.function.name
@@ -172,6 +230,9 @@ def run_agent(user_message: str, history: list[dict] | None = None) -> dict:
             result = TOOL_FUNCTIONS[name](**args)
             if name == "offer_choices":
                 choices = args["choices"]
+            if name == "offer_bookings":
+                cards = result
+                result = {"acknowledged": True, "cards_shown": len(cards)}
             messages.append(
                 {
                     "role": "tool",

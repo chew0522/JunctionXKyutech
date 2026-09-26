@@ -1,0 +1,16 @@
+{
+  "currency": "RM",
+  "semester": "Sem 2",
+  "due_date": "2026-10-15",
+  "fees": [
+    { "name": "Tuition fee", "amount": 5000 },
+    { "name": "Library fee", "amount": 150 },
+    { "name": "Sports & facilities fee", "amount": 300 },
+    { "name": "Health Center fee", "amount": 200 },
+    { "name": "Laboratory & materials fee", "amount": 550 }
+  ],
+  "payments": [
+    { "name": "PTPTN disbursement", "date": "2026-09-02", "amount": 3600 },
+    { "name": "Online payment - FPX", "date": "2026-09-10", "amount": 150 }
+  ]
+}

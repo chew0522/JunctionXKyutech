@@ -1,0 +1,29 @@
+[
+  { "id": "form-activity", "title": "Student Activity Application", "description": "Apply to organise a club or society activity on campus.", "icon": "calendar",
+    "fields": [
+      {"key":"activity_name","label":"Activity name","type":"text","required":true},
+      {"key":"organiser","label":"Club / society","type":"text","required":true},
+      {"key":"date","label":"Proposed date","type":"date","required":true},
+      {"key":"venue","label":"Preferred venue","type":"select","options":["Main Hall","Auditorium","Seminar Room B","Outdoor Field"],"required":true},
+      {"key":"attendees","label":"Expected attendees","type":"number","required":true},
+      {"key":"details","label":"Activity description","type":"multiline","required":true}]},
+  { "id": "form-reimbursement", "title": "Reimbursement Claim", "description": "Claim back approved out-of-pocket expenses.", "icon": "receipt",
+    "fields": [
+      {"key":"expense_type","label":"Expense type","type":"select","options":["Event supplies","Travel","Printing","Competition fee","Other"],"required":true},
+      {"key":"amount","label":"Amount (RM)","type":"number","required":true},
+      {"key":"date","label":"Date of expense","type":"date","required":true},
+      {"key":"details","label":"What was it for?","type":"multiline","required":true}]},
+  { "id": "form-facility", "title": "Facility Use Request", "description": "Request a room or facility outside the normal booking hours.", "icon": "building",
+    "fields": [
+      {"key":"facility","label":"Facility","type":"select","options":["Main Hall","Auditorium","Seminar Room B","Badminton Court 1","Basketball Court","Gym"],"required":true},
+      {"key":"date","label":"Date needed","type":"date","required":true},
+      {"key":"reason","label":"Reason","type":"multiline","required":true}]},
+  { "id": "form-leave", "title": "Leave of Absence", "description": "Apply to pause your studies for a semester.", "icon": "plane",
+    "fields": [
+      {"key":"semester","label":"Semester","type":"select","options":["2026/2027-1","2026/2027-2"],"required":true},
+      {"key":"reason","label":"Reason","type":"multiline","required":true}]},
+  { "id": "form-transcript", "title": "Transcript Request", "description": "Request an official copy of your academic transcript.", "icon": "file",
+    "fields": [
+      {"key":"copies","label":"Number of copies","type":"number","required":true},
+      {"key":"purpose","label":"Purpose","type":"select","options":["Job application","Further study","Scholarship","Personal record"],"required":true}]}
+]

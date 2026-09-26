@@ -7,14 +7,12 @@ enum AppTab { home, courses, chat, bookings, profile }
 
 class FloatingBottomBar extends StatelessWidget {
   final AppTab active;
-  final bool hasNudge;
   final void Function(AppTab) onTap;
 
   const FloatingBottomBar({
     super.key,
     required this.active,
     required this.onTap,
-    this.hasNudge = false,
   });
 
   @override
@@ -62,20 +60,6 @@ class FloatingBottomBar extends StatelessWidget {
                       ),
                       child: const Icon(LucideIcons.messageCircle, color: Colors.white, size: 26),
                     ),
-                    if (hasNudge)
-                      Positioned(
-                        top: 2,
-                        right: 2,
-                        child: Container(
-                          width: 16,
-                          height: 16,
-                          decoration: BoxDecoration(
-                            color: AppColors.nudge,
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 3),
-                          ),
-                        ),
-                      ),
                   ],
                 ),
               ),

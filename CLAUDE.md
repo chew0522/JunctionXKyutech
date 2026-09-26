@@ -6,7 +6,7 @@ Guidance for Claude Code when working in this repository.
 
 Campus Concierge — an AI agent for campus services, built for JunctionX Kyutech 2026, Track 02 (Hack Connected Everywhere). Full context and scope: [PRD.md](PRD.md). Read it before making architectural decisions.
 
-24-hour hackathon build. Only one team member codes — prioritize speed and clarity over polish. Don't build Tier 3 features (course *enrollment*/registration, exam results, student ID) — they're explicitly out of scope; see PRD §4-5. Note this is narrower than "academic platform" — *viewing* enrolled courses, materials, and assignments is in scope and already built. **Assignment submission is also out of scope** (removed after initially building it, PRD §4) — it's high-stakes and hard to undo, so the agent redirects students to the real submission portal instead of submitting on their behalf. Don't reintroduce a `submit_assignment` tool without checking with the team first.
+24-hour hackathon build. Only one team member codes — prioritize speed and clarity over polish. Don't build Tier 3 features (course *enrollment*/registration, exam results, student ID) — they're explicitly out of scope; see PRD §4-5. The Scan / Pay / ID screen (Dashboard button) is also demo-only: Scan understands `attendance:<COURSE>` and `merit:<ID>` codes, Pay and ID show rotating fake QR codes and process nothing. MyRegister, MyFinance and MyForm exist as display-only mock pages under the Profile menu (registration is closed and nothing is enrolled; forms just save a submission record) — do not connect them to real systems. Note this is narrower than "academic platform" — *viewing* enrolled courses, materials, and assignments is in scope and already built. **Assignment submission is also out of scope** (removed after initially building it, PRD §4) — it's high-stakes and hard to undo, so the agent redirects students to the real submission portal instead of submitting on their behalf. Don't reintroduce a `submit_assignment` tool without checking with the team first.
 
 ## Tech stack
 
@@ -27,7 +27,7 @@ The agent is one DeepSeek tool-calling loop plus a set of independent connector 
 
 **All tiers below are committed to be built** (see PRD §3, §5, §12) — the numbering is build order, not an optionality ranking. Only Tier 3 (course registration, exam results, student ID) is out of scope, and that's because it needs real school-system access this hackathon doesn't have, not because of time.
 
-- **Tier 0 (build first):** nudge engine — a rule-based check (polling on a timer is fine) that evaluates mock data and pushes an unsolicited message into the chat when a rule fires. It reuses Tier 1 connector functions for data access; it does not get its own data layer. See PRD §6.1 for the exact trigger design.
+- **Tier 0:** proactive nudges were built and then removed at the team's request — don't reintroduce a nudge engine, `/nudges` endpoint, or nudge cards without checking first.
 - **Tier 1:** `get_events`, `book_study_room`, `get_bus_location`, `get_courses`/`get_course_materials`/`get_assignments` (view-only — no submit, see above), `todo_list`.
 - **Tier 2:** `get_cafe_crowd`, `book_clinic_appointment` (reuse the Tier 1 booking pattern).
 - **Tier 2.5:** `plan_coffee_run` (`connectors/planner.py`) — cross-connector reasoning combining class schedule, cafe crowd/wait time, and walk times.
@@ -38,7 +38,7 @@ The agent is one DeepSeek tool-calling loop plus a set of independent connector 
 
 **Design rule: never let the LLM estimate or calculate a number that matters** (walk times, time-feasibility, costs). Write a dedicated deterministic tool that computes the real answer in Python and returns a structured verdict — the model's only job is to call it and phrase the result. `plan_coffee_run` is the reference implementation: it looks up `get_next_class` (internal, not its own agent tool — `connectors/academic.py`) and `get_walk_minutes` (`connectors/campus_map.py`), does the arithmetic itself, and only hands the model a finished verdict to narrate. Follow this pattern for any new reasoning feature; don't hand the model raw numbers and trust it to add them up.
 
-**Shared demo clock:** `current_time.py` (backend root) holds the single hardcoded `DEMO_NOW` used by both `nudges.py` and `connectors/planner.py`. If you need to adjust the staged demo time, change it there once — don't hardcode a second copy anywhere else.
+**Shared demo clock:** `current_time.py` (backend root) holds the single hardcoded `DEMO_NOW` used by `connectors/planner.py`, `bookings_log.py` and the slot/attendance endpoints. If you need to adjust the staged demo time, change it there once — don't hardcode a second copy anywhere else.
 
 If running behind, don't silently drop scope — that's a PRD §12 checkpoint decision for the whole team, not a call to make alone mid-build.
 
