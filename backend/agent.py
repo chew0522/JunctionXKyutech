@@ -16,7 +16,8 @@ from connectors.academic import (
     get_course_materials,
     get_courses,
 )
-from connectors.bus import TOOL_SCHEMA as BUS_SCHEMA, get_bus_location
+from connectors.bus import PLAN_TRIP_SCHEMA, TOOL_SCHEMA as BUS_SCHEMA, get_bus_location, plan_bus_trip
+from connectors.bus_sim import trip_cards
 from connectors.cafe import TOOL_SCHEMA as CAFE_SCHEMA, get_cafe_crowd
 from connectors.clinic import GET_SLOTS_SCHEMA, get_clinic_slots
 from connectors.events import TOOL_SCHEMA as EVENTS_SCHEMA, get_events
@@ -154,6 +155,11 @@ def _system_prompt() -> str:
         "Never estimate walk times or whether there's enough time for something yourself — "
         "always call plan_coffee_run for that. Keep answers short and conversational. "
         "Never use emoji — the app's design system forbids them; use plain text only. "
+        "When the student says they want to go somewhere or asks how to get somewhere on "
+        "campus, call plan_bus_trip (it reads their current location itself). Start your reply "
+        "with the tool's 'summary' sentence(s) word for word — it already contains where they "
+        "are, the bus and the timings — then add one short line saying they can tap a card "
+        "below to track that bus live. Never restate or recompute the numbers yourself. Do not also call offer_choices for this. "
         "You cannot book anything directly. For any booking request (study room, "
         "facility, clinic), call offer_bookings so the student sees detail cards and "
         "picks the date and time in the app, and tell them to tap the one they want. "
@@ -172,6 +178,7 @@ TOOLS = [
     GET_ROOMS_SCHEMA,
     GET_FACILITIES_SCHEMA,
     BUS_SCHEMA,
+    PLAN_TRIP_SCHEMA,
     LIST_TODOS_SCHEMA,
     CAFE_SCHEMA,
     GET_SLOTS_SCHEMA,
@@ -189,6 +196,7 @@ TOOL_FUNCTIONS = {
     "get_study_rooms": get_study_rooms,
     "get_facilities": get_facilities,
     "get_bus_location": get_bus_location,
+    "plan_bus_trip": plan_bus_trip,
     "todo_list": todo_list,
     "get_cafe_crowd": get_cafe_crowd,
     "get_clinic_slots": get_clinic_slots,
@@ -210,6 +218,7 @@ def run_agent(user_message: str, history: list[dict] | None = None) -> dict:
     messages.append({"role": "user", "content": user_message})
     choices: list[str] | None = None
     cards: list[dict] | None = None
+    trip_summary: str | None = None
 
     # Loop: the model may request tool calls multiple times before giving a final answer
     while True:
@@ -222,7 +231,11 @@ def run_agent(user_message: str, history: list[dict] | None = None) -> dict:
         messages.append(choice.message.model_dump(exclude_none=True))
 
         if choice.finish_reason != "tool_calls":
-            return {"reply": choice.message.content, "history": messages, "choices": choices, "cards": cards}
+            reply = choice.message.content
+            if trip_summary and trip_summary not in (reply or ""):
+                # The model dropped the deterministic sentence; use it rather than trust a paraphrase.
+                reply = trip_summary + ("\n\nTap a card below to track it live." if cards else "")
+            return {"reply": reply, "history": messages, "choices": choices, "cards": cards}
 
         for tool_call in choice.message.tool_calls:
             name = tool_call.function.name
@@ -230,6 +243,9 @@ def run_agent(user_message: str, history: list[dict] | None = None) -> dict:
             result = TOOL_FUNCTIONS[name](**args)
             if name == "offer_choices":
                 choices = args["choices"]
+            if name == "plan_bus_trip":
+                cards = trip_cards(result) or cards
+                trip_summary = result.get("summary") or result.get("error")
             if name == "offer_bookings":
                 cards = result
                 result = {"acknowledged": True, "cards_shown": len(cards)}

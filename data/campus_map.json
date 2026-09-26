@@ -1,0 +1,191 @@
+{
+  "center": {
+    "lat": 33.8908,
+    "lng": 130.8396
+  },
+  "zoom": 16,
+  "buildings": [
+    {
+      "id": "main-gate",
+      "name": "Main Gate",
+      "lat": 33.8892,
+      "lng": 130.8375,
+      "aliases": [
+        "gate",
+        "entrance"
+      ]
+    },
+    {
+      "id": "library",
+      "name": "Library",
+      "lat": 33.891,
+      "lng": 130.8388,
+      "aliases": [
+        "library",
+        "study room",
+        "study rooms",
+        "study"
+      ]
+    },
+    {
+      "id": "cs",
+      "name": "Computer Science Faculty",
+      "lat": 33.893,
+      "lng": 130.8378,
+      "aliases": [
+        "computer science",
+        "cs faculty",
+        "comp sci",
+        "cs building"
+      ]
+    },
+    {
+      "id": "eng",
+      "name": "Engineering Faculty",
+      "lat": 33.8936,
+      "lng": 130.8402,
+      "aliases": [
+        "engineering"
+      ]
+    },
+    {
+      "id": "health",
+      "name": "Health Center",
+      "lat": 33.8924,
+      "lng": 130.8392,
+      "aliases": [
+        "health",
+        "clinic",
+        "medical",
+        "doctor"
+      ]
+    },
+    {
+      "id": "main-hall",
+      "name": "Main Hall",
+      "lat": 33.8922,
+      "lng": 130.8418,
+      "aliases": [
+        "main hall",
+        "hall"
+      ]
+    },
+    {
+      "id": "union",
+      "name": "Student Union",
+      "lat": 33.8906,
+      "lng": 130.8408,
+      "aliases": [
+        "student union",
+        "union",
+        "cafe",
+        "coffee",
+        "canteen"
+      ]
+    },
+    {
+      "id": "lounge",
+      "name": "Student Lounge",
+      "lat": 33.8898,
+      "lng": 130.842,
+      "aliases": [
+        "lounge"
+      ]
+    },
+    {
+      "id": "dorm",
+      "name": "Dormitory Block C",
+      "lat": 33.8888,
+      "lng": 130.8405,
+      "aliases": [
+        "dorm",
+        "dormitory",
+        "hostel",
+        "block c"
+      ]
+    },
+    {
+      "id": "sports",
+      "name": "Sports Complex",
+      "lat": 33.8912,
+      "lng": 130.8426,
+      "aliases": [
+        "sports",
+        "gym",
+        "court",
+        "badminton",
+        "basketball",
+        "field"
+      ]
+    },
+    {
+      "id": "train",
+      "name": "Train Station",
+      "lat": 33.888,
+      "lng": 130.8365,
+      "aliases": [
+        "train",
+        "station"
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "id": "loop-a",
+      "name": "Campus Loop A",
+      "plate": "KYU-101",
+      "speed_mps": 5.0,
+      "offset_m": 0,
+      "capacity": "moderate",
+      "stops": [
+        "main-gate",
+        "library",
+        "cs",
+        "health",
+        "eng"
+      ]
+    },
+    {
+      "id": "loop-b",
+      "name": "Campus Loop B",
+      "plate": "KYU-102",
+      "speed_mps": 4.5,
+      "offset_m": 300,
+      "capacity": "crowded",
+      "stops": [
+        "main-gate",
+        "dorm",
+        "lounge",
+        "union",
+        "library"
+      ]
+    },
+    {
+      "id": "loop-c",
+      "name": "Campus Loop C",
+      "plate": "KYU-103",
+      "speed_mps": 5.5,
+      "offset_m": 500,
+      "capacity": "empty",
+      "stops": [
+        "dorm",
+        "sports",
+        "main-hall",
+        "union"
+      ]
+    },
+    {
+      "id": "shuttle",
+      "name": "Off-Campus Shuttle",
+      "plate": "KYU-204",
+      "speed_mps": 6.0,
+      "offset_m": 200,
+      "capacity": "moderate",
+      "stops": [
+        "train",
+        "main-gate",
+        "union"
+      ]
+    }
+  ]
+}

@@ -18,6 +18,7 @@ from connectors.academic import (
     submit_assignment,
 )
 from connectors.bus import get_bus_location
+from connectors.bus_sim import get_campus_map, get_my_location, plan_trip, schedule_trip
 from connectors.cafe import get_cafe_crowd
 from connectors.course_detail import get_course_detail
 from connectors.clinic import book_clinic_appointment, get_clinic_slots
@@ -155,6 +156,32 @@ class BookRoomRequest(BaseModel):
 @router.post("/rooms/book")
 def api_book_room(req: BookRoomRequest):
     return book_study_room(req.room_id, req.date, req.time)
+
+
+@router.get("/campus-map")
+def api_campus_map():
+    return get_campus_map()
+
+
+@router.get("/my-location")
+def api_my_location():
+    return get_my_location()
+
+
+@router.get("/trip-plan")
+def api_trip_plan(from_id: str, to_id: str):
+    return plan_trip(from_id, to_id)
+
+
+class TripScheduleBody(BaseModel):
+    route_id: str
+    from_id: str
+    to_id: str
+
+
+@router.post("/trip-schedule")
+def api_trip_schedule(body: TripScheduleBody):
+    return schedule_trip(body.route_id, body.from_id, body.to_id)
 
 
 @router.get("/bus")

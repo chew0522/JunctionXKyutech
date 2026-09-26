@@ -331,6 +331,7 @@ class _AppointmentCard extends StatelessWidget {
   IconData get _icon => switch (booking['kind']) {
         'clinic' => LucideIcons.stethoscope,
         'facility' => LucideIcons.landmark,
+        'bus' => LucideIcons.bus,
         _ => LucideIcons.doorOpen,
       };
 

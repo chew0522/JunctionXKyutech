@@ -10,6 +10,7 @@ import '../widgets/chip.dart';
 import '../widgets/composer.dart';
 import '../widgets/message_pieces.dart';
 import '../widgets/slot_picker.dart';
+import 'bus_page.dart';
 import 'healthcare_page.dart';
 
 const _welcomeChips = ["What's on today?"];
@@ -105,10 +106,24 @@ class _ChatScreenState extends State<ChatScreen> {
   IconData _cardIcon(String kind) => switch (kind) {
         'clinic' => LucideIcons.stethoscope,
         'facility' => LucideIcons.landmark,
+        'bus' => LucideIcons.bus,
         _ => LucideIcons.doorOpen,
       };
 
   Future<void> _bookCard(Map<String, dynamic> card) async {
+    if (card['kind'] == 'bus') {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (ctx) => BusPage(
+            onBack: () => Navigator.of(ctx).pop(),
+            initialBusId: card['id'],
+            initialFromId: card['from_id'],
+            initialToId: card['to_id'],
+          ),
+        ),
+      );
+      return;
+    }
     if (card['kind'] == 'clinic') {
       Navigator.of(context).push(
         MaterialPageRoute(builder: (ctx) => HealthcarePage(onBack: () => Navigator.of(ctx).pop())),
@@ -218,6 +233,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     available: c['available'] == true,
                     booking: _bookingCardId == c['id'],
                     onBook: () => _bookCard(c),
+                    actionLabel: c['kind'] == 'bus' ? 'Track' : 'Book',
                   ),
                   const SizedBox(height: 8),
                 ],
