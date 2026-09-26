@@ -1,10 +1,10 @@
 # Design system
 
-Campus Concierge — a single chat screen on a phone. Small system on purpose: **2 fonts, 4 colour roles + neutrals, 4 corner radii**. **Light mode only** (no dark mode for the hackathon). Anything not listed here, don't invent — ask UI/UX first.
+Campus Concierge — a phone app: a Dashboard, 4 real pages, and a Chat reached only via the **Ask** button. Small system on purpose: **2 fonts, 4 colour roles + neutrals, 4 corner radii**. **Light mode only** (no dark mode for the hackathon). Anything not listed here, don't invent — ask UI/UX first.
 
 Look in one line: **calm, warm paper background, one strong indigo, and amber reserved only for the agent speaking first.**
 
-**Mockups:** [Campus Concierge Chat UI canvas](https://claude.ai/artifact/NtfYEffJuhq1eSvM8qeFjn) — 14 screens + a UI kit board; press Play to click through. Other docs: **[chat-ui.md](chat-ui.md) (start here — chat screens, build order)** · [dashboard.md](dashboard.md) (Dashboard) · [layout.md](layout.md) (component specs) · [navigation.md](navigation.md) (flow, demo script, demo facts) · [nudges.md](nudges.md) (Tier 0) · [tone.md](tone.md) (how the agent talks + system prompt).
+**Mockups:** [Campus Concierge Chat UI canvas](https://claude.ai/artifact/NtfYEffJuhq1eSvM8qeFjn) — 19 screens + a UI kit board; press Play to click through. **Start with [navigation.md](navigation.md)** for the overall map, then: [dashboard.md](dashboard.md) (Home + bottom bar) · [pages.md](pages.md) (Events, Buses, Cafes, Courses, Bookings) · [chat-ui.md](chat-ui.md) (the chat, reached via Ask) · [layout.md](layout.md) (component specs) · [nudges.md](nudges.md) (Tier 0) · [tone.md](tone.md) (agent tone + system prompt).
 
 ## Theme at a glance (send this to the team)
 

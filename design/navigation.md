@@ -1,54 +1,58 @@
 # Navigation
 
-**Everything happens in one screen: Chat.** It opens on a Welcome state, and a Home button leads back to a Dashboard. No tabs, no bottom nav, no menu, no login. This is the product idea itself — the student never has to know *where* something lives (unlike a typical campus portal's grid of tiles). They just ask.
+**A real multi-page app, not a chat-only funnel.** Dashboard (Home) + 4 bottom-bar tabs, most of them dedicated pages. The chat is reached **only** through the raised **Ask** button — it's not where the app starts, and tiles/tabs don't route into it. Full page specs: [pages.md](pages.md) and [dashboard.md](dashboard.md). Full chat spec: [chat-ui.md](chat-ui.md).
 
 ```
-App launch
-   │
-   ▼
-┌─────────────────────────────┐
-│  Chat screen (only route)   │◄─────────────┐
-│                             │              │
-│  header ─ [To-do] button ───┼──► To-do bottom sheet ── swipe down / tap outside
-│                             │
-│  messages                   │
-│   └ card buttons ───────────┼──► send a message (stay on Chat)
-│                             │
-│  chips ─────────────────────┼──► send a message (stay on Chat)
-│  input + send ──────────────┼──► send a message (stay on Chat)
-└─────────────────────────────┘
+                  Home   Events   ( ASK )   Courses   Bookings   ← bottom bar
+                    │       │     opens Chat    │         │
+                    ▼       ▼                   ▼         ▼
+              Dashboard  EventsPage         Chat      CoursesPage
+                                          (Welcome →       │
+                                          conversation)  BookingsPage
+Dashboard tiles: Next bus ──► BusPage        Quietest cafe ──► CafePage
+                 Due next ──► CoursesPage
+                 Next event ──► EventsPage
 ```
 
-## The one rule: every tap is a message
+## The one rule, and where it applies
 
-Chips, nudge buttons, and card buttons **all do the same thing**: post their label into the chat as a user message, then the agent replies.
+**Inside the chat only:** every chip, nudge button and card button **sends its label as a message**. One handler: `sendMessage(String text)`.
 
-| Tap | What gets sent |
+| Tap (in chat) | What gets sent |
 |---|---|
 | Chip `Next bus` | "Next bus" |
 | Nudge button `Book Room 201` | "Book Room 201" |
 | Card button `Show my to-dos` | "Show my to-dos" |
 
-Why:
-- **The coder writes one handler**, not one per button.
-- **Judges see every step in the chat history.** Nothing happens off-screen.
-- The agent (DeepSeek) already knows the context from the conversation, so "Book Room 201" after a room nudge just works.
-- **Nudge text must reach the agent.** When a nudge is shown, add it to the chat history as an assistant message, so the agent knows what "Book Room 201" refers to.
+**Outside the chat** (Dashboard, Events, Courses, Bookings), taps **navigate** or **call a connector directly** — they never send a chat message:
 
-Exceptions (views, not actions): the **Home** button opens the Dashboard, and the **View all** link on the to-do card opens the to-do sheet.
+| Surface | Tap | Does |
+|---|---|---|
+| Dashboard | A tile | Navigates to that page ([dashboard.md](dashboard.md)) |
+| Dashboard, bottom bar | The nudge's action button | Navigates to the relevant page (e.g. Bookings) and completes the action there |
+| Events / Bookings | A row's action (Book) | Calls the connector (`book_study_room`, `book_clinic_appointment`) directly and shows the result card in-page |
+| Courses | A to-do row | Opens the submit-confirmation flow in-page |
+| Bottom bar | Home / Events / Courses / Bookings | Navigates to that tab |
+| Bottom bar | **Ask** | Opens the Chat (Welcome state) — the only door into the chat |
+
+Why split it this way: browsing and simple actions (view a list, book a free room) are faster as a normal app; the chat is reserved for open-ended questions and the two "wow" moments — the unprompted nudge and the combined-answer feature — where a conversation genuinely adds something a list can't.
 
 ## Screens and surfaces
 
 | Surface | How you get there | How you leave | Contents |
 |---|---|---|---|
-| **Dashboard** | App launch, or Home button (top left of every chat screen) | Tap a tile, the nudge, or the ask bar | Nudge + 4 live tiles + ask bar |
-| **Chat — Welcome state** | Opening the chat with no messages | Send a message, or a nudge fires | Welcome, search bar, 3 chips |
-| **Chat** | First message sent | Home button → Dashboard | Everything |
-| **To-do sheet** | "View all" link on the to-do card | Swipe down, tap outside, or close button | Pending assignments from `todo_list`: title, course, due date. View only (optional: a `Mark submitted` button that sends "Mark Problem Set 3 as submitted"). |
+| **Dashboard (Home)** | App launch, or the Home tab | Tap a tile or a bottom-bar tab | Nudge + 4 live tiles + bottom bar — [dashboard.md](dashboard.md) |
+| **Events** | Bottom bar, or the "Next event" tile | Bottom bar, or the back chevron | All events, by day — [pages.md § 1](pages.md) |
+| **Buses** | The "Next bus" tile only | Back chevron | All bus routes, live — [pages.md § 2](pages.md) |
+| **Cafes** | The "Quietest cafe" tile only | Back chevron | All cafes, quietest first — [pages.md § 3](pages.md) |
+| **Courses** | Bottom bar, or the "Due next" tile | Bottom bar, or the back chevron | To-dos + courses + materials + submit — [pages.md § 4](pages.md) |
+| **Bookings** | Bottom bar, or a room/clinic nudge action | Bottom bar, or the back chevron | Study rooms + clinic, book in-page — [pages.md § 5](pages.md) |
+| **Chat — Welcome state** | The **Ask** button | Send a message, or a nudge fires | Welcome, search bar, 3 chips |
+| **Chat — conversation** | First message sent | Chat header's Home button → Dashboard | Everything in [chat-ui.md](chat-ui.md) |
 
-That's all. **Don't add** a settings page, profile page, or event detail page — the agent answers in the chat.
+**Don't add** a settings page, profile page, or login — everything above is it.
 
-## First page: Welcome
+## Welcome state (inside the Chat, after tapping Ask)
 
 The chat opens on a **Welcome** state (canvas board "0 · Welcome"). It's the same Chat screen with no messages yet — not a separate route.
 
@@ -65,24 +69,11 @@ The chat opens on a **Welcome** state (canvas board "0 · Welcome"). It's the sa
 2. If a nudge fires while still on Welcome → switch to the chat view and show the nudge as the first message.
 3. The Flutter app polls `/nudges` every 15 s, so the first nudge appears within ~15 s (see [nudges.md](nudges.md)).
 
-## Dashboard
+## Dashboard, Events, Courses, Bookings, Buses, Cafes
 
-Where the Home button goes (canvas board "Dashboard"). It's a **glance at campus right now**, not a grid of app shortcuts — every tile is live info, and tapping it asks the agent.
+Full specs: [dashboard.md](dashboard.md) (Home + the bottom bar) and [pages.md](pages.md) (the other 5). Short version: it's a **glance at campus right now**, not a grid of app-launcher icons — every tile and row is live info, and tapping one takes you straight to that page or does the action, no conversation needed. The **Ask** button is the only door into the chat.
 
-| Element | Tap → |
-|---|---|
-| Header: logo left, "Sat 26 Sep · 14:50" right | — |
-| "Good afternoon, {username}" + "Here's your campus right now." | — |
-| **Current nudge** (amber, compact) — same nudge as the chat | `Book Room 201` → opens chat and sends "Book Room 201" |
-| Tile **Next bus** — 4 min, Campus Loop A at the Library | Opens chat, sends "Next bus" |
-| Tile **Due next** — 23:59, Problem Set 3, 3 due | Opens chat, sends "Show my to-dos" |
-| Tile **Next event** — 15:00, AI Workshop, Building A 101 | Opens chat, sends "What's on today?" |
-| Tile **Quietest cafe** — Low, Student Union, 2 min | Opens chat, sends "Where can I get coffee without a queue?" |
-| **Ask bar** at the bottom | Opens chat on the Welcome state |
-
-Same rule as everywhere: **every tap becomes a chat message**. The dashboard has no logic of its own — it calls the same connectors as the nudge engine (`get_bus_location`, `todo_list`, `get_events`, `get_cafe_crowd`).
-
-If there's no time to build it: Home just clears the chat and returns to Welcome.
+If there's no time to build the pages: fall back to the chat-only plan in [chat-ui.md](chat-ui.md), where every tile and tab sends a message into the chat instead.
 
 ## Message states (what the student sees while waiting)
 
@@ -107,22 +98,19 @@ Demo clock is fixed at **Sat 26 Sep 2026, 14:50** (`DEMO_NOW` in `backend/nudges
 
 **Before each run:** restore `data/rooms.json` (booking changes it) and call `POST /reset` to clear the chat history.
 
-| # | Moment | Student does | Agent does | Canvas screen |
+| # | Moment | Student does | App/agent does | Page or canvas screen |
 |---|---|---|---|---|
-| 1 | Open | Opens the chat | Welcome page: "Welcome, {username}" + search bar + chips | 0 |
-| 2 | Ask | Taps `What's on today?` | "AI Workshop at 15:00 in Building A, Room 101, and the Career Fair at 17:00 in the Main Hall." | 1 (top) |
-| 3 | **Nudge** ⭐ | Nothing — waits ≤ 15 s | Amber card: "Your usual room is taken" | 1 |
-| 4 | **Action** ⭐ | Taps `Book Room 201` | Trace line → "Room booked" card: Study Room 201, Library 2F | 2 |
-| 5 | Ask | Taps `Next bus` | Bus card: Campus Loop A at the Library, 4 min | 3 (top) |
-| 6 | **Nudge 2** | Nothing | Amber card: "Problem Set 3 is due tonight" | — |
-| 7 | To-dos | Taps `Show my to-dos` | To-do card: 3 assignments, Problem Set 3 first | 3 (bottom) |
+| 1 | Open | Opens the app | Dashboard: greeting, live tiles, bottom bar | Dashboard |
+| 2 | Browse | Taps the **Events** tab | Full events list, AI Workshop first | EventsPage |
+| 3 | Book | Taps **Bookings**, then `Book` on Study Room 201 | "Room booked" shown in-page, no chat | BookingsPage |
+| 4 | **Nudge** ⭐ | Nothing — a nudge appears on the Dashboard | Amber card: "Your usual room is taken" | Dashboard |
+| 5 | **Ask** ⭐ | Taps the raised **Ask** button | Chat opens on Welcome | Chat: 0 |
+| 6 | **Combined answer** ⭐ | Types "Can I grab a coffee before the AI Workshop?" | Plan card pulling from 4 services | Chat: 10 · Combined |
+| 7 | Close | Taps Home (chat header) | Back to the Dashboard | Dashboard |
 
-Optional if time allows:
-- "Where can I get coffee without a queue?" → cafe card: Student Union Coffee Bar, low, 2 min (canvas 4)
-- "I need to see a doctor" → clinic slot card → tap 09:00 → "Appointment booked" (canvas 5)
-- Tap Home → Dashboard shows the whole campus at a glance
+**Presenter tip:** show the app first (steps 1–3) to prove it's a real, fast tool — then land the **nudge** (step 4) and the **Ask → combined answer** (steps 5–6) as the two moments that prove it's an *agent*, not just another campus app.
 
-**Presenter tip:** at step 3, stop talking and let the nudge appear on its own. Then say: "I didn't ask anything — the agent noticed."
+Alternate flow, if the team keeps the chat-only fallback instead of the 5 pages: use the older script — see chat-ui.md's build order note.
 
 ## Demo facts
 

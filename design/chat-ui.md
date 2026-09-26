@@ -19,29 +19,30 @@ Device: **phone, portrait, 390 × 844**, light mode only. All example values are
 | Tier | PRD feature | Connector(s) | Screen |
 |---|---|---|---|
 | 0 | Proactive nudges | nudge engine (`/nudges`) | C1, C6 |
-| 1 | Event Information Center | `get_events` | C7 |
-| 1 | Library study room reservation | `get_study_rooms`, `book_study_room` | C8 → C2 |
-| 1 | School bus tracker | `get_bus_location` | C3 |
-| 1 | Academic platform — courses, materials | `get_courses`, `get_course_materials` | C9 |
-| 1 | Academic platform — submit assignment | `submit_assignment` | C10 |
-| 1 | To-do list (from assignments) | `todo_list` | C3 |
-| 2 | Cafe crowd | `get_cafe_crowd` | C4 |
-| 2 | Clinic reservation | `get_clinic_slots`, `book_clinic_appointment` | C5 |
+| 1 | Event Information Center | `get_events` | C7 in chat, **EventsPage** by default ([pages.md](pages.md)) |
+| 1 | Library study room reservation | `get_study_rooms`, `book_study_room` | C8 → C2 in chat, **BookingsPage** by default |
+| 1 | School bus tracker | `get_bus_location` | C3 in chat, **BusPage** by default |
+| 1 | Academic platform — courses, materials | `get_courses`, `get_course_materials` | C9 in chat, **CoursesPage** by default |
+| 1 | Academic platform — submit assignment | `submit_assignment` | C10 in chat, **CoursesPage** by default |
+| 1 | To-do list (from assignments) | `todo_list` | C3 in chat, **CoursesPage** by default |
+| 2 | Cafe crowd | `get_cafe_crowd` | C4 in chat, **CafePage** by default |
+| 2 | Clinic reservation | `get_clinic_slots`, `book_clinic_appointment` | C5 in chat, **BookingsPage** by default |
 | 2 | Student service assistance | none (general Q&A) | Plain agent bubble |
 | 2.5 | Cross-connector reasoning | 3+ of the above | C11 |
 | 3 | Registration, exam results, student ID | none — out of scope | Agent says it can't (see [tone.md](tone.md)) |
 
-**Routes:** CLAUDE.md and PRD §7 say **one chat screen, no routing**. The **Dashboard** and **Home button** are extras we added — **not in the PRD; build only if the team leader agrees.** If not: drop the Home button and [dashboard.md](dashboard.md), and the app is the chat screen only. Welcome is the chat screen when the message list is empty.
+**Routes: approved.** The app is more than one screen — Dashboard + 4 bottom-bar tabs, most of them real pages, not chat. See [pages.md](pages.md) for Events/Buses/Cafes/Courses/Bookings and [dashboard.md](dashboard.md) for Home. **This file covers only the chat itself**, which is reached **exclusively through the Ask button** in the bottom bar.
+
+```
+        Home   Events   ( ASK )   Courses   Bookings   ← bottom bar (dashboard.md, pages.md)
+                           │
+                           ▼
+                  Chat — Welcome / conversation      ← this file
+```
+
+**In the chat, the one rule:** every chip, nudge button and card button **sends its label as a user message** to `/chat`. One handler: `sendMessage(String text)`. This rule is chat-only — Dashboard tiles and bottom-bar tabs navigate to pages instead (see [pages.md](pages.md)); they don't send chat messages.
 
 **No chat history between sessions.** CLAUDE.md says no persistence — the history lives in memory (`_history` in `backend/main.py`) and resets on `/reset` or restart.
-
-```
-Dashboard ──(tile / nudge / ask bar)──► Chat
-    ▲                                    │
-    └────────────(Home button)───────────┘
-```
-
-**The one rule:** every chip, nudge button, card button and dashboard tile **sends its label as a user message** to `/chat`. One handler: `sendMessage(String text)`. Exceptions: the Home button (navigates) and the ask bar (opens chat, focuses the input).
 
 ---
 
@@ -286,8 +287,8 @@ Canvas: **To-do bottom sheet**. Not in the PRD, and there's no header button for
 6. Thinking + error states
 7. Tier 2 cards: Cafe crowds, Clinic slots, Appointment booked
 8. Tier 2.5: Combined answer card (or plain text + source tags)
-9. Only if the leader agrees: Dashboard ([dashboard.md](dashboard.md)), to-do sheet
-10. Polish: nudge collapse, animations
+9. Dashboard + the 5 app pages — see [dashboard.md](dashboard.md) and [pages.md](pages.md) (build these **before** step 5 if going with pages instead of chat-only; see pages.md's own build order)
+10. Polish: nudge collapse, animations, to-do sheet (now optional either way — Courses page covers it)
 
 Matches PRD §12: 0–3 h steps 1–3 · 3–6 h step 4 · 6–10 h step 5 · 10–13 h step 7 · 13–16 h step 8.
 
