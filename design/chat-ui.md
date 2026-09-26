@@ -1,6 +1,6 @@
 # Chat UI — build spec for the coder
 
-Every screen in the [canvas](https://claude.ai/artifact/NtfYEffJuhq1eSvM8qeFjn), top to bottom, with exact text, what each tap does, and where the data comes from. Build from this file; look up colours, fonts and sizes in [design.md](design.md), component specs in [layout.md](layout.md), nudge format in [nudges.md](nudges.md), agent wording in [tone.md](tone.md).
+Every chat screen in the [canvas](https://claude.ai/artifact/NtfYEffJuhq1eSvM8qeFjn), top to bottom, with exact text, what each tap does, and where the data comes from. Build from this file; look up colours, fonts and sizes in [design.md](design.md), component specs in [layout.md](layout.md), nudge format in [nudges.md](nudges.md), agent wording in [tone.md](tone.md).
 
 Device: **phone, portrait, 390 × 844**, light mode only. All example values are the demo data (`DEMO_NOW` = Sat 26 Sep 2026, 14:50).
 
@@ -10,12 +10,11 @@ Device: **phone, portrait, 390 × 844**, light mode only. All example values are
 
 | # | Screen | Canvas board | Type |
 |---|---|---|---|
-| A | Dashboard | Dashboard | Screen (route `/`) |
 | B | Chat — Welcome state | 0 · Welcome | Chat screen with no messages |
 | C | Chat — conversation | 1 – 5 | Chat screen with messages |
 | D | To-do bottom sheet | To-do bottom sheet | Optional (see §D) |
 
-**Only 2 routes:** Dashboard and Chat. Welcome is the chat screen when the message list is empty.
+**Only 2 routes:** Dashboard and Chat. Welcome is the chat screen when the message list is empty. The Dashboard has its own spec: **[dashboard.md](dashboard.md)**.
 
 ```
 Dashboard ──(tile / nudge / ask bar)──► Chat
@@ -78,30 +77,6 @@ Dashboard ──(tile / nudge / ask bar)──► Chat
 | Buttons | Two equal, 44 px, radius 12, gap 8. Action 1: `nudge` fill, white text. Action 2: white, 1 px `nudgeButtonLine`, `nudge` text |
 | After a tap | Card collapses to one line at 60% opacity: check icon + "{title} · You chose "{button}"" |
 | Arrives | Slide up 250 ms + `HapticFeedback.lightImpact()`; auto-scroll to it |
-
----
-
-## A. Dashboard
-
-Canvas: **Dashboard**. Route `/`. Background `background`, side padding 16.
-
-| # | Element | Content (demo) | Tap → |
-|---|---|---|---|
-| 1 | Header (no border) | Left: "Campus Concierge" (Bricolage 16). Right: "Sat 26 Sep · 14:50" (13 / 600, `textMuted`) | — |
-| 2 | Greeting | "Good afternoon, Alex" (Bricolage 28 / 34) · "Here's your campus right now." (15, `textMuted`) | — |
-| 3 | Nudge card (compact) | HEADS UP · "Your usual room is taken" (18) · "Study Room 204 is booked. Study Room 201 is free right now." (14) · no pills | `Book Room 201` → open Chat + send "Book Room 201" · `No thanks` → dismiss |
-| 4 | Section label | "RIGHT NOW" (12 / 700, uppercase, `textMuted`) | — |
-| 5 | Tile: Next bus | `bus` "Next bus" · **4 min** · Campus Loop A / at the Library | Chat + "Next bus" |
-| 6 | Tile: Due next | `square-check` "Due next" · **23:59** · Problem Set 3 / today · 3 due | Chat + "Show my to-dos" |
-| 7 | Tile: Next event | `calendar` "Next event" · **15:00** · AI Workshop / Building A, 101 | Chat + "What's on today?" |
-| 8 | Tile: Quietest cafe | `coffee` "Quietest cafe" · 3 bars (1 filled) + **Low** · Student Union / 2 min wait | Chat + "Where can I get coffee without a queue?" |
-| 9 | Ask bar (bottom, 20 px from edge) | Pill 56 px: `search` icon · "Ask Campus Concierge…" · round send button | Open Chat (Welcome state), focus the input |
-
-**Tiles:** 2 × 2 grid, gap 12. Each: `surface`, 1 px `line`, radius 20, padding 14, min height 124. Big value = Bricolage 30 / 700 `primary`.
-
-**Data:** `get_bus_location` (first route), `todo_list` (first item + count), `get_events(today)` (next upcoming), `get_cafe_crowd` (lowest crowd), nudge from `/nudges`. Greeting word from the time: before 12 "Good morning", before 18 "Good afternoon", else "Good evening".
-
-**No time?** Skip the Dashboard: Home clears the chat and shows Welcome.
 
 ---
 
@@ -226,7 +201,7 @@ Canvas: **To-do bottom sheet**. There's no header button for it any more; **buil
 5. Trace line + result cards: Room booked → Bus → To-do list (needs backend change 2)
 6. Thinking + error states
 7. Tier 2 cards: Cafe crowds, Clinic slots, Appointment booked
-8. Dashboard
+8. Dashboard — see [dashboard.md](dashboard.md)
 9. Optional: to-do sheet, nudge collapse, animations
 
 ## Widgets to make
@@ -236,10 +211,9 @@ Canvas: **To-do bottom sheet**. There's no header button for it any more; **buil
 | `ChatHeader` | All chat screens |
 | `Composer(chips)` | All chat screens |
 | `UserBubble`, `AgentBubble`, `TimeDivider`, `TraceLine`, `ThinkingBubble` | Chat |
-| `NudgeCard(nudge, compact)` | Chat, Dashboard (`compact: true`) |
+| `NudgeCard(nudge, compact)` | Chat (also used compact on the Dashboard) |
 | `ResultCard(icon, title, rows, buttons)` | Room booked, Appointment booked |
 | `BusCard`, `TodoListCard`, `CafeCard`, `SlotPickerCard` | One per connector |
-| `DashTile(icon, label, value, line1, line2, message)` | Dashboard |
 | `Chip(label)` | Composer, Welcome, error |
 
 Check before handing back: every tappable thing ≥ 44 × 44 · amber only on nudges · no emoji anywhere · every tap sends a message.
