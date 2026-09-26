@@ -1,4 +1,4 @@
-# Screens — build spec for the coder
+# Chat UI — build spec for the coder
 
 Every screen in the [canvas](https://claude.ai/artifact/NtfYEffJuhq1eSvM8qeFjn), top to bottom, with exact text, what each tap does, and where the data comes from. Build from this file; look up colours, fonts and sizes in [design.md](design.md), component specs in [layout.md](layout.md), nudge format in [nudges.md](nudges.md), agent wording in [tone.md](tone.md).
 
