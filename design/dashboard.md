@@ -22,7 +22,33 @@ Canvas: **Dashboard**. Route `/`. Background `background`, side padding 16.
 | 6 | Tile: Due next | `square-check` "Due next" · **23:59** · Problem Set 3 / today · 3 due | Chat + "Show my to-dos" |
 | 7 | Tile: Next event | `calendar` "Next event" · **15:00** · AI Workshop / Building A, 101 | Chat + "What's on today?" |
 | 8 | Tile: Quietest cafe | `coffee` "Quietest cafe" · 3 bars (1 filled) + **Low** · Student Union / 2 min wait | Chat + "Where can I get coffee without a queue?" |
-| 9 | Ask bar (bottom, 20 px from edge) | Pill 56 px: `search` icon · "Ask Campus Concierge…" · round send button | Open Chat (Welcome state), focus the input |
+| 9 | **Bottom bar** | 5 slots — see below | — |
+
+## Bottom bar
+
+```
+  (home)   (cal)    ( ASK )   (cap)   (cal✓)
+   Home   Events   ▲raised▲  Courses  Bookings
+```
+
+| Part | Spec |
+|---|---|
+| Bar | 84 px tall (includes 16 px bottom safe area), `surface`, 1 px `line` top border, 5 equal columns |
+| Tab (4 of them) | 56 px tap area, icon 22 + label 12. Active: `primary`, 700. Inactive: `textMuted`, 600 |
+| **Ask button (centre)** | 64 px circle, `primary` fill, white `message-circle` icon 26, 4 px ring in `background` colour so it lifts off the bar. **Raised 30 px above the bar.** Label "Ask" below, `primary` 12 / 700 |
+| Nudge dot | 16 px `nudge` (amber) dot with 3 px white ring, top-right of the Ask button, **only while a nudge is waiting**. Semantics label: "Ask Campus Concierge — 1 new heads-up" |
+
+| Slot | Tab | Opens | PRD feature |
+|---|---|---|---|
+| 1 | Home | This Dashboard | Nudge + live tiles |
+| 2 | Events | Events page *(not designed yet)* | Event Information Center |
+| 3 | **Ask** | Chat, Welcome state | The agent — the wow point |
+| 4 | Courses | Courses page *(not designed yet)* | Academic platform + to-dos |
+| 5 | Bookings | Bookings page *(not designed yet)* | Study rooms + clinic |
+
+**In the chat, hide the bottom bar** so the composer has room; the chat header's Home button comes back here.
+
+Until the 3 tab pages exist, each tab can just open the chat and send a message ("What's on today?", "What are my courses?", "Show my bookings") — same answer, zero extra screens.
 
 **Tiles:** 2 × 2 grid, gap 12. Each: `surface`, 1 px `line`, radius 20, padding 14, min height 124. Big value = Bricolage 30 / 700 `primary`.
 
@@ -36,3 +62,4 @@ Canvas: **Dashboard**. Route `/`. Background `background`, side padding 16.
 |---|---|
 | `DashTile(icon, label, value, line1, line2, message)` | The 4 tiles — `message` is what gets sent to the chat on tap |
 | `NudgeCard(nudge, compact: true)` | The nudge at the top (shared with the chat) |
+| `BottomBar(active, hasNudge)` | Bottom bar with the raised Ask button |
