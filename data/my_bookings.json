@@ -61,5 +61,23 @@
     "date": "2026-09-26",
     "time": "14:30",
     "booked_at": "2026-09-26T14:50:00"
+  },
+  {
+    "id": "742c17a7",
+    "kind": "bus",
+    "title": "Campus Loop C: Main Hall to Student Union",
+    "subtitle": "KYU-103 \u00b7 1 min ride",
+    "date": "2026-09-26",
+    "time": "14:52",
+    "booked_at": "2026-09-26T14:50:00"
+  },
+  {
+    "id": "78bfe20e",
+    "kind": "room",
+    "title": "Study Room 202",
+    "subtitle": "Library, Floor 2",
+    "date": "2026-09-30",
+    "time": "13:00",
+    "booked_at": "2026-09-26T14:50:00"
   }
 ]

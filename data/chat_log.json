@@ -341,5 +341,369 @@
         "available": true
       }
     ]
+  },
+  {
+    "role": "user",
+    "text": "i want to go main hall from domitory",
+    "time": "2026-09-26T14:50:00"
+  },
+  {
+    "role": "agent",
+    "text": "Take Campus Loop C \u2014 it stops at Dormitory Block C and goes straight to Main Hall via Sports Complex. Want me to pull up more details on that route?",
+    "time": "2026-09-26T14:50:00",
+    "choices": [
+      "Show Campus Loop C details",
+      "Show all bus routes"
+    ]
+  },
+  {
+    "role": "user",
+    "text": "Show all bus routes",
+    "time": "2026-09-26T14:50:00"
+  },
+  {
+    "role": "agent",
+    "text": "There you go \u2014 four routes total. Campus Loop C is the one that connects the dormitory to Main Hall directly.",
+    "time": "2026-09-26T14:50:00",
+    "choices": [
+      "Show Campus Loop C details",
+      "Show Campus Loop B details"
+    ]
+  },
+  {
+    "role": "user",
+    "text": "Show Campus Loop C details",
+    "time": "2026-09-26T14:50:00"
+  },
+  {
+    "role": "agent",
+    "text": "Campus Loop C (KYU-103) details:\n\n- Stops in order: Dormitory Block C, Sports Complex, Main Hall, Student Union\n- Current location: at Main Hall, heading toward Student Union\n- Next stop: Student Union, arriving in about 1 min\n- Capacity: empty, so plenty of room\n- Last updated: 14:50 today\n\nSince it's currently at Main Hall, you'd catch it on its loop back around to Dormitory Block C. Want me to check anything else?",
+    "time": "2026-09-26T14:50:00"
+  },
+  {
+    "role": "user",
+    "text": "I want to go to the engineering faculty",
+    "time": "2026-09-26T14:50:00"
+  },
+  {
+    "role": "agent",
+    "text": "Campus Loop A it is \u2014 tap \"Track Campus Loop A\" below to follow it live.",
+    "time": "2026-09-26T14:50:00",
+    "cards": [
+      {
+        "kind": "bus",
+        "id": "loop-a",
+        "title": "Campus Loop A \u00b7 KYU-101",
+        "subtitle": "Library to Engineering Faculty \u00b7 arrives in 3 min \u00b7 2 min ride \u00b7 you arrive 14:55",
+        "from_id": "library",
+        "to_id": "eng",
+        "available": true
+      }
+    ]
+  },
+  {
+    "role": "user",
+    "text": "how do i get to the gym",
+    "time": "2026-09-26T14:50:00"
+  },
+  {
+    "role": "agent",
+    "text": "Tap \"Track Campus Loop B\" or \"Track Campus Loop C\" below to follow them live.",
+    "time": "2026-09-26T14:50:00",
+    "cards": [
+      {
+        "kind": "bus",
+        "id": "loop-b",
+        "title": "Campus Loop B, then Campus Loop C",
+        "subtitle": "Change at Dormitory Block C \u00b7 first bus arrives in 2 min \u00b7 about 7 min total \u00b7 you arrive 14:57",
+        "from_id": "library",
+        "to_id": "dorm",
+        "available": true
+      },
+      {
+        "kind": "bus",
+        "id": "loop-b",
+        "title": "Campus Loop B, then Campus Loop C",
+        "subtitle": "Change at Student Union \u00b7 first bus arrives in 2 min \u00b7 about 10 min total \u00b7 you arrive 15:00",
+        "from_id": "library",
+        "to_id": "union",
+        "available": true
+      }
+    ]
+  },
+  {
+    "role": "user",
+    "text": "I want to go to the engineering faculty",
+    "time": "2026-09-26T14:50:00"
+  },
+  {
+    "role": "agent",
+    "text": "Just tap \"Track Campus Loop A\" below to follow KYU-101 live and catch it in 3 minutes.",
+    "time": "2026-09-26T14:50:00",
+    "cards": [
+      {
+        "kind": "bus",
+        "id": "loop-a",
+        "title": "Campus Loop A \u00b7 KYU-101",
+        "subtitle": "Library to Engineering Faculty \u00b7 arrives in 3 min \u00b7 2 min ride \u00b7 you arrive 14:55",
+        "from_id": "library",
+        "to_id": "eng",
+        "available": true
+      }
+    ]
+  },
+  {
+    "role": "user",
+    "text": "how do i get to the gym",
+    "time": "2026-09-26T14:50:00"
+  },
+  {
+    "role": "agent",
+    "text": "Tap \"Track Campus Loop B\" below to follow KYU-102 live \u2014 remember to switch to Campus Loop C at Dormitory Block C.",
+    "time": "2026-09-26T14:50:00",
+    "cards": [
+      {
+        "kind": "bus",
+        "id": "loop-b",
+        "title": "Campus Loop B, then Campus Loop C",
+        "subtitle": "Change at Dormitory Block C \u00b7 first bus arrives in 2 min \u00b7 about 7 min total \u00b7 you arrive 14:57",
+        "from_id": "library",
+        "to_id": "dorm",
+        "available": true
+      },
+      {
+        "kind": "bus",
+        "id": "loop-b",
+        "title": "Campus Loop B, then Campus Loop C",
+        "subtitle": "Change at Student Union \u00b7 first bus arrives in 2 min \u00b7 about 9 min total \u00b7 you arrive 14:59",
+        "from_id": "library",
+        "to_id": "union",
+        "available": true
+      }
+    ]
+  },
+  {
+    "role": "user",
+    "text": "When is the next bus?",
+    "time": "2026-09-26T14:50:00"
+  },
+  {
+    "role": "agent",
+    "text": "Tap \"Track Campus Loop B\" or \"Track Campus Loop C\" below to follow them live \u2014 both are about a minute away.",
+    "time": "2026-09-26T14:50:00",
+    "choices": [
+      "Track Campus Loop B",
+      "Track Campus Loop C",
+      "Track Campus Loop A"
+    ]
+  },
+  {
+    "role": "user",
+    "text": "I want to go to the engineering faculty",
+    "time": "2026-09-26T14:50:00"
+  },
+  {
+    "role": "agent",
+    "text": "You're at Library. Campus Loop A arrives in 2 min, and the ride to Engineering Faculty takes 2 min, so you'd arrive around 14:54.\n\nYou can tap the card below to track that bus live.",
+    "time": "2026-09-26T14:50:00",
+    "cards": [
+      {
+        "kind": "bus",
+        "id": "loop-a",
+        "title": "Campus Loop A \u00b7 KYU-101",
+        "subtitle": "Library to Engineering Faculty \u00b7 arrives in 2 min \u00b7 2 min ride \u00b7 you arrive 14:54",
+        "from_id": "library",
+        "to_id": "eng",
+        "available": true
+      }
+    ]
+  },
+  {
+    "role": "user",
+    "text": "how do i get to the gym",
+    "time": "2026-09-26T14:50:00"
+  },
+  {
+    "role": "user",
+    "text": "Track Campus Loop B",
+    "time": "2026-09-26T14:50:00"
+  },
+  {
+    "role": "agent",
+    "text": "Let me know which route you'd like and I'll pull up the live tracking for it.",
+    "time": "2026-09-26T14:50:00",
+    "cards": [
+      {
+        "kind": "bus",
+        "id": "loop-b",
+        "title": "Campus Loop B, then Campus Loop C",
+        "subtitle": "Change at Dormitory Block C \u00b7 first bus arrives in 2 min \u00b7 about 6 min total \u00b7 you arrive 14:56",
+        "from_id": "library",
+        "to_id": "dorm",
+        "available": true
+      },
+      {
+        "kind": "bus",
+        "id": "loop-b",
+        "title": "Campus Loop B, then Campus Loop C",
+        "subtitle": "Change at Student Union \u00b7 first bus arrives in 2 min \u00b7 about 9 min total \u00b7 you arrive 14:59",
+        "from_id": "library",
+        "to_id": "union",
+        "available": true
+      }
+    ]
+  },
+  {
+    "role": "user",
+    "text": "take me to the library",
+    "time": "2026-09-26T14:50:00"
+  },
+  {
+    "role": "agent",
+    "text": "Campus Loop B (KYU-102) is just leaving Dormitory Block C \u2014 next stop is Student Lounge in about 1 min. It's currently crowded.\n\nTap the card below to track that bus live.",
+    "time": "2026-09-26T14:50:00"
+  },
+  {
+    "role": "agent",
+    "text": "You're already at Library, so there's no trip to plan \u2014 you're there. Is there somewhere else you'd like to head, or anything I can help you find at the library?",
+    "time": "2026-09-26T14:50:00"
+  },
+  {
+    "role": "user",
+    "text": "how do i get to the gym",
+    "time": "2026-09-26T14:50:00"
+  },
+  {
+    "role": "agent",
+    "text": "There's no direct bus from Library to Sports Complex. You're at Library: take Campus Loop B (arrives in 2 min) to Dormitory Block C, then Campus Loop C, for about 6 min in total (arriving around 14:56).\n\nTap a card below to track it live.",
+    "time": "2026-09-26T14:50:00",
+    "cards": [
+      {
+        "kind": "bus",
+        "id": "loop-b",
+        "title": "Campus Loop B, then Campus Loop C",
+        "subtitle": "Change at Dormitory Block C \u00b7 first bus arrives in 2 min \u00b7 about 6 min total \u00b7 you arrive 14:56",
+        "from_id": "library",
+        "to_id": "dorm",
+        "available": true
+      },
+      {
+        "kind": "bus",
+        "id": "loop-b",
+        "title": "Campus Loop B, then Campus Loop C",
+        "subtitle": "Change at Student Union \u00b7 first bus arrives in 2 min \u00b7 about 9 min total \u00b7 you arrive 14:59",
+        "from_id": "library",
+        "to_id": "union",
+        "available": true
+      }
+    ]
+  },
+  {
+    "role": "user",
+    "text": "i wanna go student lounge",
+    "time": "2026-09-26T14:50:00"
+  },
+  {
+    "role": "agent",
+    "text": "You're at Library. Campus Loop B arrives in 2 min, and the ride to Student Lounge takes 3 min, so you'd arrive around 14:55.\n\nTap a card below to track it live.",
+    "time": "2026-09-26T14:50:00",
+    "cards": [
+      {
+        "kind": "bus",
+        "id": "loop-b",
+        "title": "Campus Loop B \u00b7 KYU-102",
+        "subtitle": "Library to Student Lounge \u00b7 arrives in 2 min \u00b7 3 min ride \u00b7 you arrive 14:55",
+        "from_id": "library",
+        "to_id": "lounge",
+        "available": true
+      }
+    ]
+  },
+  {
+    "role": "user",
+    "text": "go to narnia",
+    "time": "2026-09-26T14:50:00"
+  },
+  {
+    "role": "agent",
+    "text": "I can only help with real places on campus, and Narnia isn't one of them. Want to head somewhere specific \u2014 the gym, student lounge, library, or a cafe?",
+    "time": "2026-09-26T14:50:00"
+  },
+  {
+    "role": "user",
+    "text": "go hall",
+    "time": "2026-09-26T14:50:00"
+  },
+  {
+    "role": "agent",
+    "text": "There's no direct bus from Library to Main Hall. You're at Library: take Campus Loop B (arrives in 1 min) to Dormitory Block C, then Campus Loop C, for about 6 min in total (arriving around 14:56).\n\nTap a card below to track it live.",
+    "time": "2026-09-26T14:50:00",
+    "cards": [
+      {
+        "kind": "bus",
+        "id": "loop-b",
+        "title": "Campus Loop B, then Campus Loop C",
+        "subtitle": "Change at Dormitory Block C \u00b7 first bus arrives in 1 min \u00b7 about 6 min total \u00b7 you arrive 14:56",
+        "from_id": "library",
+        "to_id": "dorm",
+        "available": true
+      },
+      {
+        "kind": "bus",
+        "id": "loop-b",
+        "title": "Campus Loop B, then Campus Loop C",
+        "subtitle": "Change at Student Union \u00b7 first bus arrives in 1 min \u00b7 about 8 min total \u00b7 you arrive 14:58",
+        "from_id": "library",
+        "to_id": "union",
+        "available": true
+      }
+    ]
+  },
+  {
+    "role": "user",
+    "text": "i want to go cafe",
+    "time": "2026-09-26T14:50:00"
+  },
+  {
+    "role": "agent",
+    "text": "You're at Library. Campus Loop B arrives in 1 min, and the ride to Student Union takes 4 min, so you'd arrive around 14:55.\n\nTap a card below to track it live.",
+    "time": "2026-09-26T14:50:00",
+    "cards": [
+      {
+        "kind": "bus",
+        "id": "loop-b",
+        "title": "Campus Loop B \u00b7 KYU-102",
+        "subtitle": "Library to Student Union \u00b7 arrives in 1 min \u00b7 4 min ride \u00b7 you arrive 14:55",
+        "from_id": "library",
+        "to_id": "union",
+        "available": true
+      }
+    ]
+  },
+  {
+    "role": "user",
+    "text": "i want study now",
+    "time": "2026-09-26T14:50:00"
+  },
+  {
+    "role": "agent",
+    "text": "Tap the card for the room you'd like, then choose your date and time in the app.",
+    "time": "2026-09-26T14:50:00",
+    "cards": [
+      {
+        "kind": "room",
+        "id": "room-202",
+        "title": "Study Room 202",
+        "subtitle": "Library, Floor 2 \u00b7 6 seats \u00b7 whiteboard",
+        "available": true
+      },
+      {
+        "kind": "room",
+        "id": "room-205",
+        "title": "Study Room 205",
+        "subtitle": "Library, Floor 3 \u00b7 2 seats",
+        "available": true
+      }
+    ]
   }
 ]

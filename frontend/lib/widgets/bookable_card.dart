@@ -10,6 +10,7 @@ class BookableResourceCard extends StatelessWidget {
   final bool available;
   final bool booking;
   final VoidCallback onBook;
+  final String actionLabel;
 
   const BookableResourceCard({
     super.key,
@@ -19,6 +20,7 @@ class BookableResourceCard extends StatelessWidget {
     required this.available,
     required this.booking,
     required this.onBook,
+    this.actionLabel = 'Book',
   });
 
   @override
@@ -59,7 +61,7 @@ class BookableResourceCard extends StatelessWidget {
                       elevation: 0,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.button)),
                     ),
-                    child: Text(booking ? '...' : 'Book',
+                    child: Text(booking ? '...' : actionLabel,
                         style: AppText.button.copyWith(color: Colors.white, fontSize: 13)),
                   )
                 : Container(

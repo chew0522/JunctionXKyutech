@@ -70,6 +70,13 @@ class ApiClient {
   Future<Map<String, dynamic>> bookRoom(String roomId, {String? date, String? time}) =>
       _post('/api/rooms/book', {'room_id': roomId, 'date': date, 'time': time});
 
+  Future<Map<String, dynamic>> fetchMyLocation() => _getMap('/api/my-location');
+  Future<Map<String, dynamic>> fetchCampusMap() => _getMap('/api/campus-map');
+  Future<Map<String, dynamic>> fetchTripPlan(String fromId, String toId) =>
+      _getMap('/api/trip-plan?from_id=$fromId&to_id=$toId');
+  Future<Map<String, dynamic>> scheduleTrip(String routeId, String fromId, String toId) =>
+      _post('/api/trip-schedule', {'route_id': routeId, 'from_id': fromId, 'to_id': toId});
+
   Future<List<dynamic>> fetchBus() => _getList('/api/bus');
   Future<List<dynamic>> fetchCafes() => _getList('/api/cafes');
 
