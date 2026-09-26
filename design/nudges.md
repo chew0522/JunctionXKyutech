@@ -78,7 +78,17 @@ Note: at 14:50 this fires almost immediately. If the demo runs slowly and passes
 - **Same nudge fires once.** After either button, that nudge doesn't fire again this session.
 - **No emoji in nudge text.** The card's bell icon and amber colour already say "heads up".
 
-## For the coder: nudge format
+## For the coder: 3 backend changes the UI needs
+
+| # | Change | Why | If no time |
+|---|---|---|---|
+| 1 | `/nudges` returns **objects** (`id`, `title`, `body`, `actions`) instead of plain strings — format below | The nudge card needs a title and buttons | Show the string as the body with a fixed `Got it` button |
+| 2 | `/chat` also returns **`tools`**: the list of tools called + their results, e.g. `[{"name": "book_study_room", "result": {...}}]` | Draws the trace line ("Booked Study Room 201") and picks the result card | Plain agent bubble only |
+| 3 | **Remove emoji** from nudge strings and the `book_study_room` / `book_clinic_appointment` messages (`✅`) | Design uses icons, not emoji | — |
+
+Also: `book_study_room` writes to `data/rooms.json`. **Reset that file before each demo run.**
+
+## Nudge format
 
 `backend/nudges.py` currently returns plain strings with emoji. To draw the nudge card, `/nudges` needs to return objects:
 

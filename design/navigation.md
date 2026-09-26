@@ -103,7 +103,7 @@ If there's no time to build it: Home just clears the chat and returns to Welcome
 
 ## Demo flow (3 min, for the pitch)
 
-Demo clock is fixed at **Sat 26 Sep 2026, 14:50** (`DEMO_NOW` in `backend/nudges.py`). Exact names and numbers: see [README.md § Demo facts](README.md#demo-facts).
+Demo clock is fixed at **Sat 26 Sep 2026, 14:50** (`DEMO_NOW` in `backend/nudges.py`). Exact names and numbers: see [Demo facts](#demo-facts) below.
 
 **Before each run:** restore `data/rooms.json` (booking changes it) and call `POST /reset` to clear the chat history.
 
@@ -123,3 +123,22 @@ Optional if time allows:
 - Tap Home → Dashboard shows the whole campus at a glance
 
 **Presenter tip:** at step 3, stop talking and let the nudge appear on its own. Then say: "I didn't ask anything — the agent noticed."
+
+## Demo facts
+
+**Single source of truth — taken from `data/` and `backend/nudges.py`.** Mockups, sample replies and the pitch script use exactly these values. If the coder changes the data, update this table and the canvas.
+
+Demo clock: **Saturday 26 Sep 2026, 14:50** (`DEMO_NOW`). The student is at the Library.
+
+| Feature | Value (from mock data) |
+|---|---|
+| App name | Campus Concierge |
+| Demo user name | Alex (placeholder) |
+| Header subtitle | Chat: "Online · 6 services" · Welcome footer: "Connected to 6 campus services" |
+| **Usual room (nudge)** | **Study Room 204** · Library 3F · 8 seats — **booked** (`room-204`) |
+| **Room offered + booked** | **Study Room 201** · Library 2F · **4 seats · whiteboard** (`room-201`) |
+| Events today | **AI Workshop**, 15:00, Building A, Room 101 · **Career Fair**, 17:00, Main Hall |
+| Bus | **Campus Loop A** — now at **Library**, next stop **Dormitory Block C**, **4 min**, moderately busy |
+| Assignments / to-dos | **Problem Set 3 – Consensus** (CS301) due **today 23:59** · **Lab 5 – Balanced Trees** (CS210) due **Tue 29 Sep 18:00** · **Homework 2 – Fourier Series** (EE150) due **Wed 30 Sep 23:59** |
+| Cafes | Main Library Cafe **high**, 12 min wait · Student Union Coffee Bar **low**, 2 min · Engineering Kiosk **medium**, 6 min |
+| Clinic slots (tomorrow) | **Sun 27 Sep 09:00** Dr. Tanaka, General Checkup (`slot-4`) · **15:00** Dr. Suzuki, Mental Health Counseling (`slot-5`) |

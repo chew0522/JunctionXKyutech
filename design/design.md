@@ -4,6 +4,8 @@ Campus Concierge — a single chat screen on a phone. Small system on purpose: *
 
 Look in one line: **calm, warm paper background, one strong indigo, and amber reserved only for the agent speaking first.**
 
+**Mockups:** [Campus Concierge Chat UI canvas](https://claude.ai/artifact/NtfYEffJuhq1eSvM8qeFjn) — 9 screens + a UI kit board; press Play to click through. Other docs: [layout.md](layout.md) (screen specs) · [navigation.md](navigation.md) (flow, demo script, demo facts) · [nudges.md](nudges.md) (Tier 0) · [tone.md](tone.md) (how the agent talks + system prompt).
+
 ## Theme at a glance (send this to the team)
 
 **Main theme colour: Indigo `#2B3A8F`**
