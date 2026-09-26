@@ -1,6 +1,9 @@
 import json
 from pathlib import Path
 
+import bookings_log
+import current_time
+
 DATA_FILE = Path(__file__).resolve().parent.parent.parent / "data" / "rooms.json"
 
 GET_ROOMS_SCHEMA = {
@@ -43,4 +46,13 @@ def book_study_room(room_id: str) -> dict:
 
     room["available"] = False
     DATA_FILE.write_text(json.dumps(rooms, indent=2))
-    return {"success": True, "message": f"✅ {room['name']} booked."}
+
+    now = current_time.now()
+    bookings_log.record_booking(
+        kind="room",
+        title=room["name"],
+        subtitle=f"{room['building']}, Floor {room['floor']}",
+        date=now.strftime("%Y-%m-%d"),
+        time=now.strftime("%H:%M"),
+    )
+    return {"success": True, "message": f"{room['name']} booked."}

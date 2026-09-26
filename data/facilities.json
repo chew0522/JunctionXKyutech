@@ -1,0 +1,58 @@
+[
+  {
+    "id": "fac-1",
+    "name": "Main Hall",
+    "category": "event",
+    "location": "Student Union, Ground Floor",
+    "capacity": 300,
+    "available": true
+  },
+  {
+    "id": "fac-2",
+    "name": "Auditorium",
+    "category": "event",
+    "location": "Building A",
+    "capacity": 150,
+    "available": false
+  },
+  {
+    "id": "fac-3",
+    "name": "Seminar Room B",
+    "category": "event",
+    "location": "Building B",
+    "capacity": 40,
+    "available": true
+  },
+  {
+    "id": "fac-4",
+    "name": "Outdoor Field",
+    "category": "event",
+    "location": "Sports Complex Grounds",
+    "capacity": 500,
+    "available": true
+  },
+  {
+    "id": "fac-5",
+    "name": "Badminton Court 1",
+    "category": "sports",
+    "location": "Sports Complex",
+    "capacity": 4,
+    "available": true
+  },
+  {
+    "id": "fac-6",
+    "name": "Basketball Court",
+    "category": "sports",
+    "location": "Sports Complex",
+    "capacity": 10,
+    "available": false
+  },
+  {
+    "id": "fac-7",
+    "name": "Gym",
+    "category": "sports",
+    "location": "Sports Complex, 2nd Floor",
+    "capacity": 30,
+    "available": false
+  }
+]

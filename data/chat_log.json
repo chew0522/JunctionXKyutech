@@ -1,0 +1,18 @@
+[
+  {
+    "role": "user",
+    "text": "Next bus",
+    "time": "2026-09-26T14:50:00"
+  },
+  {
+    "role": "agent",
+    "text": "Want details on any of these routes?",
+    "time": "2026-09-26T14:50:00",
+    "choices": [
+      "Campus Loop C",
+      "Campus Loop A",
+      "Campus Loop B",
+      "Off-Campus Shuttle"
+    ]
+  }
+]

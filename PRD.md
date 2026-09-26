@@ -28,7 +28,7 @@ A conversational AI agent that sits on top of campus services. Students ask in p
 - Real integration with the school's official Student Information System — specifically **course enrollment/registration**, exam results, and student ID/identity. Note this is narrower than "academic platform": *viewing* already-enrolled courses, materials, and assignments is in scope (§5, Tier 1) and uses the same mock-data pattern as everything else — it's only the enrollment/registration transaction itself, and anything identity- or grade-related, that's deferred.
 - Any authentication/security-sensitive student data
 - Real hardware/IoT sensors (cafe crowd detection, bus GPS) — all simulated/mocked
-- Real file uploads for assignment submission — `submit_assignment` mocks the action (marks as submitted) rather than handling an actual file
+- **Assignment submission through the agent.** Deliberately removed after initially building it — turning in coursework is high-stakes and hard to "undo" (unlike booking a room), and letting an AI agent submit on the student's behalf makes them too dependent on it for something that matters academically. The agent can *view* assignments and due dates, but always redirects the student to the school's real submission portal to actually submit. Same category of judgment call as the SIS exclusions above.
 
 ## 5. Feature scope, by build order
 
@@ -45,7 +45,7 @@ All features below are committed — the tiering is build sequence (build 0 firs
 | Event Information Center | Agent answers questions about campus events (desc, date, time, venue) from a mock event dataset |
 | Library Study Room Reservation | Agent checks room availability and **books a room** (the "agent takes action" wow moment) |
 | School Bus Location Tracker | Agent reports simulated live bus location/ETA |
-| Academic Platform (view-only) | Agent shows the student's enrolled courses, course materials (slides/readings/recordings), and assignments; can **submit an assignment** through a mocked submission portal. Enrollment/registration itself stays out of scope (§4). |
+| Academic Platform (view-only) | Agent shows the student's enrolled courses, course materials (slides/readings/recordings), and assignments. No submission action — see §4; the agent redirects to the real submission portal instead. Enrollment/registration itself also stays out of scope (§4). |
 | Built-in To-Do List | **Sourced entirely from pending lecturer assignments** (via the Academic Platform), sorted by due date — not a freeform personal list. The agent can list it but does not add arbitrary personal tasks to it. |
 
 ### Tier 2 — build third
@@ -58,7 +58,7 @@ All features below are committed — the tiering is build sequence (build 0 firs
 ### Tier 2.5 — build fourth
 | Feature | Behavior |
 |---|---|
-| Cross-connector reasoning | Agent combines 3+ connectors to answer something none could alone — e.g. "best time to grab coffee before your 2pm class" factoring in cafe crowd + walk time + class location. Build after Tier 0/1/2 exist so there's real connector data to reason across. |
+| Cross-connector reasoning (coffee-run planner) | Agent answers "do I have time to grab coffee before my [course] class?" by combining class schedule + cafe crowd/wait time + walk times between campus zones. **Built as a dedicated deterministic tool (`plan_coffee_run`), not free-form LLM arithmetic** — the model never estimates or sums times itself; it calls the tool and phrases the result. Walk times are a static mock lookup table, not a real maps API (see §7). |
 
 ### Tier 3 — roadmap only, not built this hackathon
 | Feature | Why deferred |
@@ -80,13 +80,15 @@ Agent (DeepSeek, tool-calling)
  ├── connector: get_bus_location()
  ├── connector: get_cafe_crowd()
  ├── connector: book_clinic_appointment()
- ├── connector: get_courses() / get_course_materials() / get_assignments() / submit_assignment()
+ ├── connector: get_courses() / get_course_materials() / get_assignments()  ← view-only, no submit (§4)
  ├── connector: todo_list()  ← derived from get_assignments(pending_only=True), not its own data
  ├── nudge engine: periodic check → pushes a proactive message into the chat when a rule fires (Tier 0)
  └── [future] connector: course_registration()  ← Tier 3, not built
 ```
 
 This is the pitch's technical answer to "how does this scale?"
+
+**Design principle for anything time/quantity-sensitive:** never let the LLM estimate or calculate a number that matters (walk times, whether something is feasible in time, costs). Write a dedicated deterministic tool that does the real computation in Python and returns a structured verdict — the model's only job is to call it and phrase the result in natural language. `plan_coffee_run` (§6.2) is the reference example; follow the same pattern for any future reasoning feature.
 
 ### 6.1 Proactive nudge engine (Tier 0 — build first)
 
@@ -97,6 +99,15 @@ Unlike a connector (which the agent calls reactively when the student asks somet
 - **Reuses existing connectors:** the nudge engine calls the same `get_events()`, `get_bus_location()`, etc. functions the agent already has — it does not need its own data layer
 - **Demo script:** stage the mock data/timing so a nudge fires live during the pitch (e.g. time the demo so "student's next class" is a few minutes away) rather than relying on a real clock coincidence
 
+### 6.2 Coffee-run planner (Tier 2.5)
+
+Answers "do I have time to grab coffee before my [course]'s class?" — the flagship cross-connector reasoning example.
+
+- **Real Google Maps Distance Matrix API for outdoor walk time** (`connectors/campus_map.py`), using coordinates in `data/zone_coordinates.json`. **Automatic fallback to the static mock table** (`data/walk_times.json`) whenever a zone's coordinates are unset, the API key is missing, or the call fails — this is deliberate, not a bug: it keeps the demo safe from network issues on stage, and lets the team plug in real campus coordinates whenever they're ready with zero code changes.
+- **The student's current location and the demo clock are both hardcoded** (`STUDENT_CURRENT_ZONE` in `connectors/planner.py`, `current_time.DEMO_NOW`) so the scenario can be staged reliably rather than depending on real device location or wall-clock timing.
+- **The math is deterministic, not LLM-estimated:** `plan_coffee_run` computes walk-to-cafe + wait-in-line + walk-to-class against time remaining until class, in Python, and returns a structured feasible/not-feasible verdict with a recommended cafe. The model only narrates that result — see the design principle in §6.
+- **Anticipated judge question — "how would this work in the real world, that can't be mocked?"** Answer: outdoor walk time is a solved problem via Maps APIs (which is what we use); indoor navigation (building → specific room) genuinely can't be solved by Maps — no mainstream maps API routes indoors — so the real industry answer there is a maintained static lookup table, calibrated over time from real usage data, which is exactly the architecture built here. The mock table isn't a hackathon shortcut we'd throw away; it's the production design for the indoor half of the problem, just pre-seeded with example data instead of the school's real floor plan.
+
 ## 7. Tech stack
 
 - **Backend:** Python (FastAPI) or Node (Express) — pick whichever the coder knows best
@@ -104,6 +115,7 @@ Unlike a connector (which the agent calls reactively when the student asks somet
 - **Data:** Mock JSON/CSV datasets for events, rooms, bus, cafe, clinic — no real hardware or school system integration
 - **Frontend:** Flutter (single chat screen, cross-platform demo on phone or web)
 - **Hosting:** Local run for demo; no production deployment needed for the hackathon
+- **Maps/location:** using the real **Google Maps Distance Matrix API** (walking mode) for outdoor building-to-building walk times, via a Google Maps Platform key already on hand. Falls back automatically to the static mock table if a zone's coordinates aren't set yet or the API call fails for any reason (network, quota, key issue) — see §6.2. Real campus coordinates for the zones (Library, Student Union, Engineering Building, Building A/B) are still TBD in `data/zone_coordinates.json`; until they're filled in, the app runs entirely on the mock table with no behavior change. Indoor navigation (building → specific room) still uses the static table regardless, since Maps doesn't route indoors — see the judge Q&A note in §6.2.
 
 ## 8. Cost & business model (for the pitch)
 

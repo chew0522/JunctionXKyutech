@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
 
+import bookings_log
+
 DATA_FILE = Path(__file__).resolve().parent.parent.parent / "data" / "clinic_slots.json"
 
 GET_SLOTS_SCHEMA = {
@@ -51,4 +53,12 @@ def book_clinic_appointment(slot_id: str) -> dict:
 
     slot["available"] = False
     DATA_FILE.write_text(json.dumps(slots, indent=2))
-    return {"success": True, "message": f"✅ Appointment booked with {slot['doctor']} at {slot['time']} on {slot['date']}."}
+
+    bookings_log.record_booking(
+        kind="clinic",
+        title=f"{slot['type']} with {slot['doctor']}",
+        subtitle="Health Center",
+        date=slot["date"],
+        time=slot["time"],
+    )
+    return {"success": True, "message": f"Appointment booked with {slot['doctor']} at {slot['time']} on {slot['date']}."}
