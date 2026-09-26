@@ -1,0 +1,5 @@
+[
+  { "course_id": "course-cs301", "date": "2026-09-26", "time": "16:00", "location": "Engineering Building", "room": "Room 210" },
+  { "course_id": "course-ee150", "date": "2026-09-26", "time": "15:30", "location": "Building B", "room": "Room 105" },
+  { "course_id": "course-cs210", "date": "2026-09-27", "time": "10:00", "location": "Building A", "room": "Room 302" }
+]

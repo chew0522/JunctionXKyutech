@@ -1,5 +1,5 @@
 [
-  { "id": "cafe-1", "name": "Main Library Cafe", "location": "Library, Ground Floor", "crowd_level": "high", "wait_minutes": 12 },
-  { "id": "cafe-2", "name": "Student Union Coffee Bar", "location": "Student Union, 1st Floor", "crowd_level": "low", "wait_minutes": 2 },
-  { "id": "cafe-3", "name": "Engineering Building Kiosk", "location": "Engineering Building, Lobby", "crowd_level": "medium", "wait_minutes": 6 }
+  { "id": "cafe-1", "name": "Main Library Cafe", "location": "Library, Ground Floor", "zone": "Library", "crowd_level": "high", "wait_minutes": 12 },
+  { "id": "cafe-2", "name": "Student Union Coffee Bar", "location": "Student Union, 1st Floor", "zone": "Student Union", "crowd_level": "low", "wait_minutes": 2 },
+  { "id": "cafe-3", "name": "Engineering Building Kiosk", "location": "Engineering Building, Lobby", "zone": "Engineering Building", "crowd_level": "medium", "wait_minutes": 6 }
 ]

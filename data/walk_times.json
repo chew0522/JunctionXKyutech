@@ -1,0 +1,14 @@
+{
+  "default_minutes": 10,
+  "pairs": [
+    { "from": "Library", "to": "Student Union", "minutes": 5 },
+    { "from": "Library", "to": "Engineering Building", "minutes": 8 },
+    { "from": "Library", "to": "Building A", "minutes": 6 },
+    { "from": "Library", "to": "Building B", "minutes": 7 },
+    { "from": "Student Union", "to": "Engineering Building", "minutes": 6 },
+    { "from": "Student Union", "to": "Building A", "minutes": 4 },
+    { "from": "Student Union", "to": "Building B", "minutes": 5 },
+    { "from": "Engineering Building", "to": "Building A", "minutes": 9 },
+    { "from": "Engineering Building", "to": "Building B", "minutes": 3 }
+  ]
+}

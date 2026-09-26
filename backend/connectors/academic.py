@@ -5,6 +5,7 @@ DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data"
 COURSES_FILE = DATA_DIR / "courses.json"
 MATERIALS_FILE = DATA_DIR / "materials.json"
 ASSIGNMENTS_FILE = DATA_DIR / "assignments.json"
+CLASS_SCHEDULE_FILE = DATA_DIR / "class_schedule.json"
 
 GET_COURSES_SCHEMA = {
     "type": "function",
@@ -45,24 +46,17 @@ GET_ASSIGNMENTS_SCHEMA = {
     },
 }
 
-SUBMIT_ASSIGNMENT_SCHEMA = {
-    "type": "function",
-    "function": {
-        "name": "submit_assignment",
-        "description": "Submit an assignment through the submission portal, marking it as turned in.",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "assignment_id": {"type": "string", "description": "e.g. assign-1"},
-            },
-            "required": ["assignment_id"],
-        },
-    },
-}
-
-
 def get_courses() -> list[dict]:
     return json.loads(COURSES_FILE.read_text())
+
+
+def get_next_class(course_id: str) -> dict | None:
+    """Not an agent tool — used by plan_coffee_run (connectors/planner.py) to look up
+    when/where a course's next class is, without exposing raw schedule data as a tool."""
+    schedule = json.loads(CLASS_SCHEDULE_FILE.read_text())
+    upcoming = [s for s in schedule if s["course_id"] == course_id]
+    upcoming.sort(key=lambda s: (s["date"], s["time"]))
+    return upcoming[0] if upcoming else None
 
 
 def get_course_materials(course_id: str) -> list[dict]:
@@ -80,6 +74,11 @@ def get_assignments(course_id: str | None = None, pending_only: bool = False) ->
 
 
 def submit_assignment(assignment_id: str) -> dict:
+    """Deliberately NOT exposed as an agent tool (no *_SCHEMA here, not registered in
+    agent.py) — the chatbot must never submit on the student's behalf. This is called
+    only from the Courses page's own explicit confirm-then-submit UI flow (REST route
+    in main.py), where the student directly taps a real button, not an AI-mediated
+    action."""
     assignments = json.loads(ASSIGNMENTS_FILE.read_text())
     assignment = next((a for a in assignments if a["id"] == assignment_id), None)
 
@@ -90,4 +89,4 @@ def submit_assignment(assignment_id: str) -> dict:
 
     assignment["submitted"] = True
     ASSIGNMENTS_FILE.write_text(json.dumps(assignments, indent=2))
-    return {"success": True, "message": f"✅ \"{assignment['title']}\" submitted."}
+    return {"success": True, "message": f"\"{assignment['title']}\" submitted."}

@@ -3,6 +3,7 @@
     "id": "assign-1",
     "course_id": "course-cs301",
     "title": "Problem Set 3 - Consensus",
+    "description": "Implement and analyze the Raft consensus algorithm under simulated network partitions.",
     "due_date": "2026-09-26",
     "due_time": "23:59",
     "submitted": false
@@ -11,6 +12,7 @@
     "id": "assign-2",
     "course_id": "course-cs210",
     "title": "Lab 5 - Balanced Trees Implementation",
+    "description": "Implement an AVL tree with insertion, deletion, and rebalancing, then benchmark against a naive BST.",
     "due_date": "2026-09-29",
     "due_time": "18:00",
     "submitted": false
@@ -19,6 +21,7 @@
     "id": "assign-3",
     "course_id": "course-ee150",
     "title": "Homework 2 - Fourier Series",
+    "description": "Derive the Fourier series for the given periodic signals and verify numerically in MATLAB.",
     "due_date": "2026-09-30",
     "due_time": "23:59",
     "submitted": false
@@ -27,8 +30,18 @@
     "id": "assign-4",
     "course_id": "course-cs301",
     "title": "Problem Set 2 - Replication",
+    "description": "Compare primary-backup and chain replication strategies for fault tolerance.",
     "due_date": "2026-09-19",
     "due_time": "23:59",
     "submitted": true
+  },
+  {
+    "id": "assign-5",
+    "course_id": "course-ee150",
+    "title": "Lab Report 1 - Signal Sampling",
+    "description": "Write up the sampling and aliasing experiment from Week 2's lab session.",
+    "due_date": "2026-09-24",
+    "due_time": "23:59",
+    "submitted": false
   }
 ]
