@@ -1,6 +1,6 @@
 # Navigation
 
-**There is one screen: Chat.** No tabs, no bottom nav, no menu, no login. This is the product idea itself — the student never has to know *where* something lives (unlike a typical campus portal's grid of tiles). They just ask.
+**Everything happens in one screen: Chat.** It opens on a Welcome state, and a Home button leads back to a Dashboard. No tabs, no bottom nav, no menu, no login. This is the product idea itself — the student never has to know *where* something lives (unlike a typical campus portal's grid of tiles). They just ask.
 
 ```
 App launch
@@ -41,18 +41,48 @@ Exception: the header **To-do** button opens the to-do sheet directly (it's a vi
 
 | Surface | How you get there | How you leave | Contents |
 |---|---|---|---|
-| **Chat** | App launch | — | Everything |
+| **Dashboard** | App launch, or Home button (top right of every chat screen) | Tap a tile, the nudge, or the ask bar | Nudge + 4 live tiles + ask bar |
+| **Chat — Welcome state** | Opening the chat with no messages | Send a message, or a nudge fires | Welcome, search bar, 3 chips |
+| **Chat** | First message sent | Home button → Dashboard | Everything |
 | **To-do sheet** | Header to-do button, or card link "View all" | Swipe down, tap outside, or close button | Pending assignments from `todo_list`: title, course, due date. View only (optional: a `Mark submitted` button that sends "Mark Problem Set 3 as submitted"). |
 
 That's all. **Don't add** a settings page, profile page, or event detail page — the agent answers in the chat.
 
-## First launch
+## First page: Welcome
 
-1. Chat opens with **one agent greeting** + 3 chips:
-   > Hi! I'm your campus concierge. I can check events, book study rooms, track the bus, and show what's due. What do you need?
-   >
-   > [What's on today?] [Next bus] [My to-dos]
-2. The Flutter app polls `/nudges` every 15 s, so the first nudge appears within ~15 s (see [nudges.md](nudges.md)).
+The chat opens on a **Welcome** state (canvas board "0 · Welcome"). It's the same Chat screen with no messages yet — not a separate route.
+
+| Element | Behaviour |
+|---|---|
+| **Home button** (top right) | Goes back to the **Dashboard**. `aria-label="Back to dashboard"` |
+| "Welcome, {username}" | Centred. Username comes from the app (mock: a fixed demo name) |
+| Subtitle | "Ask me anything about campus — rooms, buses, events and what's due." |
+| **Search bar** (round, pill) | The student types here. Sending the first message switches to the chat view |
+| 3 chips below | `What's on today?` · `Next bus` · `My to-dos` — tap = send that message |
+
+**What happens next:**
+1. Student sends a message (typed or chip) → Welcome fades out, the chat view appears with the message at the bottom, and the search bar moves down to become the composer.
+2. If a nudge fires while still on Welcome → switch to the chat view and show the nudge as the first message.
+3. The Flutter app polls `/nudges` every 15 s, so the first nudge appears within ~15 s (see [nudges.md](nudges.md)).
+
+## Dashboard
+
+Where the Home button goes (canvas board "Dashboard"). It's a **glance at campus right now**, not a grid of app shortcuts — every tile is live info, and tapping it asks the agent.
+
+| Element | Tap → |
+|---|---|
+| Header: logo left, "Sat 26 Sep · 14:50" right | — |
+| "Good afternoon, {username}" + "Here's your campus right now." | — |
+| **Current nudge** (amber, compact) — same nudge as the chat | `Book Room 201` → opens chat and sends "Book Room 201" |
+| Tile **Next bus** — 4 min, Campus Loop A at the Library | Opens chat, sends "Next bus" |
+| Tile **Due next** — 23:59, Problem Set 3, 3 due | Opens chat, sends "Show my to-dos" |
+| Tile **Next event** — 15:00, AI Workshop, Building A 101 | Opens chat, sends "What's on today?" |
+| Tile **Quietest cafe** — Low, Student Union, 2 min | Opens chat, sends "Where can I get coffee without a queue?" |
+| **Ask bar** at the bottom | Opens chat on the Welcome state |
+
+Same rule as everywhere: **every tap becomes a chat message**. The dashboard has no logic of its own — it calls the same connectors as the nudge engine (`get_bus_location`, `todo_list`, `get_events`, `get_cafe_crowd`).
+
+If there's no time to build it: Home just clears the chat and returns to Welcome.
 
 ## Message states (what the student sees while waiting)
 
@@ -79,7 +109,7 @@ Demo clock is fixed at **Sat 26 Sep 2026, 14:50** (`DEMO_NOW` in `backend/nudges
 
 | # | Moment | Student does | Agent does | Canvas screen |
 |---|---|---|---|---|
-| 1 | Open | Opens app | Greeting + chips | — |
+| 1 | Open | Opens the chat | Welcome page: "Welcome, {username}" + search bar + chips | 0 |
 | 2 | Ask | Taps `What's on today?` | "AI Workshop at 15:00 in Building A, Room 101, and the Career Fair at 17:00 in the Main Hall." | 1 (top) |
 | 3 | **Nudge** ⭐ | Nothing — waits ≤ 15 s | Amber card: "Your usual room is taken" | 1 |
 | 4 | **Action** ⭐ | Taps `Book Room 201` | Trace line → "Room booked" card: Study Room 201, Library 2F | 2 |
@@ -87,6 +117,9 @@ Demo clock is fixed at **Sat 26 Sep 2026, 14:50** (`DEMO_NOW` in `backend/nudges
 | 6 | **Nudge 2** | Nothing | Amber card: "Problem Set 3 is due tonight" | — |
 | 7 | To-dos | Taps `Show my to-dos` | To-do card: 3 assignments, Problem Set 3 first | 3 (bottom) |
 
-Optional if time allows: "Where can I get coffee without a queue?" → cafe card: Student Union Coffee Bar, low, 2 min.
+Optional if time allows:
+- "Where can I get coffee without a queue?" → cafe card: Student Union Coffee Bar, low, 2 min (canvas 4)
+- "I need to see a doctor" → clinic slot card → tap 09:00 → "Appointment booked" (canvas 5)
+- Tap Home → Dashboard shows the whole campus at a glance
 
 **Presenter tip:** at step 3, stop talking and let the nudge appear on its own. Then say: "I didn't ask anything — the agent noticed."

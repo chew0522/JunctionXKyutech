@@ -40,6 +40,7 @@ Both are free Google Fonts. In Flutter use the [`google_fonts`](https://pub.dev/
 
 | Token | Font | Size / line height | Weight | Used for |
 |---|---|---|---|---|
+| `welcome` | Bricolage Grotesque | 32 / 38 | 700 | "Welcome, {username}" on the first page only |
 | `display` | Bricolage Grotesque | 30 / 32 | 700 | Big numbers only (bus ETA "4 min", in `primary`) |
 | `title` | Bricolage Grotesque | 21 / 26 | 700 | Nudge card title |
 | `cardTitle` | Bricolage Grotesque | 18 / 24 | 700 | Result card title ("Room booked", "Campus Loop A") |
@@ -195,5 +196,10 @@ Simple 2 px stroke icons (Lucide style — Flutter: [`lucide_icons`](https://pub
 | `coffee` | Cafe crowd card |
 | `square` (empty) | Unchecked to-do |
 | `square-check` | Header to-do button |
+| `house` | Home button (back to dashboard) |
+| `calendar` | Dashboard "Next event" tile |
+| `stethoscope` | Clinic slots card |
+| `x` | Close the to-do sheet |
+| `search` | Welcome search bar |
 | `wrench` | Agent trace line |
 | `send` | Send button |

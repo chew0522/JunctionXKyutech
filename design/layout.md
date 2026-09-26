@@ -2,6 +2,54 @@
 
 Target device: **phone, portrait, 390 × 844** (iPhone 14 / most Androids). Colours, fonts and radii come from [design.md](design.md).
 
+## Welcome state (first page)
+
+Shown when the chat has no messages yet. Canvas board "0 · Welcome".
+
+```
+┌──────────────────────────────────┐
+│ [CC] Campus Concierge   [home]   │  68 px, no border, background colour
+│                                  │
+│                                  │
+│        Welcome, {username}       │  Bricolage 32 / 38, 700, centred
+│   Ask me anything about campus — │  body 15 / 22, textMuted, centred,
+│   rooms, buses, events and what's│  max width 290
+│   due.                           │
+│                                  │  gap 24
+│ ([search] Ask anything…     (send))│  search bar
+│                                  │  gap 24
+│  [What's on today?] [Next bus]   │  chips, centred, wrap
+│          [My to-dos]             │
+│                                  │
+│  ● Connected to 6 campus services│  footer 56 px, meta, textMuted
+└──────────────────────────────────┘
+```
+
+| Part | Spec |
+|---|---|
+| Header | 68 px, padding 0 × 16. Left: 32 × 32 `CC` mark (radius 10) + "Campus Concierge" Bricolage 16. Right: **Home button** 44 × 44, outlined (`line`), radius 12, `house` icon |
+| Content block | Vertically centred in the space between header and footer, nudged up slightly (72 px bottom padding). Side padding 20 |
+| **Search bar** | Height 56, **fully round** (`radiusPill`), `surface` fill, 1 px `inputLine`. Left: 20 px `search` icon in `textMuted`. Input text 16 (16+ stops iOS zooming in). Right: 44 × 44 round `primary` send button, 6 px from the edge |
+| Chips | Same as chat chips (44 px). Row wraps and centres |
+| Footer | `live` dot + "Connected to 6 campus services" |
+
+Transition to chat: on first send, the search bar animates down to the composer position (300 ms) and the welcome text fades out (200 ms).
+
+## Dashboard
+
+Canvas board "Dashboard". Background `background`, side padding 16.
+
+| Part | Spec |
+|---|---|
+| Header | 68 px, no border. Left: 32 px `CC` mark + "Campus Concierge". Right: date + time, `meta` 600, `textMuted` |
+| Greeting | "Good afternoon, {username}" Bricolage 28 / 34 · "Here's your campus right now." body, `textMuted` |
+| Nudge | Compact nudge card: padding 14 × 16, title 18, body 14, **no info pills**, same 2 buttons |
+| Section label | "RIGHT NOW" — `label`, uppercase |
+| Tiles | 2 × 2 grid, gap 12. Each tile: `surface`, 1 px `line`, `radiusCard`, padding 14, min height 124. Row 1: 16 px icon + label (`meta`, muted). Row 2: big value (`display` 30, `primary`). Row 3: name (600) + detail (muted), 13 / 18 |
+| Ask bar | Same as the Welcome search bar, pinned 20 px from the bottom |
+
+Cafe tile shows 3 bars (6 px wide, 10 / 16 / 22 px tall; filled = `primary`, empty = `inputLine`) + the word Low / Medium / High.
+
 ## Screen anatomy
 
 ```
@@ -55,7 +103,8 @@ Scaffold(
 | Avatar | 40 × 40, `radiusButton`, `primary` fill, "CC" in white `appName` 16 |
 | Title | "Campus Concierge", `appName` |
 | Subtitle | 8 px `live` dot + "Connected to 6 campus services", `meta`, `textMuted` |
-| Right button | 44 × 44 outlined, `square-check` icon → opens to-do sheet |
+| Subtitle text | "Online · 6 services" (short, so two buttons fit) |
+| Right buttons | Two 44 × 44 outlined buttons, gap 8: `square-check` → opens to-do sheet · `house` → **Home (Dashboard)**, always the rightmost |
 
 ## Message list
 
@@ -92,6 +141,7 @@ Everything in the list is one of these. **Result cards share one shell** — onl
 | `get_cafe_crowd` | Checked cafe crowds |
 | `get_clinic_slots` | Checked clinic slots |
 | `book_clinic_appointment` | Booked clinic appointment |
+| `submit_assignment` | Marked {assignment title} as submitted |
 
 ### 4. Nudge card (Tier 0)
 Full width. Fill `nudgeFill`, 1 px `nudgeLine`, `radiusCard`, padding 16, gap 12 between rows.
@@ -133,7 +183,32 @@ Variants — same shell, different header and rows. Every value comes from the c
 | Clinic booked | ✓ success | Appointment booked | Fields from `clinic_slots.json` (date, time, doctor/type) |
 | Bus | `bus` icon in `primaryTint` square | Campus Loop A (`route`) | Big ETA on the right (`eta_minutes`, `display`, `primary`); "Now at Library → next Dormitory Block C" (`current_stop` → `next_stop`); "Moderately busy" (`capacity_status`) |
 | To-do list | `square-check` | 3 things due | One row per item: empty checkbox, `task`, course, `due`. Due today shown in 600 weight. Link "View all" |
-| Cafe crowd | `coffee` icon | Cafe crowds | One row per cafe: `name`, 3 bars + word **Low / Medium / High** (never colour only), `wait_minutes` |
+| Cafe crowd | `coffee` icon | Cafe crowds | One row per cafe, **quietest first**: `name` + `location`; right side 3 bars + word **Low / Medium / High** (never colour only) + "{wait_minutes} min wait" |
+| Clinic slots (options) | `stethoscope` | Clinic · {date} | One **tappable row per free slot** (56 px, `primaryTint`, radius 14): time (Bricolage 18, `primary`), doctor + type, "Book". Tap sends "Book 09:00 with Dr. Tanaka" |
+| Appointment booked | ✓ success | Appointment booked | When, Doctor, Type |
+
+## To-do bottom sheet
+
+Opens from the header to-do button (canvas board "To-do bottom sheet").
+
+- Scrim over the chat: `#1A1C20` at 45%. Tap it to close.
+- Sheet: `surface`, top corners radius 24, padding 10 / 16 / 28. Drag handle 40 × 5, `inputLine`.
+- Title "Your to-dos" Bricolage 22 + "From your courses · 3 not submitted" (`meta`). Round 44 px close button (`background` fill, `x` icon).
+- One row per pending assignment: empty checkbox, title (15, 600), course (13, muted), due (13, muted). Rows: radius 16, 1 px `line`, padding 14.
+- **Due today** row: `primaryTint` fill, due shown as an indigo pill "Today 23:59", plus a `Mark submitted` button that sends "Mark Problem Set 3 as submitted" (agent calls `submit_assignment`).
+- Footer line: check icon + "1 submitted this week · Problem Set 2".
+
+## States
+
+Canvas board "States + nudges 2 and 3".
+
+| State | Spec |
+|---|---|
+| Agent thinking | Agent bubble 44 px tall, three 8 px dots in `textMuted` at 100 / 60 / 30% (animate them in turn) |
+| Error | Agent bubble "Sorry, I couldn't reach campus services just now. Want to try again?" + `Try again` chip |
+| Nudge after a tap | Collapses to one line: check icon + "{title} · You chose "{button}"", 60% opacity. Stays in the history |
+
+## Screen anatomy
 
 ### 6. Suggestion chips
 - Height 44, padding 0 × 16, `radiusPill`, `primaryTint` fill, 1 px `primaryLine`, `primary` text `chip`

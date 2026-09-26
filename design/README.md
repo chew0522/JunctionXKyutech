@@ -2,7 +2,20 @@
 
 **Read this first.** Everything the team needs from UI/UX for Campus Concierge (JunctionX Kyutech 2026, Track 02). Owner: UI/UX.
 
-**Mockups:** [Campus Concierge Chat UI canvas](https://claude.ai/artifact/NtfYEffJuhq1eSvM8qeFjn) — 3 phone screens + a UI kit board. (Ask UI/UX to share it with you if the link doesn't open.)
+**Mockups:** [Campus Concierge Chat UI canvas](https://claude.ai/artifact/NtfYEffJuhq1eSvM8qeFjn) — 9 screens + a UI kit board. Press Play on a screen to click through (Home → Dashboard → tiles). (Ask UI/UX to share it with you if the link doesn't open.)
+
+| Canvas board | Shows |
+|---|---|
+| 0 · Welcome | First page: Welcome, {username}, round search bar, chips, Home button |
+| 1 · Proactive nudge | Room nudge arrives unasked |
+| 2 · Room booking | Tap "Book Room 201" → booked |
+| 3 · Bus + to-dos | Bus card, to-do list card |
+| 4 · Cafe crowd | Which cafe is quiet |
+| 5 · Clinic booking | Pick a slot → appointment booked |
+| Dashboard | Where Home goes: nudge + 4 live tiles |
+| To-do bottom sheet | Pending assignments, Mark submitted |
+| States | Thinking, error, nudges 2 and 3, a nudge after a tap |
+| Chat UI kit | Colours, type, message pieces |
 
 All names, times and numbers in these docs **follow the coder's mock data in `data/` and `backend/nudges.py`**. If the data changes, the design follows.
 
@@ -18,7 +31,7 @@ All names, times and numbers in these docs **follow the coder's mock data in `da
 ## Decisions already made
 
 1. **Phone, English, portrait.** Demo runs on a phone.
-2. **One chat screen only.** No tabs, menus or login. Plus one to-do bottom sheet.
+2. **Two screens: Dashboard + Chat.** Chat opens on a **Welcome** page ("Welcome, {username}" + round search bar). A **Home button (top right)** on every chat screen goes to the **Dashboard**: the current nudge + 4 live tiles (bus, due next, next event, quietest cafe). No tabs, menus or login. Plus one to-do bottom sheet.
 3. **Theme colour: Indigo `#2B3A8F`.** Amber is reserved for nudges only. Details in [design.md](design.md).
 4. **Demo nudge: N1 "Your usual room is taken"** — the agent speaks first *and* books a room in one tap.
 5. **Every button and chip sends its label as a chat message.** One handler, and judges see every step.
@@ -56,7 +69,9 @@ Demo clock: **Saturday 26 Sep 2026, 14:50** (`DEMO_NOW`). The student is at the 
 | Feature | Value (from mock data) |
 |---|---|
 | App name | Campus Concierge |
-| Header subtitle | "Connected to 6 campus services" |
+| Header subtitle | Chat: "Online · 6 services" · Welcome footer: "Connected to 6 campus services" |
+| Demo user name | Alex (placeholder) |
+| Clinic slots (tomorrow) | **Sun 27 Sep 09:00** Dr. Tanaka, General Checkup (`slot-4`) · **15:00** Dr. Suzuki, Mental Health Counseling (`slot-5`) |
 | **Usual room (nudge)** | **Study Room 204** · Library 3F · 8 seats — **booked** (`room-204`) |
 | **Room offered + booked** | **Study Room 201** · Library 2F · **4 seats · whiteboard** (`room-201`) |
 | Events today | **AI Workshop**, 15:00, Building A, Room 101 · **Career Fair**, 17:00, Main Hall |
