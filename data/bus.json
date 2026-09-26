@@ -1,0 +1,6 @@
+[
+  { "route": "Campus Loop A", "current_stop": "Library", "next_stop": "Dormitory Block C", "eta_minutes": 4, "capacity_status": "moderate" },
+  { "route": "Campus Loop B", "current_stop": "Main Gate", "next_stop": "Engineering Building", "eta_minutes": 9, "capacity_status": "crowded" },
+  { "route": "Campus Loop C", "current_stop": "Sports Complex", "next_stop": "Student Union", "eta_minutes": 2, "capacity_status": "empty" },
+  { "route": "Off-Campus Shuttle", "current_stop": "Train Station", "next_stop": "Main Gate", "eta_minutes": 14, "capacity_status": "moderate" }
+]

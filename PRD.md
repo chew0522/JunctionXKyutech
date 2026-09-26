@@ -18,48 +18,56 @@ A conversational AI agent that sits on top of campus services. Students ask in p
 
 - Prove the agent can **initiate**, not just respond — a proactive nudge the student didn't ask for (the core differentiator vs. every other "campus chatbot")
 - Prove the agent can **take an action**, not just answer (the "agent vs chatbot" distinction)
-- Prove the "ask once, agent connects the dots" experience across 2+ data sources in one answer (stretch — build if time allows, see §5)
+- Prove the "ask once, agent connects the dots" experience — one answer combining 2+ data sources
 - Present a credible extensibility + cost story so judges see this as a real platform, not a toy
+
+**Scope decision:** all features in §5 are committed to be built — none are conditional on time remaining. §5's ordering is build sequence, not a priority cutoff. If the team falls behind schedule, cut scope explicitly by re-opening this PRD and moving an item to §5's Tier 3 (Roadmap only) — don't silently drop something the day of.
 
 ## 4. Non-goals (explicitly out of scope for this build)
 
-- Real integration with the school's official Student Information System (course registration, exam results, student ID/identity)
+- Real integration with the school's official Student Information System — specifically **course enrollment/registration**, exam results, and student ID/identity. Note this is narrower than "academic platform": *viewing* already-enrolled courses, materials, and assignments is in scope (§5, Tier 1) and uses the same mock-data pattern as everything else — it's only the enrollment/registration transaction itself, and anything identity- or grade-related, that's deferred.
 - Any authentication/security-sensitive student data
 - Real hardware/IoT sensors (cafe crowd detection, bus GPS) — all simulated/mocked
+- Real file uploads for assignment submission — `submit_assignment` mocks the action (marks as submitted) rather than handling an actual file
 
-## 5. Feature scope, by tier
+## 5. Feature scope, by build order
 
-### Tier 0 — Highest priority, build before anything else in Tier 1/2
+All features below are committed — the tiering is build sequence (build 0 first, then 1, then 2, then the cross-connector feature), not an optionality ranking. See §3 for what to do if the team runs out of time.
+
+### Tier 0 — build first
 | Feature | Behavior |
 |---|---|
-| Proactive Nudges | Agent surfaces an unsolicited, timely message based on the student's context — e.g. "Your next class starts in 15 min and it's a 10-min walk, leave now" or "Your usual study room is filling up, want me to reserve it?" This is the single highest-leverage feature for both Innovation and Impact scoring (see judging-criteria notes) — it's what separates an *agent* from a *chatbot*. |
+| Proactive Nudges | Agent surfaces an unsolicited, timely message based on the student's context — e.g. "Your next class starts in 15 min and it's a 10-min walk, leave now", "Your usual study room is filling up, want me to reserve it?", or "Your assignment is due in a few hours and you haven't submitted it." This is the single highest-leverage feature for both Innovation and Impact scoring (see judging-criteria notes) — it's what separates an *agent* from a *chatbot*. |
 
-### Tier 1 — Built and demoed live
+### Tier 1 — build second
 | Feature | Behavior |
 |---|---|
 | Event Information Center | Agent answers questions about campus events (desc, date, time, venue) from a mock event dataset |
 | Library Study Room Reservation | Agent checks room availability and **books a room** (the "agent takes action" wow moment) |
 | School Bus Location Tracker | Agent reports simulated live bus location/ETA |
-| Built-in To-Do List | Agent adds/reads personal tasks on request ("remind me to submit the assignment Friday") |
+| Academic Platform (view-only) | Agent shows the student's enrolled courses, course materials (slides/readings/recordings), and assignments; can **submit an assignment** through a mocked submission portal. Enrollment/registration itself stays out of scope (§4). |
+| Built-in To-Do List | **Sourced entirely from pending lecturer assignments** (via the Academic Platform), sorted by due date — not a freeform personal list. The agent can list it but does not add arbitrary personal tasks to it. |
 
-### Tier 2 — Present as connected, kept shallow
+### Tier 2 — build third
 | Feature | Behavior |
 |---|---|
 | Cafe Crowd Detection | Agent reports a mocked crowd level (low/medium/high); framed as "would come from real sensors in production" |
 | School Clinic Reservation | Reuses the room-booking pattern for appointment booking |
 | Student Service Assistance | Covered by the agent's general Q&A/help capability — not a separate module |
 
-### Stretch — build only if Tier 0/1/2 are done with time to spare
+### Tier 2.5 — build fourth
 | Feature | Behavior |
 |---|---|
-| Cross-connector reasoning | Agent combines 3+ connectors to answer something none could alone — e.g. "best time to grab coffee before your 2pm class" factoring in cafe crowd + walk time + class location. Do not start this until Tier 0/1/2 are demo-solid; a broken stretch feature costs more (Technical Quality) than a missing one costs (Innovation). |
+| Cross-connector reasoning | Agent combines 3+ connectors to answer something none could alone — e.g. "best time to grab coffee before your 2pm class" factoring in cafe crowd + walk time + class location. Build after Tier 0/1/2 exist so there's real connector data to reason across. |
 
-### Tier 3 — Roadmap only, not built
+### Tier 3 — roadmap only, not built this hackathon
 | Feature | Why deferred |
 |---|---|
-| Course Registration | Requires real SIS integration, high stakes if incorrect |
+| Course Registration/Enrollment | Requires real SIS integration, high stakes if incorrect (distinct from *viewing* enrolled courses, which is Tier 1) |
 | Exam Results | Sensitive student data, needs real auth |
 | Student ID / College Residency | Needs real identity verification, security-critical |
+
+Tier 3 stays deferred regardless of schedule — these need real school-system access this hackathon cannot provide, not just more time.
 
 ## 6. Architecture principle: connector-based extensibility
 
@@ -72,7 +80,8 @@ Agent (DeepSeek, tool-calling)
  ├── connector: get_bus_location()
  ├── connector: get_cafe_crowd()
  ├── connector: book_clinic_appointment()
- ├── connector: todo_add() / todo_list()
+ ├── connector: get_courses() / get_course_materials() / get_assignments() / submit_assignment()
+ ├── connector: todo_list()  ← derived from get_assignments(pending_only=True), not its own data
  ├── nudge engine: periodic check → pushes a proactive message into the chat when a rule fires (Tier 0)
  └── [future] connector: course_registration()  ← Tier 3, not built
 ```
@@ -106,8 +115,9 @@ Unlike a connector (which the agent calls reactively when the student asks somet
 
 1. **Live proactive nudge:** the agent surfaces an unsolicited, timely message during the demo without being asked — this is the must-land moment
 2. Live agent action: booking a study room or adding a to-do, executed on stage, not just described
-3. Live multi-source answer: one question, combining 2+ data sources in a single response (stretch, see §5)
-4. A cost/extensibility slide that shows the team thought past the demo into real deployment
+3. Live multi-source answer: one question, combining 2+ data sources in a single response
+4. All Tier 0-2.5 connectors respond correctly to at least one rehearsed question each
+5. A cost/extensibility slide that shows the team thought past the demo into real deployment
 
 ## 10. Competitive landscape
 
@@ -124,10 +134,15 @@ To be filled in by the Competitor Analysis role during the build — compare aga
 
 ## 12. Timeline (24h)
 
-- **0-4h:** Basic chat UI + backend + DeepSeek API connected, plain Q&A working
-- **4-8h:** Tier 0 proactive nudge engine working end-to-end (at least one rule firing reliably) — do this before Tier 1 connectors
-- **8-13h:** Tool-calling for Tier 1 connectors on mock data
-- **13-17h:** Tier 2 connectors added, agent responses polished, team demo sync
-- **17-19h:** Stretch — cross-connector reasoning, only if Tier 0/1/2 are demo-solid
+All tiers below are in scope — this is a tight schedule, so each block has a hard cutoff. If a block overruns, move to the next one anyway and fix the gap in the 19-21h buffer rather than letting one feature eat later blocks.
+
+- **0-3h:** Basic chat UI + backend + DeepSeek API connected, plain Q&A working
+- **3-6h:** Tier 0 proactive nudge engine working end-to-end (at least one rule firing reliably)
+- **6-10h:** Tier 1 connectors (events, room booking, bus, to-do) wired into tool-calling
+- **10-13h:** Tier 2 connectors (cafe crowd, clinic booking) — reuse the Tier 1 booking pattern to move fast
+- **13-16h:** Tier 2.5 cross-connector reasoning, using the now-complete connector set
+- **16-19h:** Full pass on agent response quality/tone across all connectors, team demo sync
 - **19-21h:** Bug fixes, demo flow smoothing, full team run-through (confirm the nudge fires reliably on cue)
 - **21-24h:** Pitch prep and rehearsal only — feature freeze
+
+**If genuinely behind at the 13h checkpoint:** re-open §3's scope decision as a team, and explicitly move Tier 2.5 (and only Tier 2.5) to a "described in the pitch, not demoed live" fallback — don't quietly cut Tier 0-2, since those are what the success criteria in §9 depend on.

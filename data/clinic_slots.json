@@ -1,0 +1,7 @@
+[
+  { "id": "slot-1", "date": "2026-09-26", "time": "10:00", "doctor": "Dr. Tanaka", "type": "General Checkup", "available": true },
+  { "id": "slot-2", "date": "2026-09-26", "time": "11:00", "doctor": "Dr. Tanaka", "type": "General Checkup", "available": false },
+  { "id": "slot-3", "date": "2026-09-26", "time": "14:30", "doctor": "Dr. Suzuki", "type": "Mental Health Counseling", "available": true },
+  { "id": "slot-4", "date": "2026-09-27", "time": "09:00", "doctor": "Dr. Tanaka", "type": "General Checkup", "available": true },
+  { "id": "slot-5", "date": "2026-09-27", "time": "15:00", "doctor": "Dr. Suzuki", "type": "Mental Health Counseling", "available": true }
+]

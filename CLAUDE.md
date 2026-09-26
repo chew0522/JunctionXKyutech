@@ -6,7 +6,7 @@ Guidance for Claude Code when working in this repository.
 
 Campus Concierge — an AI agent for campus services, built for JunctionX Kyutech 2026, Track 02 (Hack Connected Everywhere). Full context and scope: [PRD.md](PRD.md). Read it before making architectural decisions.
 
-24-hour hackathon build. Only one team member codes — prioritize speed and clarity over polish. Don't build Tier 3 features (course registration, exam results, student ID) — they're explicitly out of scope; see PRD §4-5.
+24-hour hackathon build. Only one team member codes — prioritize speed and clarity over polish. Don't build Tier 3 features (course *enrollment*/registration, exam results, student ID) — they're explicitly out of scope; see PRD §4-5. Note this is narrower than "academic platform" — *viewing* enrolled courses, materials, and assignments (and submitting an assignment) is in scope and already built.
 
 ## Tech stack
 
@@ -25,12 +25,16 @@ The agent is one DeepSeek tool-calling loop plus a set of independent connector 
 - Reads from (or writes to) its own mock JSON file under `data/`
 - Has no dependency on other connectors
 
-**Build order matters** (see PRD §5, §12): the Tier 0 proactive nudge engine comes *before* Tier 1 connectors — it's the highest-leverage feature for the judging criteria, not an afterthought.
+**All tiers below are committed to be built** (see PRD §3, §5, §12) — the numbering is build order, not an optionality ranking. Only Tier 3 (course registration, exam results, student ID) is out of scope, and that's because it needs real school-system access this hackathon doesn't have, not because of time.
 
 - **Tier 0 (build first):** nudge engine — a rule-based check (polling on a timer is fine) that evaluates mock data and pushes an unsolicited message into the chat when a rule fires. It reuses Tier 1 connector functions for data access; it does not get its own data layer. See PRD §6.1 for the exact trigger design.
-- **Tier 1 connectors:** `get_events`, `book_study_room`, `get_bus_location`, `todo_add`/`todo_list`.
-- **Tier 2 connectors:** `get_cafe_crowd`, `book_clinic_appointment`.
-- **Stretch, only if time remains:** cross-connector reasoning (one answer combining 3+ connectors). Do not start this before Tier 0/1/2 are demo-solid.
+- **Tier 1:** `get_events`, `book_study_room`, `get_bus_location`, `get_courses`/`get_course_materials`/`get_assignments`/`submit_assignment`, `todo_list`.
+- **Tier 2:** `get_cafe_crowd`, `book_clinic_appointment` (reuse the Tier 1 booking pattern).
+- **Tier 2.5 (build after Tier 0-2 exist):** cross-connector reasoning — one answer combining 3+ connectors. Needs the full connector set in place first, since there's nothing to reason across otherwise.
+
+**`todo_list` is not a standalone data source** — it derives its output from `get_assignments(pending_only=True)` in `connectors/academic.py`. There is deliberately no `todo_add`: the to-do list only ever reflects pending lecturer assignments, never arbitrary personal notes. Don't reintroduce a personal-add path without checking with the team first — it was a scope decision, not an oversight.
+
+If running behind, don't silently drop scope — that's a PRD §12 checkpoint decision for the whole team, not a call to make alone mid-build.
 
 When adding a new connector: write the function, register it as a tool, add its mock data file. Don't refactor the agent loop itself to accommodate a new connector — if that seems necessary, the connector is scoped wrong.
 

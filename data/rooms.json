@@ -1,0 +1,9 @@
+[
+  { "id": "room-201", "name": "Study Room 201", "building": "Library", "floor": 2, "capacity": 4, "has_whiteboard": true, "available": true },
+  { "id": "room-202", "name": "Study Room 202", "building": "Library", "floor": 2, "capacity": 6, "has_whiteboard": true, "available": true },
+  { "id": "room-203", "name": "Study Room 203", "building": "Library", "floor": 2, "capacity": 4, "has_whiteboard": false, "available": false },
+  { "id": "room-204", "name": "Study Room 204", "building": "Library", "floor": 3, "capacity": 8, "has_whiteboard": true, "available": false },
+  { "id": "room-205", "name": "Study Room 205", "building": "Library", "floor": 3, "capacity": 2, "has_whiteboard": false, "available": true },
+  { "id": "room-301", "name": "Group Pod A", "building": "Student Union", "floor": 1, "capacity": 10, "has_whiteboard": true, "available": false },
+  { "id": "room-302", "name": "Group Pod B", "building": "Student Union", "floor": 1, "capacity": 6, "has_whiteboard": true, "available": true }
+]

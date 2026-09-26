@@ -1,0 +1,7 @@
+[
+  { "id": "mat-1", "course_id": "course-cs301", "week": 4, "title": "Consensus Algorithms (Slides)", "type": "slides" },
+  { "id": "mat-2", "course_id": "course-cs301", "week": 4, "title": "Raft Paper (Reading)", "type": "reading" },
+  { "id": "mat-3", "course_id": "course-cs210", "week": 5, "title": "Balanced Trees (Slides)", "type": "slides" },
+  { "id": "mat-4", "course_id": "course-cs210", "week": 5, "title": "Lecture Recording - Week 5", "type": "video" },
+  { "id": "mat-5", "course_id": "course-ee150", "week": 3, "title": "Fourier Transform Basics (Slides)", "type": "slides" }
+]

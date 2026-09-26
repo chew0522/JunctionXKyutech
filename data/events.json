@@ -1,0 +1,82 @@
+[
+  {
+    "id": "evt-1",
+    "name": "AI Workshop",
+    "description": "Hands-on session on building with LLM APIs, covering tool-calling and agent design.",
+    "category": "Workshop",
+    "date": "2026-09-26",
+    "time": "15:00",
+    "venue": "Building A, Room 101",
+    "organizer": "Computer Science Club"
+  },
+  {
+    "id": "evt-2",
+    "name": "Career Fair",
+    "description": "Meet recruiters from local tech companies and startups. Bring your resume.",
+    "category": "Career",
+    "date": "2026-09-26",
+    "time": "17:00",
+    "venue": "Main Hall",
+    "organizer": "Career Services Office"
+  },
+  {
+    "id": "evt-3",
+    "name": "Robotics Showcase",
+    "description": "Student teams demo autonomous robots built this semester.",
+    "category": "Showcase",
+    "date": "2026-09-27",
+    "time": "13:00",
+    "venue": "Engineering Building, Atrium",
+    "organizer": "Robotics Society"
+  },
+  {
+    "id": "evt-4",
+    "name": "Morning Yoga",
+    "description": "Free weekly yoga session for students and staff, mats provided.",
+    "category": "Wellness",
+    "date": "2026-09-27",
+    "time": "07:30",
+    "venue": "Sports Complex, Studio 2",
+    "organizer": "Campus Wellness Center"
+  },
+  {
+    "id": "evt-5",
+    "name": "Guest Lecture: Climate Data Modeling",
+    "description": "Visiting professor talk on machine learning for climate prediction.",
+    "category": "Lecture",
+    "date": "2026-09-28",
+    "time": "10:00",
+    "venue": "Building B, Lecture Hall 3",
+    "organizer": "Environmental Science Department"
+  },
+  {
+    "id": "evt-6",
+    "name": "International Food Festival",
+    "description": "Student clubs share dishes from their home countries.",
+    "category": "Culture",
+    "date": "2026-09-28",
+    "time": "12:00",
+    "venue": "Central Courtyard",
+    "organizer": "International Students Association"
+  },
+  {
+    "id": "evt-7",
+    "name": "Midterm Study Jam",
+    "description": "Quiet group study session with free coffee and snacks.",
+    "category": "Academic",
+    "date": "2026-09-29",
+    "time": "18:00",
+    "venue": "Library, 3rd Floor",
+    "organizer": "Student Union"
+  },
+  {
+    "id": "evt-8",
+    "name": "Startup Pitch Night",
+    "description": "Student founders pitch to a panel of local investors.",
+    "category": "Career",
+    "date": "2026-09-30",
+    "time": "19:00",
+    "venue": "Innovation Hub, Auditorium",
+    "organizer": "Entrepreneurship Club"
+  }
+]
