@@ -27,6 +27,7 @@ All names, times and numbers in these docs **follow the coder's mock data in `da
 | [layout.md](layout.md) | Screen anatomy (390 × 844), specs for all 6 message types, coder checklist | Coder |
 | [navigation.md](navigation.md) | One-screen app, "every tap is a message" rule, loading/error states, 3-min demo flow | Coder, Pitch |
 | [nudges.md](nudges.md) | The 3 built nudges (Tier 0), demo order, and the JSON format the nudge card needs | Everyone |
+| [tone.md](tone.md) | How the agent talks: voice rules, sample replies, nudge + UI copy, **ready-to-paste `SYSTEM_PROMPT`** | Coder, Pitch |
 
 ## Decisions already made
 
@@ -93,7 +94,7 @@ Also: `book_study_room` writes to `data/rooms.json`. **Reset that file before ea
 
 | Role | Next action |
 |---|---|
-| **Coder** | Set up `AppColors` + `ThemeData` from [design.md](design.md). Build the chat screen from [layout.md](layout.md). Do the 3 backend changes above. |
+| **Coder** | Set up `AppColors` + `ThemeData` from [design.md](design.md). Build the chat screen from [layout.md](layout.md). Do the 3 backend changes above. Paste the new `SYSTEM_PROMPT` from [tone.md](tone.md#ready-to-paste-system_prompt). |
 | **Competitor analysis + slides** | Use indigo + amber in the deck. Use **Demo facts** for any screenshots or examples. For the "before" slide, show a typical tile-grid campus portal (personal details blurred). |
 | **Business / pitch** | Rehearse the demo flow in [navigation.md](navigation.md#demo-flow-3-min-for-the-pitch). Practise pausing for the nudge. |
-| **UI/UX** | Next: agent tone guide + sample replies for `SYSTEM_PROMPT` in `backend/agent.py`. Then test the built app on a real phone. |
+| **UI/UX** | Test the agent's replies against [tone.md](tone.md#how-to-test-the-tone-uiux-task). Then test the built app on a real phone. |
