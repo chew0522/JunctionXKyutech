@@ -125,7 +125,7 @@ Run these from the `backend` folder.
 
 ```
 backend/
-  main.py               API entry point (/chat, /history, /reset-demo)
+  main.py               API entry point (/chat, /history, /reset-demo) 
   agent.py              system prompt, tool list and the tool-calling loop
   api_routes.py         REST endpoints used by the app's pages
   connectors/           one file per campus service and planner
