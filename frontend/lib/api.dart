@@ -4,6 +4,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/http.dart' as http;
 
+import 'clock.dart';
 import 'models.dart';
 
 // The Android emulator's "localhost" is the emulator itself, not the host machine —
@@ -62,13 +63,15 @@ class ApiClient {
   Future<DateTime> fetchNow() async {
     final res = await http.get(Uri.parse('$backendUrl/api/now'));
     if (res.statusCode != 200) throw Exception('Backend returned ${res.statusCode}');
-    return DateTime.parse(jsonDecode(res.body)['now']);
+    final now = DateTime.parse(jsonDecode(res.body)['now']);
+    syncDemoClock(now);
+    return now;
   }
 
   Future<List<dynamic>> fetchEvents() => _getList('/api/events');
   Future<List<dynamic>> fetchRooms() => _getList('/api/rooms');
-  Future<Map<String, dynamic>> bookRoom(String roomId, {String? date, String? time}) =>
-      _post('/api/rooms/book', {'room_id': roomId, 'date': date, 'time': time});
+  Future<Map<String, dynamic>> bookRoom(String roomId, {String? date, String? time, bool force = false}) =>
+      _post('/api/rooms/book', {'room_id': roomId, 'date': date, 'time': time, 'force': force});
 
   Future<Map<String, dynamic>> fetchMyLocation() => _getMap('/api/my-location');
   Future<Map<String, dynamic>> fetchCampusMap() => _getMap('/api/campus-map');
@@ -81,8 +84,8 @@ class ApiClient {
   Future<List<dynamic>> fetchCafes() => _getList('/api/cafes');
 
   Future<List<dynamic>> fetchClinicSlots() => _getList('/api/clinic-slots');
-  Future<Map<String, dynamic>> bookClinicSlot(String slotId) =>
-      _post('/api/clinic-slots/book', {'slot_id': slotId});
+  Future<Map<String, dynamic>> bookClinicSlot(String slotId, {bool force = false}) =>
+      _post('/api/clinic-slots/book', {'slot_id': slotId, 'force': force});
 
   Future<List<dynamic>> fetchCourses() => _getList('/api/courses');
   Future<Map<String, dynamic>> fetchCourseDetail(String courseId) async {
@@ -100,8 +103,11 @@ class ApiClient {
 
   Future<List<dynamic>> fetchFacilities({String? category}) =>
       _getList(category == null ? '/api/facilities' : '/api/facilities?category=$category');
-  Future<Map<String, dynamic>> bookFacility(String facilityId, {String? date, String? time}) =>
-      _post('/api/facilities/book', {'facility_id': facilityId, 'date': date, 'time': time});
+  Future<Map<String, dynamic>> bookFacility(String facilityId, {String? date, String? time, bool force = false}) =>
+      _post('/api/facilities/book', {'facility_id': facilityId, 'date': date, 'time': time, 'force': force});
+
+  Future<Map<String, dynamic>> changeBooking(String bookingId, {String? date, String? time, String? slotId, bool force = false}) =>
+      _post('/api/my-bookings/$bookingId/change', {'date': date, 'time': time, 'slot_id': slotId, 'force': force});
 
   Future<Map<String, dynamic>> fetchProfile() async {
     final res = await http.get(Uri.parse('$backendUrl/api/profile'));

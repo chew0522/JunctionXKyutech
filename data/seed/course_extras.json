@@ -1,0 +1,355 @@
+{
+  "course-cs301": {
+    "quizzes": [
+      {
+        "id": "q-301-1",
+        "title": "Quiz 1 - Consistency Models",
+        "date": "2026-09-15",
+        "time": "10:00",
+        "mode": "Online",
+        "duration": 30,
+        "kind": "quiz",
+        "score": 18,
+        "max": 20
+      },
+      {
+        "id": "q-301-2",
+        "title": "Quiz 2 - Consensus Protocols",
+        "date": "2026-10-01",
+        "time": "10:00",
+        "mode": "Online",
+        "duration": 30,
+        "kind": "quiz"
+      },
+      {
+        "id": "q-301-3",
+        "title": "Midterm Exam",
+        "date": "2026-10-13",
+        "time": "09:00",
+        "mode": "Lecture Hall 3",
+        "duration": 90,
+        "kind": "exam"
+      }
+    ],
+    "grades": [
+      {
+        "title": "Problem Set 2 - Replication",
+        "weight": 20,
+        "score": 92,
+        "max": 100,
+        "assignment_id": "assign-4"
+      },
+      {
+        "title": "Quiz 1 - Consistency Models",
+        "weight": 10,
+        "score": 18,
+        "max": 20
+      },
+      {
+        "title": "Participation",
+        "weight": 10,
+        "score": 95,
+        "max": 100
+      },
+      {
+        "title": "Problem Set 3 - Consensus",
+        "weight": 20,
+        "status": "Not graded yet"
+      },
+      {
+        "title": "Quiz 2 - Consensus Protocols",
+        "weight": 15,
+        "status": "Not taken yet"
+      },
+      {
+        "title": "Midterm Exam",
+        "weight": 25,
+        "status": "Not taken yet"
+      }
+    ],
+    "events": [
+      {
+        "date": "2026-09-28",
+        "time": "10:00",
+        "title": "Lecture: Byzantine Fault Tolerance",
+        "detail": "Lecture Hall 3"
+      },
+      {
+        "date": "2026-09-30",
+        "time": "14:00",
+        "title": "Office Hours",
+        "detail": "Prof. Yamamoto's office"
+      }
+    ],
+    "attendance": [
+      {
+        "date": "2026-09-01",
+        "status": "Present"
+      },
+      {
+        "date": "2026-09-03",
+        "status": "Present"
+      },
+      {
+        "date": "2026-09-08",
+        "status": "Absent"
+      },
+      {
+        "date": "2026-09-10",
+        "status": "Present"
+      },
+      {
+        "date": "2026-09-15",
+        "status": "Present"
+      },
+      {
+        "date": "2026-09-17",
+        "status": "Present"
+      },
+      {
+        "date": "2026-09-22",
+        "status": "Late"
+      },
+      {
+        "date": "2026-09-24",
+        "status": "Present"
+      }
+    ]
+  },
+  "course-cs210": {
+    "quizzes": [
+      {
+        "id": "q-210-1",
+        "title": "Quiz 1 - Complexity Analysis",
+        "date": "2026-09-11",
+        "time": "09:00",
+        "mode": "Online",
+        "duration": 25,
+        "kind": "quiz",
+        "score": 17,
+        "max": 20
+      },
+      {
+        "id": "q-210-2",
+        "title": "Quiz 2 - Balanced Trees",
+        "date": "2026-10-02",
+        "time": "09:00",
+        "mode": "Online",
+        "duration": 25,
+        "kind": "quiz"
+      },
+      {
+        "id": "q-210-3",
+        "title": "Midterm Exam",
+        "date": "2026-10-16",
+        "time": "13:00",
+        "mode": "Building A, Room 302",
+        "duration": 90,
+        "kind": "exam"
+      }
+    ],
+    "grades": [
+      {
+        "title": "Lab 4 - Heaps",
+        "weight": 15,
+        "score": 41,
+        "max": 50
+      },
+      {
+        "title": "Quiz 1 - Complexity Analysis",
+        "weight": 10,
+        "score": 17,
+        "max": 20
+      },
+      {
+        "title": "Lab 5 - Balanced Trees",
+        "weight": 15,
+        "status": "Not graded yet"
+      },
+      {
+        "title": "Quiz 2 - Balanced Trees",
+        "weight": 10,
+        "status": "Not taken yet"
+      },
+      {
+        "title": "Midterm Exam",
+        "weight": 30,
+        "status": "Not taken yet"
+      }
+    ],
+    "events": [
+      {
+        "date": "2026-09-28",
+        "time": "09:00",
+        "title": "Lecture: AVL Rotations",
+        "detail": "Building A, Room 302"
+      },
+      {
+        "date": "2026-10-01",
+        "time": "15:00",
+        "title": "Office Hours",
+        "detail": "Prof. Ito's office"
+      }
+    ],
+    "attendance": [
+      {
+        "date": "2026-08-31",
+        "status": "Present"
+      },
+      {
+        "date": "2026-09-02",
+        "status": "Present"
+      },
+      {
+        "date": "2026-09-04",
+        "status": "Present"
+      },
+      {
+        "date": "2026-09-07",
+        "status": "Present"
+      },
+      {
+        "date": "2026-09-09",
+        "status": "Present"
+      },
+      {
+        "date": "2026-09-11",
+        "status": "Present"
+      },
+      {
+        "date": "2026-09-14",
+        "status": "Present"
+      },
+      {
+        "date": "2026-09-16",
+        "status": "Present"
+      },
+      {
+        "date": "2026-09-18",
+        "status": "Present"
+      },
+      {
+        "date": "2026-09-21",
+        "status": "Absent"
+      },
+      {
+        "date": "2026-09-23",
+        "status": "Present"
+      },
+      {
+        "date": "2026-09-25",
+        "status": "Present"
+      }
+    ]
+  },
+  "course-ee150": {
+    "quizzes": [
+      {
+        "id": "q-150-1",
+        "title": "Quiz 1 - Signal Basics",
+        "date": "2026-09-14",
+        "time": "13:00",
+        "mode": "Building B, Room 105",
+        "duration": 30,
+        "kind": "quiz",
+        "score": 14,
+        "max": 20
+      },
+      {
+        "id": "q-150-2",
+        "title": "Quiz 2 - Fourier Series",
+        "date": "2026-10-05",
+        "time": "13:00",
+        "mode": "Building B, Room 105",
+        "duration": 30,
+        "kind": "quiz"
+      },
+      {
+        "id": "q-150-3",
+        "title": "Midterm Exam",
+        "date": "2026-10-17",
+        "time": "10:00",
+        "mode": "Lecture Hall 1",
+        "duration": 120,
+        "kind": "exam"
+      }
+    ],
+    "grades": [
+      {
+        "title": "Homework 1 - Convolution",
+        "weight": 10,
+        "score": 8,
+        "max": 10
+      },
+      {
+        "title": "Quiz 1 - Signal Basics",
+        "weight": 10,
+        "score": 14,
+        "max": 20
+      },
+      {
+        "title": "Lab Report 1 - Signal Sampling",
+        "weight": 15,
+        "status": "Not graded yet"
+      },
+      {
+        "title": "Homework 2 - Fourier Series",
+        "weight": 10,
+        "status": "Not graded yet"
+      },
+      {
+        "title": "Midterm Exam",
+        "weight": 30,
+        "status": "Not taken yet"
+      }
+    ],
+    "events": [
+      {
+        "date": "2026-09-28",
+        "time": "13:00",
+        "title": "Lecture: Sampling Theorem",
+        "detail": "Building B, Room 105"
+      },
+      {
+        "date": "2026-10-02",
+        "time": "11:00",
+        "title": "Office Hours",
+        "detail": "Prof. Kobayashi's office"
+      }
+    ],
+    "attendance": [
+      {
+        "date": "2026-08-31",
+        "status": "Present"
+      },
+      {
+        "date": "2026-09-02",
+        "status": "Present"
+      },
+      {
+        "date": "2026-09-07",
+        "status": "Present"
+      },
+      {
+        "date": "2026-09-09",
+        "status": "Present"
+      },
+      {
+        "date": "2026-09-14",
+        "status": "Present"
+      },
+      {
+        "date": "2026-09-16",
+        "status": "Late"
+      },
+      {
+        "date": "2026-09-21",
+        "status": "Present"
+      },
+      {
+        "date": "2026-09-23",
+        "status": "Present"
+      }
+    ]
+  }
+}

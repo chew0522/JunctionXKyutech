@@ -6,7 +6,7 @@
     "floor": 2,
     "capacity": 4,
     "has_whiteboard": true,
-    "available": false
+    "available": true
   },
   {
     "id": "room-202",
@@ -15,7 +15,7 @@
     "floor": 2,
     "capacity": 6,
     "has_whiteboard": true,
-    "available": false
+    "available": true
   },
   {
     "id": "room-203",
@@ -60,6 +60,6 @@
     "floor": 1,
     "capacity": 6,
     "has_whiteboard": true,
-    "available": false
+    "available": true
   }
 ]

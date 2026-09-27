@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../api.dart';
+import '../widgets/clash_dialog.dart';
 import '../widgets/slot_picker.dart';
 import '../theme.dart';
 import '../widgets/bookable_card.dart';
@@ -50,10 +51,11 @@ class _FacilitiesPageState extends State<FacilitiesPage> {
     final now = await _api.fetchNow();
     if (!mounted) return;
     final picked = await pickDateTime(context, now, resourceId: facility['id'], name: facility['name']);
-    if (picked == null) return;
+    if (picked == null || !mounted) return;
     setState(() => _bookingId = facility['id']);
     try {
-      await _api.bookFacility(facility['id'], date: picked.$1, time: picked.$2);
+      await bookWithClashCheck(context,
+          (force) => _api.bookFacility(facility['id'], date: picked.$1, time: picked.$2, force: force));
     } finally {
       await _load();
       setState(() => _bookingId = null);
@@ -90,8 +92,8 @@ class _FacilitiesPageState extends State<FacilitiesPage> {
                               BookableResourceCard(
                                 icon: widget.icon,
                                 title: f['name'],
-                                subtitle: '${f['location']} · Capacity ${f['capacity']}',
-                                available: f['available'] == true,
+                                subtitle: '${f['location']} · Capacity ${f['capacity']} · ${f['available'] == true ? 'free now' : 'in use now'}',
+                                available: true,
                                 booking: _bookingId == f['id'],
                                 onBook: () => _book(f),
                               ),

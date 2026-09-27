@@ -135,3 +135,107 @@ class CategoryCard extends StatelessWidget {
     );
   }
 }
+
+enum ProposalStatus { idle, booking, booked }
+
+/// A concrete booking the assistant proposed (resource + date + time). Confirm books exactly
+/// these details; the model never chooses at confirm time.
+class BookingProposalCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final ProposalStatus status;
+  final VoidCallback onConfirm;
+  final VoidCallback onChange;
+
+  const BookingProposalCard({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.status,
+    required this.onConfirm,
+    required this.onChange,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final booked = status == ProposalStatus.booked;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        border: Border.all(color: booked ? AppColors.success : AppColors.line, width: booked ? 1.5 : 1),
+        borderRadius: BorderRadius.circular(AppRadius.card),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(color: AppColors.primaryTint, borderRadius: BorderRadius.circular(12)),
+                child: Icon(icon, size: 20, color: AppColors.primary),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title, style: AppText.cardTitle.copyWith(fontSize: 16)),
+                    const SizedBox(height: 2),
+                    Text(subtitle, style: AppText.metaKey.copyWith(fontSize: 13)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          if (booked)
+            Container(
+              width: double.infinity,
+              height: 44,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(color: AppColors.successFill, borderRadius: BorderRadius.circular(AppRadius.pill)),
+              child: Text('Booked', style: AppText.button.copyWith(color: AppColors.success)),
+            )
+          else
+            Row(
+              children: [
+                Expanded(
+                  child: SizedBox(
+                    height: 44,
+                    child: ElevatedButton(
+                      onPressed: status == ProposalStatus.booking ? null : onConfirm,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.pill)),
+                      ),
+                      child: Text(status == ProposalStatus.booking ? '...' : 'Confirm booking',
+                          style: AppText.button.copyWith(color: Colors.white, fontSize: 14)),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                SizedBox(
+                  height: 44,
+                  child: OutlinedButton(
+                    onPressed: status == ProposalStatus.booking ? null : onChange,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.primary,
+                      side: const BorderSide(color: AppColors.primaryLine),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.pill)),
+                    ),
+                    child: Text('Change time', style: AppText.button.copyWith(color: AppColors.primary, fontSize: 14)),
+                  ),
+                ),
+              ],
+            ),
+        ],
+      ),
+    );
+  }
+}

@@ -56,7 +56,10 @@ class _SlotSheet extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Pick a time · $date', style: AppText.cardTitle.copyWith(fontSize: 16)),
-                const SizedBox(height: 14),
+                const SizedBox(height: 4),
+                Text('Times marked "class" overlap a class. You can still book them after a warning.',
+                    style: AppText.metaKey.copyWith(fontSize: 12)),
+                const SizedBox(height: 12),
                 Flexible(
                   child: SingleChildScrollView(
                     child: Wrap(
@@ -67,6 +70,7 @@ class _SlotSheet extends StatelessWidget {
                           _SlotChip(
                             time: s['time'],
                             available: s['available'] == true,
+                            note: s['class'] as String?,
                             onTap: () => Navigator.of(context).pop(s['time'] as String),
                           ),
                       ],
@@ -85,9 +89,10 @@ class _SlotSheet extends StatelessWidget {
 class _SlotChip extends StatelessWidget {
   final String time;
   final bool available;
+  final String? note;
   final VoidCallback onTap;
 
-  const _SlotChip({required this.time, required this.available, required this.onTap});
+  const _SlotChip({required this.time, required this.available, required this.onTap, this.note});
 
   @override
   Widget build(BuildContext context) {
@@ -101,13 +106,20 @@ class _SlotChip extends StatelessWidget {
           width: 76,
           padding: const EdgeInsets.symmetric(vertical: 10),
           alignment: Alignment.center,
-          child: Text(
-            time,
-            style: AppText.button.copyWith(
-              fontSize: 14,
-              color: available ? AppColors.primary : AppColors.textMuted.withValues(alpha: 0.6),
-              decoration: available ? null : TextDecoration.lineThrough,
-            ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                time,
+                style: AppText.button.copyWith(
+                  fontSize: 14,
+                  color: available ? AppColors.primary : AppColors.textMuted.withValues(alpha: 0.6),
+                  decoration: available ? null : TextDecoration.lineThrough,
+                ),
+              ),
+              if (note != null)
+                Text('class · $note', style: AppText.metaKey.copyWith(fontSize: 9, color: AppColors.danger)),
+            ],
           ),
         ),
       ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../api.dart';
+import '../widgets/clash_dialog.dart';
 import '../widgets/slot_picker.dart';
 import '../theme.dart';
 import '../widgets/bookable_card.dart';
@@ -42,10 +43,11 @@ class _StudyRoomsPageState extends State<StudyRoomsPage> {
     final now = await _api.fetchNow();
     if (!mounted) return;
     final picked = await pickDateTime(context, now, resourceId: room['id'], name: room['name']);
-    if (picked == null) return;
+    if (picked == null || !mounted) return;
     setState(() => _bookingId = room['id']);
     try {
-      await _api.bookRoom(room['id'], date: picked.$1, time: picked.$2);
+      await bookWithClashCheck(context,
+          (force) => _api.bookRoom(room['id'], date: picked.$1, time: picked.$2, force: force));
     } finally {
       await _load();
       setState(() => _bookingId = null);
@@ -83,8 +85,9 @@ class _StudyRoomsPageState extends State<StudyRoomsPage> {
                                 icon: LucideIcons.doorOpen,
                                 title: r['name'],
                                 subtitle: '${r['building']}, Floor ${r['floor']} · ${r['capacity']} seats'
-                                    '${r['has_whiteboard'] == true ? ' · whiteboard' : ''}',
-                                available: r['available'] == true,
+                                    '${r['has_whiteboard'] == true ? ' · whiteboard' : ''}'
+                                    ' · ${r['available'] == true ? 'free now' : 'in use now'}',
+                                available: true,
                                 booking: _bookingId == r['id'],
                                 onBook: () => _book(r),
                               ),
