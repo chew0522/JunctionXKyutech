@@ -117,8 +117,8 @@ Run these from the `backend` folder.
 
 | Command | What it does |
 |---|---|
-| `python demo_reset.py` | Restores bookings, chat, scans, forms and clinic slots to their starting state (also available as `POST /reset-demo`). |
-| `DEMO_CLOCK=fixed uvicorn main:app --reload` | Freezes the demo clock at Sat 26 Sep 2026, 14:50 so answers stay the same. Without it the clock starts there and runs forward. |
+| `python demo_reset.py` | Clears appointments, chat, scans and forms and restores clinic slots (also `POST /reset-demo`). Add `--sample` to start with sample appointments. |
+| `DEMO_CLOCK=fixed uvicorn main:app --reload` | Freezes the clock at Sat 26 Sep 2026, 14:50 so answers stay the same. Without it the app uses the real current time. |
 | `python eval_questions.py` | Sends about 50 likely questions to the assistant and checks it used the right tool and gave a sensible reply (calls the DeepSeek API). |
 
 ## Project structure
@@ -138,9 +138,3 @@ frontend/lib/
 docs/screenshots/       images used in this README
 ```
 
-## Limitations
-
-- Simulated data only, with no real login, and no real payments (Pay and ID codes are demo codes).
-- Course registration is display-only, and submitting assignments is deliberately not done through the chat.
-- Bookings can be changed from the Dashboard, but there is no cancel yet.
-- The assistant needs a working connection to its model (DeepSeek in the demo). Only DeepSeek has been tested so far; other models, including local ones, are supported by configuration but untested.

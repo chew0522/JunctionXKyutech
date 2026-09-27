@@ -1,62 +1,22 @@
 [
   {
-    "id": "seed001",
-    "kind": "room",
-    "title": "Study Room 202",
-    "subtitle": "Library, Floor 2",
-    "date": "2026-09-29",
-    "time": "13:00",
-    "booked_at": "2026-09-26T14:50:00",
-    "resource_id": "room-202"
-  },
-  {
-    "id": "seed002",
-    "kind": "clinic",
-    "title": "Mental Health Counseling with Dr. Nguyen",
-    "subtitle": "Health Center",
-    "date": "2026-09-28",
-    "time": "11:00",
-    "booked_at": "2026-09-26T14:50:00",
-    "resource_id": "slot-8"
-  },
-  {
-    "id": "seed003",
+    "id": "573df3ed",
     "kind": "facility",
-    "title": "Badminton Court 1",
+    "resource_id": "fac-6",
+    "title": "Basketball Court",
     "subtitle": "Sports Complex",
-    "date": "2026-09-30",
+    "date": "2026-09-28",
     "time": "18:00",
-    "booked_at": "2026-09-26T14:50:00",
-    "resource_id": "fac-5"
+    "booked_at": "2026-09-27T11:51:54"
   },
   {
-    "id": "seed005",
-    "kind": "clinic",
-    "title": "General Checkup with Dr. Carter",
-    "subtitle": "Health Center",
-    "date": "2026-10-03",
-    "time": "09:00",
-    "booked_at": "2026-09-26T14:50:00",
-    "resource_id": "slot-31"
-  },
-  {
-    "id": "seed006",
-    "kind": "room",
-    "title": "Group Pod B",
-    "subtitle": "Student Union, Floor 1",
-    "date": "2026-10-04",
-    "time": "13:00",
-    "booked_at": "2026-09-26T14:50:00",
-    "resource_id": "room-302"
-  },
-  {
-    "id": "seed004",
+    "id": "26e9c4bf",
     "kind": "facility",
-    "title": "Main Hall",
-    "subtitle": "Student Union, Ground Floor",
-    "date": "2026-10-02",
-    "time": "14:00",
-    "booked_at": "2026-09-26T14:50:00",
-    "resource_id": "fac-1"
+    "resource_id": "fac-7",
+    "title": "Gym",
+    "subtitle": "Sports Complex, 2nd Floor",
+    "date": "2026-09-27",
+    "time": "16:30",
+    "booked_at": "2026-09-27T11:52:27"
   }
 ]

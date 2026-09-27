@@ -1,19 +1,12 @@
 import os
-import time as _time
-from datetime import datetime, timedelta
+from datetime import datetime
 
-# Demo-only start time; the clock then runs forward in real time from when the server started
-# (so nothing looks frozen). POST /reset-demo re-anchors it. Set DEMO_CLOCK=fixed to freeze it.
+# Default: the real local time. For a repeatable demo, start the server with DEMO_CLOCK=fixed
+# to freeze the clock at DEMO_START (Sat 26 Sep 2026, 14:50).
 DEMO_START = datetime(2026, 9, 26, 14, 50)
-_anchor = _time.time()
-
-
-def reset_anchor() -> None:
-    global _anchor
-    _anchor = _time.time()
 
 
 def now() -> datetime:
     if os.environ.get("DEMO_CLOCK") == "fixed":
         return DEMO_START
-    return (DEMO_START + timedelta(seconds=_time.time() - _anchor)).replace(microsecond=0)
+    return datetime.now().replace(microsecond=0)

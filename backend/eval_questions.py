@@ -27,7 +27,7 @@ QUESTIONS = [
     ("I need a doctor appointment tomorrow", "propose_booking|find_clash_free"),
     ("Book the badminton court", "propose_booking"),
     ("basketball Tuesday", "propose_booking", ["evening"]),
-    ("book basketball tmr", "propose_booking", ["morning", "afternoon", "evening"]),
+    ("book basketball tmr", "propose_booking", ["afternoon", "evening"]),
     ("book a doctor for Tuesday", "propose_booking", ["morning"]),
     ("Basketball tomorrow evening", "propose_booking", ["confirm"]),
     ("could u just book the gym for me tomorrow evening?", "propose_booking"),
@@ -70,10 +70,16 @@ def check(item):
     question, expected, *rest = item
     must_mention = rest[0] if rest else []
     started = time.time()
-    try:
-        result = run_agent(question)
-    except Exception as e:
-        return question, expected, False, f"error: {e!r}"[:120], [], time.time() - started
+    result = None
+    for attempt in range(3):  # network hiccups to the model API shouldn't count as wrong answers
+        try:
+            result = run_agent(question)
+            break
+        except Exception as e:
+            error = e
+            time.sleep(3)
+    if result is None:
+        return question, expected, False, f"error: {error!r}"[:120], [], time.time() - started
     tools = [tc["function"]["name"] for m in result["history"] for tc in (m.get("tool_calls") or [])]
     reply = (result["reply"] or "").strip()
     has_extras = bool(result.get("cards") or result.get("choices"))

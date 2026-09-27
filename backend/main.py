@@ -3,7 +3,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 import chat_log
-import current_time
 from demo_reset import reset_demo
 from agent import run_agent
 from api_routes import router as api_router
@@ -67,9 +66,9 @@ def reset():
 
 
 @app.post("/reset-demo")
-def reset_demo_data():
-    """Restore bookings, chat, scans, forms and clinic slots to their starting state."""
-    files = reset_demo()
+def reset_demo_data(sample: bool = False):
+    """Restore bookings, chat, scans, forms and clinic slots to their starting state
+    (no appointments unless ?sample=true)."""
+    files = reset_demo(empty_bookings=not sample)
     _history.clear()
-    current_time.reset_anchor()
     return {"ok": True, "reset": files}

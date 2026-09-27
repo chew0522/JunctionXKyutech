@@ -61,7 +61,7 @@
     "time": "11:00",
     "doctor": "Dr. Nguyen",
     "type": "Mental Health Counseling",
-    "available": false
+    "available": true
   },
   {
     "id": "slot-9",
@@ -245,7 +245,7 @@
     "time": "09:00",
     "doctor": "Dr. Carter",
     "type": "General Checkup",
-    "available": false
+    "available": true
   },
   {
     "id": "slot-32",
