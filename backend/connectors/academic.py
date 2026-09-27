@@ -47,7 +47,12 @@ GET_ASSIGNMENTS_SCHEMA = {
 }
 
 def get_courses() -> list[dict]:
-    return json.loads(COURSES_FILE.read_text())
+    courses = json.loads(COURSES_FILE.read_text())
+    registered = json.loads((DATA_DIR / "registration.json").read_text())["registered"]
+    credits = {r["code"]: r["credits"] for r in registered}
+    for c in courses:
+        c["credits"] = credits.get(c["code"])
+    return courses
 
 
 def get_next_class(course_id: str) -> dict | None:
@@ -90,3 +95,26 @@ def submit_assignment(assignment_id: str) -> dict:
     assignment["submitted"] = True
     ASSIGNMENTS_FILE.write_text(json.dumps(assignments, indent=2))
     return {"success": True, "message": f"\"{assignment['title']}\" submitted."}
+
+
+def get_next_class_overall() -> dict | None:
+    """Earliest class still to come across all courses (used by the schedule tool and as the
+    coffee planner's default), so the model never has to guess which class 'my next class' is."""
+    from datetime import datetime
+
+    import current_time
+
+    now = current_time.now()
+    courses = {c["id"]: c for c in get_courses()}
+    upcoming = []
+    for s in json.loads(CLASS_SCHEDULE_FILE.read_text()):
+        when = datetime.strptime(f"{s['date']} {s['time']}", "%Y-%m-%d %H:%M")
+        if when > now:
+            upcoming.append((when, s))
+    if not upcoming:
+        return None
+    when, s = min(upcoming, key=lambda x: x[0])
+    c = courses[s["course_id"]]
+    return {"course_id": s["course_id"], "code": c["code"], "name": c["name"], "date": s["date"],
+            "time": s["time"], "location": s["location"], "room": s["room"],
+            "minutes_until": int((when - now).total_seconds() / 60)}

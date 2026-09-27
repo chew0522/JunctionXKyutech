@@ -14,7 +14,7 @@ import current_time
 LOG_FILE = Path(__file__).resolve().parent.parent / "data" / "my_bookings.json"
 
 
-def record_booking(kind: str, title: str, subtitle: str, date: str, time: str) -> None:
+def record_booking(kind: str, title: str, subtitle: str, date: str, time: str, resource_id: str | None = None) -> None:
     """kind is a short tag like 'room', 'clinic', 'facility' — used only for picking an
     icon client-side. date/time are the booked slot's own date/time, not the booking
     timestamp."""
@@ -23,6 +23,7 @@ def record_booking(kind: str, title: str, subtitle: str, date: str, time: str) -
         {
             "id": str(uuid.uuid4())[:8],
             "kind": kind,
+            "resource_id": resource_id,
             "title": title,
             "subtitle": subtitle,
             "date": date,
@@ -41,3 +42,15 @@ def _load_all() -> list[dict]:
     if not LOG_FILE.exists():
         return []
     return json.loads(LOG_FILE.read_text())
+
+
+def get_booking(booking_id: str) -> dict | None:
+    return next((b for b in _load_all() if b["id"] == booking_id), None)
+
+
+def update_booking(booking_id: str, **fields) -> None:
+    bookings = _load_all()
+    for b in bookings:
+        if b["id"] == booking_id:
+            b.update(fields)
+    LOG_FILE.write_text(json.dumps(bookings, indent=2))

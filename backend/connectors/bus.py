@@ -28,7 +28,7 @@ PLAN_TRIP_SCHEMA = {
             "type": "object",
             "properties": {
                 "destination": {"type": "string", "description": "Where they want to go, as they said it, e.g. 'main hall'"},
-                "origin": {"type": "string", "description": "Optional starting place if not their current location"},
+                "origin": {"type": "string", "description": "REQUIRED whenever the student says where they are (e.g. 'I'm at the gym' -> 'gym'); omit only if they did not mention their location"},
             },
             "required": ["destination"],
         },

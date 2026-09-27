@@ -94,7 +94,7 @@ def get_bus_location(route: str | None = None) -> list[dict]:
     return buses
 
 
-def plan_trip(from_id: str, to_id: str) -> dict:
+def plan_trip(from_id: str, to_id: str, after_seconds: float = 0) -> dict:
     data = get_campus_map()
     buildings = {b["id"]: b for b in data["buildings"]}
     if from_id not in buildings or to_id not in buildings:
@@ -102,8 +102,10 @@ def plan_trip(from_id: str, to_id: str) -> dict:
     if from_id == to_id:
         return {"error": "Pick two different places.", "options": []}
 
-    now_ts = time.time()
-    now = current_time.now()
+    from datetime import timedelta
+
+    now_ts = time.time() + after_seconds
+    now = current_time.now() + timedelta(seconds=after_seconds)
     options = []
     for r in data["routes"]:
         if from_id not in r["stops"] or to_id not in r["stops"]:
@@ -248,7 +250,11 @@ def plan_bus_trip(destination: str, origin: str | None = None) -> dict:
 
     plan = plan_trip(start["id"], end["id"])
     transfers = [] if plan["options"] else _transfer_options(start["id"], end["id"])
-    where = f"You're at {start['name']}" if origin_is_current else f"From {start['name']}"
+    buildings = {b["id"]: b for b in get_campus_map()["buildings"]}
+    straight_m = _meters((buildings[start["id"]]["lat"], buildings[start["id"]]["lng"]),
+                         (buildings[end["id"]]["lat"], buildings[end["id"]]["lng"]))
+    walk_minutes = max(1, math.ceil(straight_m * 1.25 / 1.3 / 60))
+    where = f"You're at {start['name']}" if origin_is_current else f"Starting from {start['name']}"
 
     def wait_text(minutes: int) -> str:
         return "is arriving now" if minutes == 0 else f"arrives in {minutes} min"
@@ -265,8 +271,11 @@ def plan_bus_trip(destination: str, origin: str | None = None) -> dict:
                    f"({wait_text(t['leg1']['wait_minutes'])}) to {t['via']}, then {t['leg2']['route']}, "
                    f"for about {t['total_minutes']} min in total (arriving around {t['arrive_at']}).")
     else:
-        summary = f"There's no bus route between {start['name']} and {end['name']}."
+        summary = (f"There's no direct or one-change bus from {start['name']} to {end['name']} "
+                   f"(it would need two changes).")
+    summary += f" Walking would take about {walk_minutes} min."
     return {
+        "walk_minutes": walk_minutes,
         "summary": summary,
         "transfers": transfers,
         "origin": start["name"],
@@ -307,3 +316,12 @@ def trip_cards(result: dict) -> list[dict]:
             "available": True,
         })
     return cards
+
+
+def walk_minutes_between(from_id: str, to_id: str) -> int:
+    """Straight-line walk with a detour allowance; moving inside one building counts as 1 min."""
+    if from_id == to_id:
+        return 1
+    buildings = {b["id"]: b for b in get_campus_map()["buildings"]}
+    a, b = buildings[from_id], buildings[to_id]
+    return max(1, math.ceil(_meters((a["lat"], a["lng"]), (b["lat"], b["lng"])) * 1.25 / 1.3 / 60))
