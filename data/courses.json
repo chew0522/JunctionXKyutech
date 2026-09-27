@@ -1,5 +1,5 @@
 [
-  { "id": "course-cs301", "code": "CS301", "name": "Distributed Systems", "instructor": "Prof. Yamamoto", "semester": "Fall 2026" },
-  { "id": "course-cs210", "code": "CS210", "name": "Data Structures & Algorithms", "instructor": "Prof. Ito", "semester": "Fall 2026" },
-  { "id": "course-ee150", "code": "EE150", "name": "Signals and Systems", "instructor": "Prof. Kobayashi", "semester": "Fall 2026" }
+  { "id": "course-cs301", "code": "CS301", "name": "Distributed Systems", "instructor": "Prof. Anderson", "semester": "Fall 2026" },
+  { "id": "course-cs210", "code": "CS210", "name": "Data Structures & Algorithms", "instructor": "Prof. Patel", "semester": "Fall 2026" },
+  { "id": "course-ee150", "code": "EE150", "name": "Signals and Systems", "instructor": "Prof. Rivera", "semester": "Fall 2026" }
 ]

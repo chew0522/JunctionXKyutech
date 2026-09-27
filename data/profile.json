@@ -1,15 +1,15 @@
 {
   "personal": {
-    "name": "Alex Tan Wei Ming",
-    "faculty": "Faculty of Computer Science and Information Technology",
+    "name": "Alex Morgan",
+    "faculty": "School of Computer Science",
     "matric": "24AB5678",
     "status": "Active",
-    "programme": "BCS (Software Eng.) Hons",
-    "semester": "2025/2026-2",
+    "programme": "B.Sc. Computer Science",
+    "semester": "2026/2027-1",
     "mode": "Full Time",
     "classification": "Junior",
     "background": [
-      ["Race", "Chinese"],
+      ["Nationality", "Domestic"],
       ["Gender", "Male"],
       ["Marital Status", "Single"],
       ["Disability", "—"]
@@ -17,17 +17,17 @@
     "sponsorship": { "name": "Campus Merit Scholarship", "type": "Scholarship" }
   },
   "address": {
-    "permanent": ["12 Jalan Harmoni 3", "Taman Sri Aman", "47500 Subang Jaya", "Selangor, Malaysia"],
-    "correspondence": ["Dormitory Block C, Room 214", "Kyutech Campus", "Kitakyushu, Fukuoka", "Japan"],
-    "contact": [["Mobile", "+81 90 1234 5678"], ["Email", "alex.tan@campus.example"]]
+    "permanent": ["12 Maple Avenue", "Riverside", "Springfield, ST 12345", "United States"],
+    "correspondence": ["Dormitory Block C, Room 214", "University Campus", "Springfield, ST 12345", "United States"],
+    "contact": [["Mobile", "+1 555 0123"], ["Email", "alex.morgan@campus.example"]]
   },
   "next_of_kin": [
-    { "name": "Tan Kok Leong", "relationship": "Father", "phone": "+60 12 345 6789", "email": "kl.tan@mail.example", "occupation": "Civil Engineer" },
-    { "name": "Lim Mei Ling", "relationship": "Mother", "phone": "+60 12 987 6543", "email": "ml.lim@mail.example", "occupation": "Teacher" }
+    { "name": "Daniel Morgan", "relationship": "Father", "phone": "+1 555 0142", "email": "daniel.morgan@mail.example", "occupation": "Civil Engineer" },
+    { "name": "Sarah Morgan", "relationship": "Mother", "phone": "+1 555 0187", "email": "sarah.morgan@mail.example", "occupation": "Teacher" }
   ],
   "academic_qualification": [
-    { "level": "Foundation in Science", "institution": "Harmoni Foundation College", "year": "2023", "result": "CGPA 3.72" },
-    { "level": "SPM", "institution": "SMK Sri Aman", "year": "2022", "result": "8A, 1B" }
+    { "level": "Associate Degree in Science", "institution": "Riverside Community College", "year": "2023", "result": "CGPA 3.72" },
+    { "level": "High School Diploma", "institution": "Springfield High School", "year": "2022", "result": "GPA 3.9" }
   ],
   "study_information": {
     "credits_completed": 78,
@@ -38,21 +38,21 @@
       ["Current CGPA", "3.58"],
       ["Academic standing", "Good standing"],
       ["Duration", "4 years"],
-      ["Campus", "Kitakyushu"]
+      ["Campus", "Main Campus"]
     ]
   },
   "advisor": {
-    "name": "Prof. Hiroshi Yamamoto",
+    "name": "Prof. James Anderson",
     "title": "Academic Advisor",
     "department": "Department of Computer Science",
-    "email": "yamamoto@campus.example",
+    "email": "anderson@campus.example",
     "office": "Engineering Building, Room 512",
     "hours": "Tue & Thu, 14:00 - 16:00",
     "next_meeting": "2026-10-08 · 15:00"
   },
   "emergency": [
-    { "name": "Tan Kok Leong", "relationship": "Father", "phone": "+60 12 345 6789", "priority": 1 },
-    { "name": "Lim Mei Ling", "relationship": "Mother", "phone": "+60 12 987 6543", "priority": 2 },
-    { "name": "Campus Security", "relationship": "On-campus", "phone": "+81 93 884 0110", "priority": 3 }
+    { "name": "Daniel Morgan", "relationship": "Father", "phone": "+1 555 0142", "priority": 1 },
+    { "name": "Sarah Morgan", "relationship": "Mother", "phone": "+1 555 0187", "priority": 2 },
+    { "name": "Campus Security", "relationship": "On-campus", "phone": "+1 555 0110", "priority": 3 }
   ]
 }

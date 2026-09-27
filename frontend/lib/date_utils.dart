@@ -24,6 +24,9 @@ class DueLabel {
 DueLabel dueLabel(DateTime due, DateTime now) {
   final hh = due.hour.toString().padLeft(2, '0');
   final mm = due.minute.toString().padLeft(2, '0');
+  if (due.isBefore(now)) {
+    return DueLabel('Overdue · ${weekdayShort(due)} $hh:$mm', true);
+  }
   if (isSameDay(due, now)) {
     return DueLabel('Today $hh:$mm', true);
   }

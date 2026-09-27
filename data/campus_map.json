@@ -1,7 +1,7 @@
 {
   "center": {
     "lat": 33.8908,
-    "lng": 130.8396
+    "lng": -97.7394
   },
   "zoom": 16,
   "buildings": [
@@ -9,7 +9,7 @@
       "id": "main-gate",
       "name": "Main Gate",
       "lat": 33.8892,
-      "lng": 130.8375,
+      "lng": -97.7415,
       "aliases": [
         "gate",
         "entrance"
@@ -19,7 +19,7 @@
       "id": "library",
       "name": "Library",
       "lat": 33.891,
-      "lng": 130.8388,
+      "lng": -97.7402,
       "aliases": [
         "library",
         "study room",
@@ -31,7 +31,7 @@
       "id": "cs",
       "name": "Computer Science Faculty",
       "lat": 33.893,
-      "lng": 130.8378,
+      "lng": -97.7412,
       "aliases": [
         "computer science",
         "cs faculty",
@@ -44,7 +44,7 @@
       "id": "eng",
       "name": "Engineering Faculty",
       "lat": 33.8936,
-      "lng": 130.8402,
+      "lng": -97.7388,
       "aliases": [
         "engineering",
         "building b",
@@ -55,7 +55,7 @@
       "id": "health",
       "name": "Health Center",
       "lat": 33.8924,
-      "lng": 130.8392,
+      "lng": -97.7398,
       "aliases": [
         "health",
         "clinic",
@@ -67,7 +67,7 @@
       "id": "main-hall",
       "name": "Main Hall",
       "lat": 33.8922,
-      "lng": 130.8418,
+      "lng": -97.7372,
       "aliases": [
         "main hall",
         "hall"
@@ -77,7 +77,7 @@
       "id": "union",
       "name": "Student Union",
       "lat": 33.8906,
-      "lng": 130.8408,
+      "lng": -97.7382,
       "aliases": [
         "student union",
         "union",
@@ -90,7 +90,7 @@
       "id": "lounge",
       "name": "Student Lounge",
       "lat": 33.8898,
-      "lng": 130.842,
+      "lng": -97.737,
       "aliases": [
         "lounge"
       ]
@@ -99,7 +99,7 @@
       "id": "dorm",
       "name": "Dormitory Block C",
       "lat": 33.8888,
-      "lng": 130.8405,
+      "lng": -97.7385,
       "aliases": [
         "dorm",
         "dormitory",
@@ -111,7 +111,7 @@
       "id": "sports",
       "name": "Sports Complex",
       "lat": 33.8912,
-      "lng": 130.8426,
+      "lng": -97.7364,
       "aliases": [
         "sports",
         "gym",
@@ -125,7 +125,7 @@
       "id": "train",
       "name": "Train Station",
       "lat": 33.888,
-      "lng": 130.8365,
+      "lng": -97.7425,
       "aliases": [
         "train",
         "station"
@@ -136,7 +136,7 @@
     {
       "id": "loop-a",
       "name": "Campus Loop A",
-      "plate": "KYU-101",
+      "plate": "BUS-101",
       "speed_mps": 5.0,
       "offset_m": 0,
       "capacity": "moderate",
@@ -151,7 +151,7 @@
     {
       "id": "loop-b",
       "name": "Campus Loop B",
-      "plate": "KYU-102",
+      "plate": "BUS-102",
       "speed_mps": 4.5,
       "offset_m": 300,
       "capacity": "crowded",
@@ -166,7 +166,7 @@
     {
       "id": "loop-c",
       "name": "Campus Loop C",
-      "plate": "KYU-103",
+      "plate": "BUS-103",
       "speed_mps": 5.5,
       "offset_m": 500,
       "capacity": "empty",
@@ -180,7 +180,7 @@
     {
       "id": "shuttle",
       "name": "Off-Campus Shuttle",
-      "plate": "KYU-204",
+      "plate": "BUS-204",
       "speed_mps": 6.0,
       "offset_m": 200,
       "capacity": "moderate",

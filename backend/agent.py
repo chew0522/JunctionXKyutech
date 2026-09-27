@@ -281,6 +281,8 @@ def _card_hint(cards: list[dict]) -> str:
     return "\n\nTap a card below to book it and pick your date and time."
 
 
+SUMMARY_IS_REPLY = {"plan_coffee_run", "plan_getting_to_class", "find_clash_free", "find_study_spot", "propose_booking", "check_class_at"}
+
 PLANNER_TOOLS = {"plan_coffee_run", "plan_getting_to_class", "plan_my_day", "find_clash_free", "find_study_spot", "propose_booking", "check_class_at"}
 
 
@@ -310,6 +312,7 @@ def run_agent(user_message: str, history: list[dict] | None = None) -> dict:
     fixed_choices: list[str] | None = None
     planner_cards: list[dict] | None = None
     browse_fallback: str | None = None
+    last_planner: str | None = None
 
     # Loop: the model may request tool calls multiple times before giving a final answer
     while True:
@@ -333,6 +336,12 @@ def run_agent(user_message: str, history: list[dict] | None = None) -> dict:
                 messages.pop()
             if browse_fallback and re.search(r"\babove\b", (reply or "").lower()):
                 reply = browse_fallback
+            if trip_summary and last_planner in SUMMARY_IS_REPLY:
+                # These summaries already answer the whole question; the model's extras
+                # ("want me to show tappable choices?") only promise things the app doesn't do.
+                reply = trip_summary + (_card_hint(cards) if cards else "")
+            elif trip_summary and not cards and re.search(r"\bcards?\b", (reply or "").lower()):
+                reply = trip_summary
             if trip_summary and trip_summary not in (reply or ""):
                 # The model dropped the deterministic sentence; use it rather than trust a paraphrase.
                 reply = trip_summary + (_card_hint(cards) if cards else "")
@@ -348,6 +357,7 @@ def run_agent(user_message: str, history: list[dict] | None = None) -> dict:
                 cards = trip_cards(result) or cards
                 trip_summary = result.get("summary") or result.get("error")
             if name in PLANNER_TOOLS:
+                last_planner = name
                 planner_cards = result.pop("cards", None) or planner_cards
                 cards = planner_cards or cards
                 fixed_choices = result.pop("choices", None) or fixed_choices

@@ -84,12 +84,14 @@ class DashboardPageState extends State<DashboardPage> {
         final events = (results[4] as List)
             .where((e) => parseDateTime(e['date'], e['time']).isAfter(_now))
             .toList()
-          ..sort((a, b) => parseDateTime(a['date'], a['time']).compareTo(parseDateTime(b['date'], b['time'])));
+          ..sort((a, b) => parseDateTime(a['date'], a['time'])
+              .compareTo(parseDateTime(b['date'], b['time'])));
         _events = events.take(2).toList();
         _myBookings = (results[5] as List)
             .where((b) => !parseDateTime(b['date'], b['time']).isBefore(_now))
             .toList()
-          ..sort((a, b) => parseDateTime(a['date'], a['time']).compareTo(parseDateTime(b['date'], b['time'])));
+          ..sort((a, b) => parseDateTime(a['date'], a['time'])
+              .compareTo(parseDateTime(b['date'], b['time'])));
         _timetable = results[6] as List;
         _loading = false;
       });
@@ -105,7 +107,9 @@ class DashboardPageState extends State<DashboardPage> {
     String message;
     if (b['kind'] == 'clinic') {
       final slots = (await _api.fetchClinicSlots())
-          .where((s) => s['available'] == true && DateTime.parse('${s['date']} ${s['time']}').isAfter(_now))
+          .where((s) =>
+              s['available'] == true &&
+              DateTime.parse('${s['date']} ${s['time']}').isAfter(_now))
           .toList();
       if (!mounted) return;
       final chosen = await showModalBottomSheet<Map<String, dynamic>>(
@@ -114,19 +118,25 @@ class DashboardPageState extends State<DashboardPage> {
         isScrollControlled: true,
         builder: (ctx) => SafeArea(
           child: ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: MediaQuery.of(ctx).size.height * 0.7),
+            constraints:
+                BoxConstraints(maxHeight: MediaQuery.of(ctx).size.height * 0.7),
             child: ListView(
               shrinkWrap: true,
               padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
               children: [
-                Text('Move your appointment', style: AppText.cardTitle.copyWith(fontSize: 16)),
+                Text('Move your appointment',
+                    style: AppText.cardTitle.copyWith(fontSize: 16)),
                 const SizedBox(height: 8),
                 for (final s in slots)
                   ListTile(
                     contentPadding: EdgeInsets.zero,
-                    title: Text('${s['date'].toString().substring(5)} · ${s['time']}', style: AppText.metaValue.copyWith(fontSize: 15)),
-                    subtitle: Text('${s['doctor']} · ${s['type']}', style: AppText.metaKey.copyWith(fontSize: 13)),
-                    onTap: () => Navigator.of(ctx).pop(Map<String, dynamic>.from(s)),
+                    title: Text(
+                        '${s['date'].toString().substring(5)} · ${s['time']}',
+                        style: AppText.metaValue.copyWith(fontSize: 15)),
+                    subtitle: Text('${s['doctor']} · ${s['type']}',
+                        style: AppText.metaKey.copyWith(fontSize: 13)),
+                    onTap: () =>
+                        Navigator.of(ctx).pop(Map<String, dynamic>.from(s)),
                   ),
               ],
             ),
@@ -134,17 +144,25 @@ class DashboardPageState extends State<DashboardPage> {
         ),
       );
       if (chosen == null || !mounted) return;
-      final res = await bookWithClashCheck(context, (force) => _api.changeBooking(b['id'], slotId: chosen['id'], force: force));
+      final res = await bookWithClashCheck(
+          context,
+          (force) =>
+              _api.changeBooking(b['id'], slotId: chosen['id'], force: force));
       message = res['cancelled'] == true ? '' : res['message'] as String;
     } else {
-      final picked = await pickDateTime(context, _now, resourceId: b['resource_id'] ?? '', name: b['title']);
+      final picked = await pickDateTime(context, _now,
+          resourceId: b['resource_id'] ?? '', name: b['title']);
       if (picked == null || !mounted) return;
       final res = await bookWithClashCheck(
-          context, (force) => _api.changeBooking(b['id'], date: picked.$1, time: picked.$2, force: force));
+          context,
+          (force) => _api.changeBooking(b['id'],
+              date: picked.$1, time: picked.$2, force: force));
       message = res['cancelled'] == true ? '' : res['message'] as String;
     }
     if (!mounted) return;
-    if (message.isNotEmpty) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    if (message.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    }
     await refresh();
   }
 
@@ -165,7 +183,9 @@ class DashboardPageState extends State<DashboardPage> {
                 children: [
                   Expanded(
                     child: _loading
-                        ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                                color: AppColors.primary))
                         : _content(),
                   ),
                   FloatingBottomBar(
@@ -188,20 +208,26 @@ class DashboardPageState extends State<DashboardPage> {
           Row(
             children: [
               Expanded(
-                child: Container(
-                  height: 48,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  decoration: BoxDecoration(
-                    color: AppColors.surface,
-                    borderRadius: BorderRadius.circular(AppRadius.pill),
-                    border: Border.all(color: AppColors.inputLine),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(LucideIcons.search, size: 18, color: AppColors.textMuted),
-                      const SizedBox(width: 8),
-                      Text('Search campus…', style: AppText.body.copyWith(color: AppColors.textMuted)),
-                    ],
+                child: GestureDetector(
+                  onTap: () => widget.onNavigate(AppTab.chat),
+                  child: Container(
+                    height: 48,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(AppRadius.pill),
+                      border: Border.all(color: AppColors.inputLine),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(LucideIcons.search,
+                            size: 18, color: AppColors.textMuted),
+                        const SizedBox(width: 8),
+                        Text('Ask or search campus…',
+                            style: AppText.body
+                                .copyWith(color: AppColors.textMuted)),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -211,18 +237,24 @@ class DashboardPageState extends State<DashboardPage> {
                 child: Container(
                   width: 44,
                   height: 44,
-                  decoration: const BoxDecoration(color: AppColors.primary, shape: BoxShape.circle),
-                  child: const Icon(LucideIcons.user, color: Colors.white, size: 20),
+                  decoration: const BoxDecoration(
+                      color: AppColors.primary, shape: BoxShape.circle),
+                  child: const Icon(LucideIcons.user,
+                      color: Colors.white, size: 20),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 20),
-          Text('$_greeting, Alex', style: AppText.title.copyWith(fontSize: 26, height: 32 / 26)),
+          Text('$_greeting, Alex',
+              style: AppText.title.copyWith(fontSize: 26, height: 32 / 26)),
           const SizedBox(height: 4),
-          Text("Here's your campus right now.", style: AppText.body.copyWith(color: AppColors.textMuted)),
+          Text("Here's your campus right now.",
+              style: AppText.body.copyWith(color: AppColors.textMuted)),
           const SizedBox(height: 20),
-          Text('RIGHT NOW', style: AppText.label.copyWith(color: AppColors.textMuted, letterSpacing: 0.7)),
+          Text('RIGHT NOW',
+              style: AppText.label
+                  .copyWith(color: AppColors.textMuted, letterSpacing: 0.7)),
           const SizedBox(height: 8),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -248,18 +280,22 @@ class DashboardPageState extends State<DashboardPage> {
             child: ElevatedButton.icon(
               onPressed: widget.onOpenScanPage,
               icon: const Icon(LucideIcons.qrCode, size: 18),
-              label: Text('Scan / Pay / ID', style: AppText.button.copyWith(color: Colors.white)),
+              label: Text('Scan / Pay / ID',
+                  style: AppText.button.copyWith(color: Colors.white)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
                 elevation: 0,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.pill)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppRadius.pill)),
               ),
             ),
           ),
           if (_myBookings.isNotEmpty) ...[
             const SizedBox(height: 20),
-            Text('APPOINTMENTS', style: AppText.label.copyWith(color: AppColors.textMuted, letterSpacing: 0.7)),
+            Text('APPOINTMENTS',
+                style: AppText.label
+                    .copyWith(color: AppColors.textMuted, letterSpacing: 0.7)),
             const SizedBox(height: 8),
             for (final b in _myBookings) ...[
               _AppointmentCard(
@@ -270,7 +306,9 @@ class DashboardPageState extends State<DashboardPage> {
             ],
           ],
           const SizedBox(height: 20),
-          Text('UPCOMING EVENTS', style: AppText.label.copyWith(color: AppColors.textMuted, letterSpacing: 0.7)),
+          Text('UPCOMING EVENTS',
+              style: AppText.label
+                  .copyWith(color: AppColors.textMuted, letterSpacing: 0.7)),
           const SizedBox(height: 8),
           for (final e in _events) ...[
             EventPreviewCard(
@@ -292,9 +330,11 @@ class DashboardPageState extends State<DashboardPage> {
                 backgroundColor: AppColors.primaryTint,
                 foregroundColor: AppColors.primary,
                 elevation: 0,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.pill)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppRadius.pill)),
               ),
-              child: Text('Show all events', style: AppText.button.copyWith(color: AppColors.primary)),
+              child: Text('Show all events',
+                  style: AppText.button.copyWith(color: AppColors.primary)),
             ),
           ),
           const SizedBox(height: 24),
@@ -332,9 +372,12 @@ class DashboardPageState extends State<DashboardPage> {
     return DashTile(
       icon: LucideIcons.checkSquare,
       label: 'Due next',
-      value: dueLabel(due, _now).text.split(' ').last,
+      value: due.isBefore(_now)
+          ? 'Overdue'
+          : dueLabel(due, _now).text.split(' ').last,
       line1: first['title'],
-      line2: '${isSameDay(due, _now) ? 'today' : weekdayShort(due)} · ${_assignments.length} due',
+      line2:
+          '${isSameDay(due, _now) ? 'today' : weekdayShort(due)} · ${_assignments.length} due',
       onTap: widget.onOpenTodoListPage,
     );
   }
@@ -346,14 +389,17 @@ class DashboardPageState extends State<DashboardPage> {
         '${_now.hour.toString().padLeft(2, '0')}:${_now.minute.toString().padLeft(2, '0')}';
     final todays = _timetable.where((e) => e['day'] == today).toList()
       ..sort((a, b) => (a['start'] as String).compareTo(b['start'] as String));
-    final upcoming = todays.where((e) => (e['end'] as String).compareTo(nowStr) > 0).toList();
+    final upcoming = todays
+        .where((e) => (e['end'] as String).compareTo(nowStr) > 0)
+        .toList();
     final next = upcoming.isEmpty ? null : upcoming.first;
     return DashTile(
       icon: LucideIcons.calendarDays,
       label: 'Timetable',
       value: next == null ? '—' : next['start'],
       line1: next == null ? 'No more classes' : next['code'],
-      line2: next == null ? 'today' : '${next['room']} · ${todays.length} today',
+      line2:
+          next == null ? 'today' : '${next['room']} · ${todays.length} today',
       onTap: widget.onOpenTimetablePage,
     );
   }
@@ -374,7 +420,6 @@ class DashboardPageState extends State<DashboardPage> {
       onTap: widget.onOpenCafePage,
     );
   }
-
 }
 
 class _AppointmentCard extends StatelessWidget {
@@ -404,7 +449,9 @@ class _AppointmentCard extends StatelessWidget {
           Container(
             width: 40,
             height: 40,
-            decoration: BoxDecoration(color: AppColors.primaryTint, borderRadius: BorderRadius.circular(12)),
+            decoration: BoxDecoration(
+                color: AppColors.primaryTint,
+                borderRadius: BorderRadius.circular(12)),
             child: Icon(_icon, size: 20, color: AppColors.primary),
           ),
           const SizedBox(width: 12),
@@ -412,11 +459,15 @@ class _AppointmentCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(booking['title'], style: AppText.metaValue.copyWith(fontSize: 14)),
-                Text(booking['subtitle'], style: AppText.metaKey.copyWith(fontSize: 13)),
+                Text(booking['title'],
+                    style: AppText.metaValue.copyWith(fontSize: 14)),
+                Text(booking['subtitle'],
+                    style: AppText.metaKey.copyWith(fontSize: 13)),
                 const SizedBox(height: 2),
-                Text('${booking['date'].toString().substring(5)} · ${booking['time']}',
-                    style: AppText.metaKey.copyWith(fontSize: 12, color: AppColors.primary)),
+                Text(
+                    '${booking['date'].toString().substring(5)} · ${booking['time']}',
+                    style: AppText.metaKey
+                        .copyWith(fontSize: 12, color: AppColors.primary)),
               ],
             ),
           ),
@@ -428,9 +479,12 @@ class _AppointmentCard extends StatelessWidget {
                 side: const BorderSide(color: AppColors.primaryLine),
                 padding: const EdgeInsets.symmetric(horizontal: 14),
                 minimumSize: const Size(0, 36),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.pill)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AppRadius.pill)),
               ),
-              child: Text('Change', style: AppText.button.copyWith(fontSize: 13, color: AppColors.primary)),
+              child: Text('Change',
+                  style: AppText.button
+                      .copyWith(fontSize: 13, color: AppColors.primary)),
             ),
         ],
       ),

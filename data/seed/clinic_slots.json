@@ -3,7 +3,7 @@
     "id": "slot-1",
     "date": "2026-09-26",
     "time": "10:00",
-    "doctor": "Dr. Tanaka",
+    "doctor": "Dr. Carter",
     "type": "General Checkup",
     "available": true
   },
@@ -11,7 +11,7 @@
     "id": "slot-2",
     "date": "2026-09-26",
     "time": "11:00",
-    "doctor": "Dr. Tanaka",
+    "doctor": "Dr. Carter",
     "type": "General Checkup",
     "available": false
   },
@@ -19,7 +19,7 @@
     "id": "slot-3",
     "date": "2026-09-26",
     "time": "14:30",
-    "doctor": "Dr. Suzuki",
+    "doctor": "Dr. Nguyen",
     "type": "Mental Health Counseling",
     "available": true
   },
@@ -27,7 +27,7 @@
     "id": "slot-4",
     "date": "2026-09-27",
     "time": "09:00",
-    "doctor": "Dr. Tanaka",
+    "doctor": "Dr. Carter",
     "type": "General Checkup",
     "available": true
   },
@@ -35,7 +35,7 @@
     "id": "slot-5",
     "date": "2026-09-27",
     "time": "15:00",
-    "doctor": "Dr. Suzuki",
+    "doctor": "Dr. Nguyen",
     "type": "Mental Health Counseling",
     "available": true
   },
@@ -43,7 +43,7 @@
     "id": "slot-6",
     "date": "2026-09-28",
     "time": "09:00",
-    "doctor": "Dr. Tanaka",
+    "doctor": "Dr. Carter",
     "type": "General Checkup",
     "available": true
   },
@@ -51,7 +51,7 @@
     "id": "slot-7",
     "date": "2026-09-28",
     "time": "10:30",
-    "doctor": "Dr. Tanaka",
+    "doctor": "Dr. Carter",
     "type": "General Checkup",
     "available": true
   },
@@ -59,7 +59,7 @@
     "id": "slot-8",
     "date": "2026-09-28",
     "time": "11:00",
-    "doctor": "Dr. Suzuki",
+    "doctor": "Dr. Nguyen",
     "type": "Mental Health Counseling",
     "available": false
   },
@@ -67,7 +67,7 @@
     "id": "slot-9",
     "date": "2026-09-28",
     "time": "14:00",
-    "doctor": "Dr. Tanaka",
+    "doctor": "Dr. Carter",
     "type": "General Checkup",
     "available": true
   },
@@ -75,7 +75,7 @@
     "id": "slot-10",
     "date": "2026-09-28",
     "time": "15:30",
-    "doctor": "Dr. Suzuki",
+    "doctor": "Dr. Nguyen",
     "type": "Mental Health Counseling",
     "available": true
   },
@@ -83,7 +83,7 @@
     "id": "slot-11",
     "date": "2026-09-29",
     "time": "09:00",
-    "doctor": "Dr. Tanaka",
+    "doctor": "Dr. Carter",
     "type": "General Checkup",
     "available": true
   },
@@ -91,7 +91,7 @@
     "id": "slot-12",
     "date": "2026-09-29",
     "time": "10:30",
-    "doctor": "Dr. Tanaka",
+    "doctor": "Dr. Carter",
     "type": "General Checkup",
     "available": true
   },
@@ -99,7 +99,7 @@
     "id": "slot-13",
     "date": "2026-09-29",
     "time": "11:00",
-    "doctor": "Dr. Suzuki",
+    "doctor": "Dr. Nguyen",
     "type": "Mental Health Counseling",
     "available": true
   },
@@ -107,7 +107,7 @@
     "id": "slot-14",
     "date": "2026-09-29",
     "time": "14:00",
-    "doctor": "Dr. Tanaka",
+    "doctor": "Dr. Carter",
     "type": "General Checkup",
     "available": true
   },
@@ -115,7 +115,7 @@
     "id": "slot-15",
     "date": "2026-09-29",
     "time": "15:30",
-    "doctor": "Dr. Suzuki",
+    "doctor": "Dr. Nguyen",
     "type": "Mental Health Counseling",
     "available": true
   },
@@ -123,7 +123,7 @@
     "id": "slot-16",
     "date": "2026-09-30",
     "time": "09:00",
-    "doctor": "Dr. Tanaka",
+    "doctor": "Dr. Carter",
     "type": "General Checkup",
     "available": true
   },
@@ -131,7 +131,7 @@
     "id": "slot-17",
     "date": "2026-09-30",
     "time": "10:30",
-    "doctor": "Dr. Tanaka",
+    "doctor": "Dr. Carter",
     "type": "General Checkup",
     "available": true
   },
@@ -139,7 +139,7 @@
     "id": "slot-18",
     "date": "2026-09-30",
     "time": "11:00",
-    "doctor": "Dr. Suzuki",
+    "doctor": "Dr. Nguyen",
     "type": "Mental Health Counseling",
     "available": true
   },
@@ -147,7 +147,7 @@
     "id": "slot-19",
     "date": "2026-09-30",
     "time": "14:00",
-    "doctor": "Dr. Tanaka",
+    "doctor": "Dr. Carter",
     "type": "General Checkup",
     "available": true
   },
@@ -155,7 +155,7 @@
     "id": "slot-20",
     "date": "2026-09-30",
     "time": "15:30",
-    "doctor": "Dr. Suzuki",
+    "doctor": "Dr. Nguyen",
     "type": "Mental Health Counseling",
     "available": false
   },
@@ -163,7 +163,7 @@
     "id": "slot-21",
     "date": "2026-10-01",
     "time": "09:00",
-    "doctor": "Dr. Tanaka",
+    "doctor": "Dr. Carter",
     "type": "General Checkup",
     "available": false
   },
@@ -171,7 +171,7 @@
     "id": "slot-22",
     "date": "2026-10-01",
     "time": "10:30",
-    "doctor": "Dr. Tanaka",
+    "doctor": "Dr. Carter",
     "type": "General Checkup",
     "available": true
   },
@@ -179,7 +179,7 @@
     "id": "slot-23",
     "date": "2026-10-01",
     "time": "11:00",
-    "doctor": "Dr. Suzuki",
+    "doctor": "Dr. Nguyen",
     "type": "Mental Health Counseling",
     "available": true
   },
@@ -187,7 +187,7 @@
     "id": "slot-24",
     "date": "2026-10-01",
     "time": "14:00",
-    "doctor": "Dr. Tanaka",
+    "doctor": "Dr. Carter",
     "type": "General Checkup",
     "available": true
   },
@@ -195,7 +195,7 @@
     "id": "slot-25",
     "date": "2026-10-01",
     "time": "15:30",
-    "doctor": "Dr. Suzuki",
+    "doctor": "Dr. Nguyen",
     "type": "Mental Health Counseling",
     "available": true
   },
@@ -203,7 +203,7 @@
     "id": "slot-26",
     "date": "2026-10-02",
     "time": "09:00",
-    "doctor": "Dr. Tanaka",
+    "doctor": "Dr. Carter",
     "type": "General Checkup",
     "available": true
   },
@@ -211,7 +211,7 @@
     "id": "slot-27",
     "date": "2026-10-02",
     "time": "10:30",
-    "doctor": "Dr. Tanaka",
+    "doctor": "Dr. Carter",
     "type": "General Checkup",
     "available": true
   },
@@ -219,7 +219,7 @@
     "id": "slot-28",
     "date": "2026-10-02",
     "time": "11:00",
-    "doctor": "Dr. Suzuki",
+    "doctor": "Dr. Nguyen",
     "type": "Mental Health Counseling",
     "available": true
   },
@@ -227,7 +227,7 @@
     "id": "slot-29",
     "date": "2026-10-02",
     "time": "14:00",
-    "doctor": "Dr. Tanaka",
+    "doctor": "Dr. Carter",
     "type": "General Checkup",
     "available": true
   },
@@ -235,7 +235,7 @@
     "id": "slot-30",
     "date": "2026-10-02",
     "time": "15:30",
-    "doctor": "Dr. Suzuki",
+    "doctor": "Dr. Nguyen",
     "type": "Mental Health Counseling",
     "available": true
   },
@@ -243,7 +243,7 @@
     "id": "slot-31",
     "date": "2026-10-03",
     "time": "09:00",
-    "doctor": "Dr. Tanaka",
+    "doctor": "Dr. Carter",
     "type": "General Checkup",
     "available": false
   },
@@ -251,7 +251,7 @@
     "id": "slot-32",
     "date": "2026-10-03",
     "time": "15:00",
-    "doctor": "Dr. Suzuki",
+    "doctor": "Dr. Nguyen",
     "type": "Mental Health Counseling",
     "available": true
   },
@@ -259,7 +259,7 @@
     "id": "slot-33",
     "date": "2026-10-04",
     "time": "09:00",
-    "doctor": "Dr. Tanaka",
+    "doctor": "Dr. Carter",
     "type": "General Checkup",
     "available": true
   },
@@ -267,7 +267,7 @@
     "id": "slot-34",
     "date": "2026-10-04",
     "time": "15:00",
-    "doctor": "Dr. Suzuki",
+    "doctor": "Dr. Nguyen",
     "type": "Mental Health Counseling",
     "available": true
   },
@@ -275,7 +275,7 @@
     "id": "slot-35",
     "date": "2026-10-05",
     "time": "09:00",
-    "doctor": "Dr. Tanaka",
+    "doctor": "Dr. Carter",
     "type": "General Checkup",
     "available": true
   },
@@ -283,7 +283,7 @@
     "id": "slot-36",
     "date": "2026-10-05",
     "time": "10:30",
-    "doctor": "Dr. Tanaka",
+    "doctor": "Dr. Carter",
     "type": "General Checkup",
     "available": true
   },
@@ -291,7 +291,7 @@
     "id": "slot-37",
     "date": "2026-10-05",
     "time": "11:00",
-    "doctor": "Dr. Suzuki",
+    "doctor": "Dr. Nguyen",
     "type": "Mental Health Counseling",
     "available": true
   },
@@ -299,7 +299,7 @@
     "id": "slot-38",
     "date": "2026-10-05",
     "time": "14:00",
-    "doctor": "Dr. Tanaka",
+    "doctor": "Dr. Carter",
     "type": "General Checkup",
     "available": false
   },
@@ -307,7 +307,7 @@
     "id": "slot-39",
     "date": "2026-10-05",
     "time": "15:30",
-    "doctor": "Dr. Suzuki",
+    "doctor": "Dr. Nguyen",
     "type": "Mental Health Counseling",
     "available": true
   }

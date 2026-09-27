@@ -21,7 +21,7 @@
     { "code": "MATH301", "name": "Linear Algebra II", "instructor": "Prof. Kumar", "credits": 3,
       "schedule": "Mon, Wed & Fri, 09:00-10:00", "location": "Building B, Room 12",
       "eligible": true, "prereq": "Prerequisite met: MATH201 Linear Algebra I (85/100)" },
-    { "code": "CS330", "name": "Computer Networks", "instructor": "Prof. Sato", "credits": 3,
+    { "code": "CS330", "name": "Computer Networks", "instructor": "Prof. Lopez", "credits": 3,
       "schedule": "Tue & Fri, 13:00-14:30", "location": "Engineering Building, Room 105",
       "eligible": true, "prereq": "Prerequisite met: CS210 Data Structures & Algorithms (92/100)" }
   ]

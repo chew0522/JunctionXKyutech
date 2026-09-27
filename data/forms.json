@@ -20,7 +20,7 @@
       {"key":"reason","label":"Reason","type":"multiline","required":true}]},
   { "id": "form-leave", "title": "Leave of Absence", "description": "Apply to pause your studies for a semester.", "icon": "plane",
     "fields": [
-      {"key":"semester","label":"Semester","type":"select","options":["2026/2027-1","2026/2027-2"],"required":true},
+      {"key":"semester","label":"Semester","type":"select","options":["2026/2027-2","2027/2028-1"],"required":true},
       {"key":"reason","label":"Reason","type":"multiline","required":true}]},
   { "id": "form-transcript", "title": "Transcript Request", "description": "Request an official copy of your academic transcript.", "icon": "file",
     "fields": [
