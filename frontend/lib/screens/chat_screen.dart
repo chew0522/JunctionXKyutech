@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../api.dart';
+import '../clock.dart';
 import '../models.dart';
 import '../theme.dart';
 import '../widgets/bookable_card.dart';
+import '../widgets/clash_dialog.dart';
 import '../widgets/chat_header.dart';
 import '../widgets/chip.dart';
 import '../widgets/composer.dart';
@@ -36,6 +38,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final List<ChatMessage> _items = [];
 
   String? _bookingCardId;
+  final Map<String, ProposalStatus> _proposalStatus = {};
   bool _sending = false;
   bool _errored = false;
   bool _loadingHistory = true;
@@ -44,6 +47,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
+    _api.fetchNow().catchError((_) => DateTime.now());
     _loadHistory();
   }
 
@@ -110,6 +114,68 @@ class _ChatScreenState extends State<ChatScreen> {
         _ => LucideIcons.doorOpen,
       };
 
+  String _proposalKey(Map<String, dynamic> c) => '${c['action']}|${c['id']}|${c['date']}|${c['time']}';
+
+  Future<Map<String, dynamic>> _bookProposal(String action, String id, String date, String time) {
+    return bookWithClashCheck(context, (force) => switch (action) {
+          'room' => _api.bookRoom(id, date: date, time: time, force: force),
+          'facility' => _api.bookFacility(id, date: date, time: time, force: force),
+          _ => _api.bookClinicSlot(id, force: force),
+        });
+  }
+
+  Future<void> _confirmProposal(Map<String, dynamic> c) async {
+    final key = _proposalKey(c);
+    setState(() => _proposalStatus[key] = ProposalStatus.booking);
+    String text;
+    var ok = false;
+    try {
+      final res = await _bookProposal(c['action'], c['id'], c['date'], c['time']);
+      ok = res['success'] == true;
+      text = ok
+          ? 'Booked: ${c['title']} on ${c['date']} at ${c['time']}.'
+          : (res['cancelled'] == true ? 'OK, I did not book it.' : res['message'] as String);
+    } catch (_) {
+      text = "Couldn't complete that booking. Please try again.";
+    }
+    setState(() {
+      _proposalStatus[key] = ok ? ProposalStatus.booked : ProposalStatus.idle;
+      _items.add(ChatMessage(text: text, fromAgent: true));
+    });
+    _scrollToBottom();
+  }
+
+  Future<void> _changeProposal(Map<String, dynamic> c) async {
+    if (c['action'] == 'clinic') {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (ctx) => HealthcarePage(onBack: () => Navigator.of(ctx).pop())),
+      );
+      return;
+    }
+    final now = await _api.fetchNow();
+    if (!mounted) return;
+    final picked = await pickDateTime(context, now, resourceId: c['id'], name: c['title']);
+    if (picked == null) return;
+    final key = _proposalKey(c);
+    setState(() => _proposalStatus[key] = ProposalStatus.booking);
+    String text;
+    var ok = false;
+    try {
+      final res = await _bookProposal(c['action'], c['id'], picked.$1, picked.$2);
+      ok = res['success'] == true;
+      text = ok
+          ? 'Booked: ${c['title']} on ${picked.$1} at ${picked.$2}.'
+          : (res['cancelled'] == true ? 'OK, I did not book it.' : res['message'] as String);
+    } catch (_) {
+      text = "Couldn't complete that booking. Please try again.";
+    }
+    setState(() {
+      _proposalStatus[key] = ok ? ProposalStatus.booked : ProposalStatus.idle;
+      _items.add(ChatMessage(text: text, fromAgent: true));
+    });
+    _scrollToBottom();
+  }
+
   Future<void> _bookCard(Map<String, dynamic> card) async {
     if (card['kind'] == 'bus') {
       Navigator.of(context).push(
@@ -133,16 +199,18 @@ class _ChatScreenState extends State<ChatScreen> {
     final now = await _api.fetchNow();
     if (!mounted) return;
     final picked = await pickDateTime(context, now, resourceId: card['id'], name: card['title']);
-    if (picked == null) return;
+    if (picked == null || !mounted) return;
     setState(() => _bookingCardId = card['id']);
     String text;
     try {
-      final res = card['kind'] == 'room'
-          ? await _api.bookRoom(card['id'], date: picked.$1, time: picked.$2)
-          : await _api.bookFacility(card['id'], date: picked.$1, time: picked.$2);
+      final res = await bookWithClashCheck(
+          context,
+          (force) => card['kind'] == 'room'
+              ? _api.bookRoom(card['id'], date: picked.$1, time: picked.$2, force: force)
+              : _api.bookFacility(card['id'], date: picked.$1, time: picked.$2, force: force));
       text = res['success'] == true
           ? '${card['title']} is booked for ${picked.$1} at ${picked.$2}.'
-          : res['message'] as String;
+          : (res['cancelled'] == true ? 'OK, I did not book it.' : res['message'] as String);
     } catch (_) {
       text = "Couldn't complete that booking. Please try again.";
     }
@@ -226,7 +294,17 @@ class _ChatScreenState extends State<ChatScreen> {
             child: Column(
               children: [
                 for (final c in item.cards!) ...[
-                  BookableResourceCard(
+                  if (c['kind'] == 'proposal')
+                    BookingProposalCard(
+                      icon: _cardIcon(c['action']),
+                      title: c['title'],
+                      subtitle: c['subtitle'],
+                      status: _proposalStatus[_proposalKey(c)] ?? ProposalStatus.idle,
+                      onConfirm: () => _confirmProposal(c),
+                      onChange: () => _changeProposal(c),
+                    )
+                  else
+                    BookableResourceCard(
                     icon: _cardIcon(c['kind']),
                     title: c['title'],
                     subtitle: c['subtitle'],
@@ -276,7 +354,7 @@ class _ChatScreenState extends State<ChatScreen> {
     final mm = time.minute.toString().padLeft(2, '0');
     if (!showDate) return '$hh:$mm';
 
-    final now = DateTime.now();
+    final now = demoNow();
     final isToday = time.year == now.year && time.month == now.month && time.day == now.day;
     final datePart = isToday ? 'Today' : _weekdays[time.weekday - 1];
     return '$datePart · $hh:$mm';
@@ -286,7 +364,11 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: Padding(
+        child: Column(
+          children: [
+            ChatHeader(onHome: widget.onGoHome, showBorder: false),
+            Expanded(
+              child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -383,6 +465,9 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             ],
           ),
+        ),
+            ),
+          ],
         ),
       ),
     );

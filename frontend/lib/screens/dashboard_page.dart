@@ -4,7 +4,9 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../api.dart';
 import '../date_utils.dart';
 import '../theme.dart';
+import '../widgets/clash_dialog.dart';
 import '../widgets/dash_tile.dart';
+import '../widgets/slot_picker.dart';
 import '../widgets/floating_bottom_bar.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -85,6 +87,8 @@ class DashboardPageState extends State<DashboardPage> {
           ..sort((a, b) => parseDateTime(a['date'], a['time']).compareTo(parseDateTime(b['date'], b['time'])));
         _events = events.take(2).toList();
         _myBookings = (results[5] as List)
+            .where((b) => !parseDateTime(b['date'], b['time']).isBefore(_now))
+            .toList()
           ..sort((a, b) => parseDateTime(a['date'], a['time']).compareTo(parseDateTime(b['date'], b['time'])));
         _timetable = results[6] as List;
         _loading = false;
@@ -95,6 +99,53 @@ class DashboardPageState extends State<DashboardPage> {
         _errored = true;
       });
     }
+  }
+
+  Future<void> _changeBooking(Map<String, dynamic> b) async {
+    String message;
+    if (b['kind'] == 'clinic') {
+      final slots = (await _api.fetchClinicSlots())
+          .where((s) => s['available'] == true && DateTime.parse('${s['date']} ${s['time']}').isAfter(_now))
+          .toList();
+      if (!mounted) return;
+      final chosen = await showModalBottomSheet<Map<String, dynamic>>(
+        context: context,
+        backgroundColor: AppColors.surface,
+        isScrollControlled: true,
+        builder: (ctx) => SafeArea(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: MediaQuery.of(ctx).size.height * 0.7),
+            child: ListView(
+              shrinkWrap: true,
+              padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
+              children: [
+                Text('Move your appointment', style: AppText.cardTitle.copyWith(fontSize: 16)),
+                const SizedBox(height: 8),
+                for (final s in slots)
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text('${s['date'].toString().substring(5)} · ${s['time']}', style: AppText.metaValue.copyWith(fontSize: 15)),
+                    subtitle: Text('${s['doctor']} · ${s['type']}', style: AppText.metaKey.copyWith(fontSize: 13)),
+                    onTap: () => Navigator.of(ctx).pop(Map<String, dynamic>.from(s)),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      );
+      if (chosen == null || !mounted) return;
+      final res = await bookWithClashCheck(context, (force) => _api.changeBooking(b['id'], slotId: chosen['id'], force: force));
+      message = res['cancelled'] == true ? '' : res['message'] as String;
+    } else {
+      final picked = await pickDateTime(context, _now, resourceId: b['resource_id'] ?? '', name: b['title']);
+      if (picked == null || !mounted) return;
+      final res = await bookWithClashCheck(
+          context, (force) => _api.changeBooking(b['id'], date: picked.$1, time: picked.$2, force: force));
+      message = res['cancelled'] == true ? '' : res['message'] as String;
+    }
+    if (!mounted) return;
+    if (message.isNotEmpty) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    await refresh();
   }
 
   String get _greeting {
@@ -211,7 +262,10 @@ class DashboardPageState extends State<DashboardPage> {
             Text('APPOINTMENTS', style: AppText.label.copyWith(color: AppColors.textMuted, letterSpacing: 0.7)),
             const SizedBox(height: 8),
             for (final b in _myBookings) ...[
-              _AppointmentCard(booking: b),
+              _AppointmentCard(
+                booking: b,
+                onChange: b['kind'] == 'bus' ? null : () => _changeBooking(b),
+              ),
               const SizedBox(height: 10),
             ],
           ],
@@ -325,8 +379,9 @@ class DashboardPageState extends State<DashboardPage> {
 
 class _AppointmentCard extends StatelessWidget {
   final Map<String, dynamic> booking;
+  final VoidCallback? onChange;
 
-  const _AppointmentCard({required this.booking});
+  const _AppointmentCard({required this.booking, this.onChange});
 
   IconData get _icon => switch (booking['kind']) {
         'clinic' => LucideIcons.stethoscope,
@@ -338,7 +393,7 @@ class _AppointmentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),
       decoration: BoxDecoration(
         color: AppColors.surface,
         border: Border.all(color: AppColors.line),
@@ -359,11 +414,24 @@ class _AppointmentCard extends StatelessWidget {
               children: [
                 Text(booking['title'], style: AppText.metaValue.copyWith(fontSize: 14)),
                 Text(booking['subtitle'], style: AppText.metaKey.copyWith(fontSize: 13)),
+                const SizedBox(height: 2),
+                Text('${booking['date'].toString().substring(5)} · ${booking['time']}',
+                    style: AppText.metaKey.copyWith(fontSize: 12, color: AppColors.primary)),
               ],
             ),
           ),
-          Text('${booking['date'].toString().substring(5)} · ${booking['time']}',
-              style: AppText.metaKey.copyWith(fontSize: 12)),
+          if (onChange != null)
+            OutlinedButton(
+              onPressed: onChange,
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppColors.primary,
+                side: const BorderSide(color: AppColors.primaryLine),
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                minimumSize: const Size(0, 36),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.pill)),
+              ),
+              child: Text('Change', style: AppText.button.copyWith(fontSize: 13, color: AppColors.primary)),
+            ),
         ],
       ),
     );

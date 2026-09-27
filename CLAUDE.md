@@ -4,7 +4,7 @@ Guidance for Claude Code when working in this repository.
 
 ## Project
 
-Campus Concierge — an AI agent for campus services, built for JunctionX Kyutech 2026, Track 02 (Hack Connected Everywhere). Full context and scope: [PRD.md](PRD.md). Read it before making architectural decisions.
+Campus Concierge — an AI agent for campus services, built for JunctionX Kyutech 2026, Track 02 (Hack Connected Everywhere). Full context and scope: [PRD.md](md/PRD.md). Read it before making architectural decisions.
 
 24-hour hackathon build. Only one team member codes — prioritize speed and clarity over polish. Don't build Tier 3 features (course *enrollment*/registration, exam results, student ID) — they're explicitly out of scope; see PRD §4-5. The Scan / Pay / ID screen (Dashboard button) is also demo-only: Scan understands `attendance:<COURSE>` and `merit:<ID>` codes, Pay and ID show rotating fake QR codes and process nothing. MyRegister, MyFinance and MyForm exist as display-only mock pages under the Profile menu (registration is closed and nothing is enrolled; forms just save a submission record) — do not connect them to real systems. Note this is narrower than "academic platform" — *viewing* enrolled courses, materials, and assignments is in scope and already built. **Assignment submission is also out of scope** (removed after initially building it, PRD §4) — it's high-stakes and hard to undo, so the agent redirects students to the real submission portal instead of submitting on their behalf. Don't reintroduce a `submit_assignment` tool without checking with the team first.
 
@@ -40,7 +40,11 @@ The agent is one DeepSeek tool-calling loop plus a set of independent connector 
 
 **Buses are simulated, not stored:** `connectors/bus_sim.py` moves each bus along its loop from `data/campus_map.json` as a function of wall-clock time (no `bus.json`). `get_bus_location`, the Dashboard tile, the live map, the trip planner and trip scheduling all read from it. The map is a drawn mock (no Google Maps API); don't add one without checking with the team. `plan_bus_trip` (agent tool) starts from the mock current location in `data/user_location.json`, computes wait/ride/transfer times in Python, and returns a `summary` sentence that the reply must use; the chat shows tappable bus cards that open live tracking.
 
-**Shared demo clock:** `current_time.py` (backend root) holds the single hardcoded `DEMO_NOW` used by `connectors/planner.py`, `bookings_log.py` and the slot/attendance endpoints. If you need to adjust the staged demo time, change it there once — don't hardcode a second copy anywhere else.
+**Booking through chat:** the agent never books by itself. `propose_booking` (`connectors/booking_proposals.py`) turns a request like 'basketball Tuesday' into a concrete free slot, and the chat shows a Confirm / Change time card; the Confirm tap calls the booking API directly with those exact details. Keep that human tap in the loop.
+
+**Planner tools** (`plan_coffee_run`, and in `connectors/day_planner.py`: `plan_getting_to_class`, `plan_my_day`, `find_clash_free`, `find_study_spot`) each do the multi-step reasoning in Python and return a `summary` sentence the reply must start with; `agent.py` puts it back if the model drops it. Prefer adding or fixing a planner over adding prompt rules, and re-run `python eval_questions.py` from `backend/` after any prompt or tool change.
+
+**Shared demo clock:** `current_time.py` starts at 2026-09-26 14:50 and then runs forward in real time from server start (`POST /reset-demo` or `python demo_reset.py` re-anchors it; `DEMO_CLOCK=fixed` freezes it). Everything reads `current_time.now()` — never add a second copy. **Class clashes are a soft warning:** room, facility and clinic bookings return `needs_confirmation` and go through only with `force=true` after the student confirms. Existing bookings can be moved with `POST /api/my-bookings/{id}/change`.
 
 If running behind, don't silently drop scope — that's a PRD §12 checkpoint decision for the whole team, not a call to make alone mid-build.
 

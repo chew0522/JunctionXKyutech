@@ -1,3 +1,5 @@
+import 'clock.dart';
+
 class ChatMessage {
   final String text;
   final bool fromAgent;
@@ -10,7 +12,7 @@ class ChatMessage {
   final List<Map<String, dynamic>>? cards;
 
   ChatMessage({required this.text, required this.fromAgent, DateTime? time, this.choices, this.cards})
-      : time = time ?? DateTime.now();
+      : time = time ?? demoNow();
 
   factory ChatMessage.fromJson(Map<String, dynamic> json) => ChatMessage(
         text: json['text'],

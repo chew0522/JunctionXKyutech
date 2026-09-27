@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../api.dart';
 import '../date_utils.dart';
 import '../theme.dart';
+import '../widgets/clash_dialog.dart';
 import '../widgets/page_header.dart';
 
 class HealthcarePage extends StatefulWidget {
@@ -47,7 +48,7 @@ class _HealthcarePageState extends State<HealthcarePage> {
   Future<void> _book(Map<String, dynamic> slot) async {
     setState(() => _bookingId = slot['id']);
     try {
-      await _api.bookClinicSlot(slot['id']);
+      await bookWithClashCheck(context, (force) => _api.bookClinicSlot(slot['id'], force: force));
     } finally {
       await _load();
       setState(() => _bookingId = null);
@@ -115,6 +116,7 @@ class _HealthcarePageState extends State<HealthcarePage> {
                               _SlotCard(
                                 slot: s,
                                 booking: _bookingId == s['id'],
+                                past: !parseDateTime(s['date'], s['time']).isAfter(_now),
                                 onBook: () => _book(s),
                               ),
                               const SizedBox(height: 12),
@@ -133,17 +135,19 @@ class _HealthcarePageState extends State<HealthcarePage> {
 class _SlotCard extends StatelessWidget {
   final Map<String, dynamic> slot;
   final bool booking;
+  final bool past;
   final VoidCallback onBook;
 
   const _SlotCard({
     required this.slot,
+    required this.past,
     required this.booking,
     required this.onBook,
   });
 
   @override
   Widget build(BuildContext context) {
-    final available = slot['available'] == true;
+    final available = slot['available'] == true && !past;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -190,7 +194,7 @@ class _SlotCard extends StatelessWidget {
                       color: AppColors.lineSoft,
                       borderRadius: BorderRadius.circular(AppRadius.button),
                     ),
-                    child: Text('Booked', style: AppText.metaKey.copyWith(fontSize: 12)),
+                    child: Text(past ? 'Passed' : 'Booked', style: AppText.metaKey.copyWith(fontSize: 12)),
                   ),
           ),
         ],

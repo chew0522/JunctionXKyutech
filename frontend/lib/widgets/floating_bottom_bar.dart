@@ -37,7 +37,25 @@ class FloatingBottomBar extends StatelessWidget {
                 children: [
                   _tab(LucideIcons.home, 'Home', AppTab.home),
                   _tab(LucideIcons.graduationCap, 'Courses', AppTab.courses),
-                  const Expanded(child: SizedBox()), // spacer under the raised Ask button
+                  Expanded(
+                    child: InkWell(
+                      onTap: () => onTap(AppTab.chat),
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Text(
+                            'Ask',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: active == AppTab.chat ? FontWeight.w700 : FontWeight.w600,
+                              color: active == AppTab.chat ? AppColors.primary : AppColors.textMuted,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                   _tab(LucideIcons.calendarCheck, 'Bookings', AppTab.bookings),
                   _tab(LucideIcons.user, 'Profile', AppTab.profile),
                 ],
