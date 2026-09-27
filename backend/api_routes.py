@@ -2,13 +2,14 @@
 Bookings, drill-in pages) that need structured data directly — no LLM round-trip.
 The chat agent (agent.py) is a separate consumer of the same connector functions."""
 
-import hashlib
 import json
 from pathlib import Path
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
+import availability
+from booking_changes import change_booking
 import bookings_log
 import current_time
 from connectors.academic import (
@@ -42,16 +43,19 @@ _DATA = Path(__file__).resolve().parent.parent / "data"
 
 @router.get("/slots")
 def api_slots(resource_id: str, name: str, date: str):
-    """Mock availability grid, 08:00-22:00 every 30 min. Stable per resource+date (hash),
-    plus past times today and anything already in the student's own bookings."""
+    """Availability grid, 08:00-22:00 every 30 min: slots other students hold (data/booked_slots.json),
+    past times today, and this student's own bookings of the same slot. Booking the same
+    facility again at a different time is always allowed."""
     now = current_time.now()
-    taken = {(b["title"], b["date"], b["time"]) for b in bookings_log.get_bookings()}
     slots = []
     for minutes in range(8 * 60, 22 * 60 + 1, 30):
         t = f"{minutes // 60:02d}:{minutes % 60:02d}"
-        busy = int(hashlib.md5(f"{resource_id}|{date}|{t}".encode()).hexdigest(), 16) % 10 < 3
         past = date == now.strftime("%Y-%m-%d") and t <= now.strftime("%H:%M")
-        slots.append({"time": t, "available": not (busy or past or (name, date, t) in taken)})
+        clash = availability.class_clash(date, t)
+        free = not past and availability.slot_free(resource_id, name, date, t)
+        slots.append({"time": t, "available": free,
+                      "reason": None if free else "taken",
+                      "class": clash["code"] if clash and free else None})
     return slots
 
 
@@ -151,11 +155,12 @@ class BookRoomRequest(BaseModel):
     room_id: str
     date: str | None = None
     time: str | None = None
+    force: bool = False
 
 
 @router.post("/rooms/book")
 def api_book_room(req: BookRoomRequest):
-    return book_study_room(req.room_id, req.date, req.time)
+    return book_study_room(req.room_id, req.date, req.time, req.force)
 
 
 @router.get("/campus-map")
@@ -201,11 +206,12 @@ def api_clinic_slots(date: str | None = None):
 
 class BookSlotRequest(BaseModel):
     slot_id: str
+    force: bool = False
 
 
 @router.post("/clinic-slots/book")
 def api_book_slot(req: BookSlotRequest):
-    return book_clinic_appointment(req.slot_id)
+    return book_clinic_appointment(req.slot_id, req.force)
 
 
 @router.get("/courses")
@@ -256,11 +262,12 @@ class BookFacilityRequest(BaseModel):
     facility_id: str
     date: str | None = None
     time: str | None = None
+    force: bool = False
 
 
 @router.post("/facilities/book")
 def api_book_facility(req: BookFacilityRequest):
-    return book_facility(req.facility_id, req.date, req.time)
+    return book_facility(req.facility_id, req.date, req.time, req.force)
 
 
 @router.get("/my-bookings")
@@ -268,3 +275,15 @@ def api_my_bookings():
     """Confirmed bookings the student actually made — see bookings_log.py's docstring
     for why this isn't just 'available: false' rooms/slots."""
     return bookings_log.get_bookings()
+
+
+class ChangeBookingBody(BaseModel):
+    date: str | None = None
+    time: str | None = None
+    slot_id: str | None = None
+    force: bool = False
+
+
+@router.post("/my-bookings/{booking_id}/change")
+def api_change_booking(booking_id: str, body: ChangeBookingBody):
+    return change_booking(booking_id, body.date, body.time, body.slot_id, body.force)

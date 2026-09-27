@@ -1,7 +1,10 @@
 import json
 from pathlib import Path
 
+import availability
 import bookings_log
+import current_time
+from datetime import datetime
 
 DATA_FILE = Path(__file__).resolve().parent.parent.parent / "data" / "clinic_slots.json"
 
@@ -42,7 +45,7 @@ def get_clinic_slots(date: str | None = None) -> list[dict]:
     return slots
 
 
-def book_clinic_appointment(slot_id: str) -> dict:
+def book_clinic_appointment(slot_id: str, force: bool = False) -> dict:
     slots = json.loads(DATA_FILE.read_text())
     slot = next((s for s in slots if s["id"] == slot_id), None)
 
@@ -50,6 +53,13 @@ def book_clinic_appointment(slot_id: str) -> dict:
         return {"success": False, "message": f"No slot found with id {slot_id}."}
     if not slot["available"]:
         return {"success": False, "message": f"That {slot['time']} slot with {slot['doctor']} is already booked."}
+    if datetime.strptime(f"{slot['date']} {slot['time']}", "%Y-%m-%d %H:%M") <= current_time.now():
+        return {"success": False, "message": "That appointment time has already passed."}
+
+    if not force and (clash := availability.class_clash(slot["date"], slot["time"], 30)):
+        return {"success": False, "needs_confirmation": True,
+                "message": (f"Heads up: you have {clash['label']} ({clash['start']:%H:%M}-{clash['end']:%H:%M}) "
+                            f"around then. Do you still want to book it?")}
 
     slot["available"] = False
     DATA_FILE.write_text(json.dumps(slots, indent=2))
@@ -60,5 +70,6 @@ def book_clinic_appointment(slot_id: str) -> dict:
         subtitle="Health Center",
         date=slot["date"],
         time=slot["time"],
+        resource_id=slot["id"],
     )
     return {"success": True, "message": f"Appointment booked with {slot['doctor']} at {slot['time']} on {slot['date']}."}

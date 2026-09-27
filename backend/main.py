@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 import chat_log
+import current_time
+from demo_reset import reset_demo
 from agent import run_agent
 from api_routes import router as api_router
 
@@ -19,6 +21,21 @@ app.add_middleware(
 
 # In-memory conversation history, single session — fine for a live demo, not for real users.
 _history: list[dict] = []
+
+
+def _restore_history() -> None:
+    """After a server restart the saved chat log is still on screen, so give the agent the
+    recent text turns back — otherwise it would silently forget what the student can see."""
+    turns = [
+        {"role": "user" if m["role"] == "user" else "assistant", "content": m["text"]}
+        for m in chat_log.get_recent_messages()[-20:]
+        if m.get("text")
+    ]
+    if turns:
+        _history[:] = [{"role": "system", "content": ""}] + turns
+
+
+_restore_history()
 
 
 class ChatRequest(BaseModel):
@@ -47,3 +64,12 @@ def history():
 def reset():
     _history.clear()
     return {"ok": True}
+
+
+@app.post("/reset-demo")
+def reset_demo_data():
+    """Restore bookings, chat, scans, forms and clinic slots to their starting state."""
+    files = reset_demo()
+    _history.clear()
+    current_time.reset_anchor()
+    return {"ok": True, "reset": files}
