@@ -28,7 +28,7 @@ PROPOSE_BOOKING_SCHEMA = {
             "type": "object",
             "properties": {
                 "kind": {"type": "string", "enum": ["room", "facility", "clinic"]},
-                "what": {"type": "string", "description": "What they want as they said it: 'basketball court', 'study room', 'gym', 'counseling', 'Dr Tanaka', 'doctor'"},
+                "what": {"type": "string", "description": "What they want as they said it: 'basketball court', 'study room', 'gym', 'counseling', 'Dr Carter', 'doctor'"},
                 "when": {"type": "string", "description": "Day as they said it: 'tomorrow', 'tuesday', '2026-10-02'. Omit if not stated."},
                 "time": {"type": "string", "description": "A time ('6pm', '18:00') or part of day ('morning', 'afternoon', 'evening'). Omit if not stated (the tool then asks the student which part of the day). Use 'earliest' if they say any time / asap."},
                 "group_size": {"type": "integer"},

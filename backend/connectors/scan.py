@@ -25,7 +25,13 @@ def _record_attendance(course_code: str) -> dict:
     if course is None:
         return {"ok": False, "kind": "attendance", "title": "Unknown class", "detail": f"No course matches '{course_code}'."}
 
-    today = current_time.now().strftime("%Y-%m-%d")
+    now = current_time.now()
+    if not any(e["course_id"] == course["id"] and e["day"] == now.strftime("%a")
+               for e in json.loads((DATA / "timetable.json").read_text())):
+        return {"ok": False, "kind": "attendance", "title": "No class today",
+                "detail": f"{course['code']} {course['name']} has no class on {now:%A}."}
+
+    today = now.strftime("%Y-%m-%d")
     extras_file = DATA / "course_extras.json"
     extras = json.loads(extras_file.read_text())
     sessions = extras.setdefault(course["id"], {}).setdefault("attendance", [])
@@ -66,7 +72,7 @@ def get_qr(kind: str) -> dict | None:
     window = int(now // QR_WINDOW_SECONDS)
     token = hashlib.sha256(f"{kind}|{profile['matric']}|{window}".encode()).hexdigest()[:12]
     return {
-        "code": f"kyutech-{kind}:{profile['matric']}:{token}",
+        "code": f"campus-{kind}:{profile['matric']}:{token}",
         "expires_in": QR_WINDOW_SECONDS - int(now % QR_WINDOW_SECONDS),
         "name": profile["name"],
         "matric": profile["matric"],

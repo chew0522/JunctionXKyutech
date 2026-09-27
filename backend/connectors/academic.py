@@ -55,12 +55,39 @@ def get_courses() -> list[dict]:
     return courses
 
 
+def _upcoming_classes(course_id: str | None = None) -> list[dict]:
+    """Every class occurrence in the next 14 days, from the weekly timetable (the single source of
+    truth for classes), soonest first."""
+    from datetime import datetime, timedelta
+
+    import current_time
+
+    now = current_time.now()
+    days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    courses = {c["id"]: c for c in get_courses()}
+    found = []
+    for offset in range(14):
+        day = now + timedelta(days=offset)
+        for e in json.loads((DATA_DIR / "timetable.json").read_text()):
+            if e["day"] != days[day.weekday()] or (course_id and e["course_id"] != course_id):
+                continue
+            start = datetime.strptime(f"{day:%Y-%m-%d} {e['start']}", "%Y-%m-%d %H:%M")
+            if start > now:
+                c = courses[e["course_id"]]
+                found.append({"course_id": e["course_id"], "code": c["code"], "name": c["name"],
+                              "date": f"{day:%Y-%m-%d}", "time": e["start"], "location": e["location"],
+                              "room": e["room"], "minutes_until": int((start - now).total_seconds() / 60)})
+    return sorted(found, key=lambda x: (x["date"], x["time"]))
+
+
 def get_next_class(course_id: str) -> dict | None:
-    """Not an agent tool — used by plan_coffee_run (connectors/planner.py) to look up
-    when/where a course's next class is, without exposing raw schedule data as a tool."""
-    schedule = json.loads(CLASS_SCHEDULE_FILE.read_text())
-    upcoming = [s for s in schedule if s["course_id"] == course_id]
-    upcoming.sort(key=lambda s: (s["date"], s["time"]))
+    """Not an agent tool — used by the planners to look up when/where a course's next class is."""
+    upcoming = _upcoming_classes(course_id)
+    return upcoming[0] if upcoming else None
+
+
+def get_next_class_overall() -> dict | None:
+    upcoming = _upcoming_classes()
     return upcoming[0] if upcoming else None
 
 
@@ -95,26 +122,3 @@ def submit_assignment(assignment_id: str) -> dict:
     assignment["submitted"] = True
     ASSIGNMENTS_FILE.write_text(json.dumps(assignments, indent=2))
     return {"success": True, "message": f"\"{assignment['title']}\" submitted."}
-
-
-def get_next_class_overall() -> dict | None:
-    """Earliest class still to come across all courses (used by the schedule tool and as the
-    coffee planner's default), so the model never has to guess which class 'my next class' is."""
-    from datetime import datetime
-
-    import current_time
-
-    now = current_time.now()
-    courses = {c["id"]: c for c in get_courses()}
-    upcoming = []
-    for s in json.loads(CLASS_SCHEDULE_FILE.read_text()):
-        when = datetime.strptime(f"{s['date']} {s['time']}", "%Y-%m-%d %H:%M")
-        if when > now:
-            upcoming.append((when, s))
-    if not upcoming:
-        return None
-    when, s = min(upcoming, key=lambda x: x[0])
-    c = courses[s["course_id"]]
-    return {"course_id": s["course_id"], "code": c["code"], "name": c["name"], "date": s["date"],
-            "time": s["time"], "location": s["location"], "room": s["room"],
-            "minutes_until": int((when - now).total_seconds() / 60)}
