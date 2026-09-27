@@ -52,13 +52,13 @@ from connectors.schedule import (
 from connectors.todo import LIST_TODOS_SCHEMA, todo_list
 
 client = OpenAI(
-    api_key=os.environ["DEEPSEEK_API_KEY"],
-    base_url="https://api.deepseek.com",
+    api_key=os.environ.get("LLM_API_KEY") or os.environ["DEEPSEEK_API_KEY"],
+    base_url=os.environ.get("LLM_BASE_URL", "https://api.deepseek.com"),
     timeout=25,
     max_retries=3,
 )
 
-MODEL = "deepseek-chat"
+MODEL = os.environ.get("LLM_MODEL", "deepseek-chat")
 
 # Not a connector — no data file, no side effect. This tool exists purely so the UI
 # can render tappable chips for a short list of options instead of forcing the student

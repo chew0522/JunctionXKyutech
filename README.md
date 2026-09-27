@@ -59,13 +59,14 @@ Beyond the chat there is a full app: dashboard, live bus map, course pages (mate
 ## How it works
 
 ```
-Flutter app  ──HTTP──►  FastAPI backend  ──►  DeepSeek (function calling)
+Flutter app  ──HTTP──►  FastAPI backend  ──►  AI model (function calling)
                               │
                               ├── connectors/  one small file per campus service
                               └── data/        mock JSON files
 ```
 
 - **Connector pattern.** Each campus service (events, rooms, bus, clinic, academic and so on) is one small connector with its own mock data file. Adding a service means adding one connector; the agent loop does not change.
+- **Model-agnostic.** The backend talks to any OpenAI-compatible API. A school can use a cloud provider under its own contract, or run an open model on its own server (for example Ollama or vLLM) so student data never leaves campus. Small local models may be less reliable at choosing tools, so run `python eval_questions.py` against any model before relying on it.
 - **The model never does the maths.** Walking times, whether there is time for coffee, bus waits and class clashes are computed in Python by planner tools. The model only picks the tool and phrases the result. Planner tools return a finished `summary` sentence that the reply must use.
 - **Booking always needs a tap.** The assistant only proposes bookings (`propose_booking`). Confirm calls the booking API directly with the exact details shown on the card.
 - **Class clashes are a warning, not a block.** The backend returns `needs_confirmation` and only books with `force=true` after the student agrees.
@@ -75,12 +76,12 @@ Flutter app  ──HTTP──►  FastAPI backend  ──►  DeepSeek (function
 
 - **Frontend:** Flutter (Dart), `google_fonts`, `lucide_icons`, `mobile_scanner`, `qr_flutter`
 - **Backend:** Python, FastAPI, Uvicorn
-- **AI:** DeepSeek (`deepseek-chat`) through the OpenAI-compatible API, with function calling
+- **AI:** any model with an OpenAI-compatible API and function calling. The demo uses DeepSeek (`deepseek-chat`); the model, address and key are settings in `backend/.env`
 - **Data:** mock JSON files under `data/`
 
 ## Getting started
 
-You need Python 3.11+, Flutter, and a DeepSeek API key.
+You need Python 3.11+, Flutter, and an API key for an OpenAI-compatible model (the demo uses DeepSeek).
 
 ### 1. Backend
 
@@ -91,6 +92,7 @@ pip install -r backend/requirements.txt
 
 cp backend/.env.example backend/.env
 # edit backend/.env and set DEEPSEEK_API_KEY
+# To use a different model, set LLM_BASE_URL, LLM_MODEL and LLM_API_KEY instead (see .env.example)
 # GOOGLE_MAPS_API_KEY is optional (it only affects walking-time lookups)
 
 cd backend
@@ -141,4 +143,4 @@ docs/screenshots/       images used in this README
 - Simulated data only, with no real login, and no real payments (Pay and ID codes are demo codes).
 - Course registration is display-only, and submitting assignments is deliberately not done through the chat.
 - Bookings can be changed from the Dashboard, but there is no cancel yet.
-- The assistant needs a working connection to the DeepSeek API.
+- The assistant needs a working connection to its model (DeepSeek in the demo). Only DeepSeek has been tested so far; other models, including local ones, are supported by configuration but untested.
