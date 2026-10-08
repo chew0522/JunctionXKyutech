@@ -4,7 +4,7 @@
 
 > **Prototype notice:** all data is simulated (mock JSON files) and every name, address and ID is fictional. There is no login and no connection to any real school system.
 
-**Team:** Desmond Chew Boon Cong, Raymond Ng Chian Quan, Sashvhant A/L Vadevell, Poh Kok Hao
+**Team:** Desmond Chew Boon Cong, [Raymond Ng Chian Quan](https://github.com/raymondng0531), Sashvhant A/L Vadevell, Poh Kok Hao
 
 ---
 
